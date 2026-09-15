@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="32" fill="#111111"/>
+  <text x="32" y="36" text-anchor="middle" font-family="Montserrat, 'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="20" letter-spacing="-0.5" fill="#F8F8F6">P.21</text>
+  <line x1="17" y1="45" x2="34" y2="45" stroke="#C99745" stroke-width="1.4"/>
+  <circle cx="35" cy="45" r="1.9" fill="#C99745"/>
+  <g stroke="#C99745" stroke-width="1.2" stroke-linecap="round">
+    <line x1="40" y1="44" x2="40" y2="46"/>
+    <line x1="42.5" y1="42.5" x2="42.5" y2="47.5"/>
+    <line x1="45" y1="41" x2="45" y2="49"/>
+    <line x1="47.5" y1="43" x2="47.5" y2="47"/>
+  </g>
+</svg>

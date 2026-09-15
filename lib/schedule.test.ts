@@ -51,12 +51,18 @@ test('force override beats the schedule, including future days', () => {
   assert.equal(r.kind === 'day' && r.day.day_number, 2)
 })
 
-test('draft day is never exposed', () => {
+test('draft day is never exposed by the schedule', () => {
   const drafts = [day(0, days[0].activation_datetime), day(1, days[1].activation_datetime, { status: 'draft' })]
   assert.deepEqual(resolveActiveDay(drafts, new Date('2026-09-16T12:00:00Z'), null), {
     kind: 'locked',
     countdown: 20,
   })
+})
+
+test('forcing a draft day previews it', () => {
+  const drafts = [day(0, days[0].activation_datetime), day(1, days[1].activation_datetime, { status: 'draft' })]
+  const r = resolveActiveDay(drafts, new Date('2026-09-14T12:00:00Z'), 1)
+  assert.equal(r.kind === 'day' && r.day.day_number, 1)
 })
 
 test('disabled day is skipped in favor of the previous one', () => {

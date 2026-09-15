@@ -8,8 +8,9 @@ export type Resolution =
  * Picks the single experience the participant may see right now.
  * - force_active_day set → that day (if it exists and isn't disabled).
  * - otherwise → the latest non-disabled day whose activation has passed.
- * A `draft` day, D0, or nothing active yet all render as locked, so
- * unfinished content is never exposed.
+ * On the schedule, a `draft` day, D0, or nothing active yet all render as
+ * locked, so unfinished content is never exposed. Forcing a day is an explicit
+ * admin choice, so a forced draft IS shown (that's how drafts get previewed).
  */
 export function resolveActiveDay(
   days: Day[],
@@ -28,7 +29,8 @@ export function resolveActiveDay(
   }
 
   if (!current) return { kind: 'locked', countdown: 21 }
-  if (current.status === 'draft' || current.experience_type === 'locked') {
+  const hiddenDraft = current.status === 'draft' && forceActiveDay === null
+  if (hiddenDraft || current.experience_type === 'locked') {
     return { kind: 'locked', countdown: current.countdown_number }
   }
   return { kind: 'day', day: current }

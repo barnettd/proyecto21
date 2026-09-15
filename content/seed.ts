@@ -1,9 +1,9 @@
-import type { Day, ExperienceType } from '../lib/types.ts'
+import type { Day, ExperienceType, Track } from '../lib/types.ts'
 
 /**
  * Local fallback content, used when Supabase isn't configured.
- * Mirrors supabase/seed.sql. All times are America/Argentina/Buenos_Aires (-03:00).
- * Every day starts as `draft` → renders locked until content is defined and marked `ready`.
+ * Mirrors supabase/schema.sql. All times are America/Argentina/Buenos_Aires (-03:00).
+ * Every day starts as `draft` → renders locked on the schedule until marked `ready`.
  */
 const plan: Array<[number, string, ExperienceType, string?]> = [
   [0, 'The Package', 'locked'],
@@ -30,6 +30,24 @@ const plan: Array<[number, string, ExperienceType, string?]> = [
   [21, 'Track 21', 'custom'],
 ]
 
+/** Participant-facing copy, per day. Draft until approved. */
+const copy: Record<number, Partial<Day>> = {
+  1: {
+    title: 'Escena de apertura',
+    intro_text: 'Toda película arranca con una canción.\nEsta es la de PROYECTO 21. Dale play.',
+    instructions:
+      'Ahora te toca a vos.\n\nImaginá la primera escena de una película sobre vos. No el tráiler: la escena de verdad. ¿Qué canción suena?',
+    completion_text: 'Recibida.\nLa escena ya tiene música.',
+    config_json: {
+      track_label: 'Canción de apertura',
+      input_label: 'Tu canción · link de Spotify',
+      submit_label: 'Enviar',
+      response_label: 'Tu escena',
+      response_tag: 'OPENING',
+    },
+  },
+}
+
 export const seedDays: Day[] = plan.map(([n, title, type, time = '08:00']) => {
   const date = new Date(Date.UTC(2026, 8, 15 + n)).toISOString().slice(0, 10)
   return {
@@ -44,8 +62,25 @@ export const seedDays: Day[] = plan.map(([n, title, type, time = '08:00']) => {
     instructions: null,
     completion_text: null,
     config_json: {},
+    ...copy[n],
   }
 })
+
+export const seedTracks: Track[] = [
+  {
+    // PLACEHOLDER — replace with the real P21 Opening Track.
+    id: 't-d1-p21',
+    day_id: 'd1',
+    source: 'P21',
+    source_name: 'PROYECTO 21',
+    title: 'Here Comes The Sun',
+    artist: 'The Beatles',
+    spotify_url: 'https://open.spotify.com/track/6dGnYIeXmHdcikdzNNDMm2',
+    tag: 'OPENING',
+    sort_order: 0,
+    playlist_status: 'candidate',
+  },
+]
 
 export const seedSettings = {
   force_active_day: null,

@@ -1,14 +1,18 @@
-import { createClient } from '@supabase/supabase-js'
-import { seedDays, seedSettings } from '../content/seed.ts'
-import type { Day, Settings } from './types.ts'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import path from 'node:path'
+import { seedDays, seedSettings, seedTracks } from '../content/seed.ts'
+import type { Day, ResponseRecord, Settings, SubmittedTrack, Track } from './types.ts'
 
 // Server-only. The service role key must never reach the browser.
+let client: SupabaseClient | null | undefined
 function supabase() {
+  if (client !== undefined) return client
   const url = process.env.SUPABASE_URL
   // Vercel's Supabase integration may inject either the legacy or the newer secret key name.
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SECRET_KEY
-  if (!url || !key) return null
-  return createClient(url, key, { auth: { persistSession: false } })
+  client = url && key ? createClient(url, key, { auth: { persistSession: false } }) : null
+  return client
 }
 
 function envForce(): number | null {
@@ -34,7 +38,7 @@ export async function loadContent(): Promise<{ days: Day[]; settings: Settings }
   }
 }
 
-async function fromSupabase(db: NonNullable<ReturnType<typeof supabase>>) {
+async function fromSupabase(db: SupabaseClient) {
   const [daysRes, settingsRes] = await Promise.all([
     db.from('days').select('*').order('day_number'),
     db.from('settings').select('*').eq('id', 1).maybeSingle(),
@@ -49,4 +53,86 @@ async function fromSupabase(db: NonNullable<ReturnType<typeof supabase>>) {
       locked_text: settingsRes.data?.locked_text ?? seedSettings.locked_text,
     },
   }
+}
+
+export async function getTracks(dayId: string): Promise<Track[]> {
+  const db = supabase()
+  if (db) {
+    const { data, error } = await db.from('tracks').select('*').eq('day_id', dayId).order('sort_order')
+    if (!error) return data as Track[]
+    console.error('[p21] tracks unavailable, serving seed tracks', error)
+  }
+  return seedTracks.filter((t) => t.day_id === dayId)
+}
+
+export async function getResponse(dayId: string): Promise<ResponseRecord | null> {
+  const db = supabase()
+  if (db) {
+    const { data, error } = await db.from('responses').select('*').eq('day_id', dayId).maybeSingle()
+    if (error) console.error('[p21] response lookup failed', error)
+    return (data as ResponseRecord | null) ?? null
+  }
+  if (!localStoreAllowed()) return null
+  return (await readLocal()).responses.find((r) => r.day_id === dayId) ?? null
+}
+
+/**
+ * Stores the day's response plus any tracks she gave (source HER) for the playlist.
+ * The response insert goes first: its unique index on day_id is the duplicate guard.
+ */
+export async function saveResponse(
+  dayId: string,
+  responseType: string,
+  payload: Record<string, unknown>,
+  tracks: SubmittedTrack[],
+  tag: string | null,
+): Promise<'saved' | 'duplicate'> {
+  const rows = tracks.map((t, i) => ({
+    day_id: dayId,
+    source: 'HER' as const,
+    source_name: null,
+    tag,
+    sort_order: i,
+    playlist_status: 'candidate',
+    ...t,
+  }))
+
+  const db = supabase()
+  if (db) {
+    const res = await db.from('responses').insert({ day_id: dayId, response_type: responseType, payload_json: payload })
+    if (res.error?.code === '23505') return 'duplicate'
+    if (res.error) throw res.error
+    if (rows.length) {
+      const tr = await db.from('tracks').insert(rows)
+      if (tr.error) console.error('[p21] response saved but tracks insert failed', tr.error)
+    }
+    return 'saved'
+  }
+
+  if (!localStoreAllowed()) throw new Error('No response storage configured (set Supabase env vars).')
+  const store = await readLocal()
+  if (store.responses.some((r) => r.day_id === dayId)) return 'duplicate'
+  const now = new Date().toISOString()
+  store.responses.push({ id: crypto.randomUUID(), day_id: dayId, response_type: responseType, payload_json: payload, created_at: now })
+  store.tracks.push(...rows.map((r) => ({ id: crypto.randomUUID(), ...r })))
+  await writeLocal(store)
+  return 'saved'
+}
+
+// Local JSON store: development only, so previews work without Supabase.
+const LOCAL_PATH = path.join(process.cwd(), '.data', 'p21-local.json')
+type LocalStore = { responses: ResponseRecord[]; tracks: Track[] }
+const localStoreAllowed = () => process.env.NODE_ENV !== 'production'
+
+async function readLocal(): Promise<LocalStore> {
+  try {
+    return JSON.parse(await readFile(LOCAL_PATH, 'utf8')) as LocalStore
+  } catch {
+    return { responses: [], tracks: [] }
+  }
+}
+
+async function writeLocal(store: LocalStore) {
+  await mkdir(path.dirname(LOCAL_PATH), { recursive: true })
+  await writeFile(LOCAL_PATH, JSON.stringify(store, null, 2))
 }

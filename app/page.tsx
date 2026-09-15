@@ -1,25 +1,32 @@
 import { connection } from 'next/server'
-import { CountdownMarker, LineDot } from '@/components/Brand'
+import { CountdownMarker, Footer, Wordmark } from '@/components/Brand'
+import { DayView } from '@/components/DayView'
 import { loadContent } from '@/lib/content'
 import { resolveActiveDay } from '@/lib/schedule'
 
-export default async function Page() {
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await connection()
-  const { days, settings } = await loadContent()
-  const active = resolveActiveDay(days, new Date(), settings.force_active_day)
+  const [{ days, settings }, params] = await Promise.all([loadContent(), searchParams])
+
+  // Local preview only: /?day=N forces a day. Never honored in production.
+  const previewDay =
+    process.env.NODE_ENV !== 'production' && typeof params.day === 'string' && /^\d+$/.test(params.day)
+      ? Number(params.day)
+      : null
+  const active = resolveActiveDay(days, new Date(), previewDay ?? settings.force_active_day)
 
   if (active.kind === 'locked') {
     return (
       <div className="shell">
         <main className="shell-main locked">
-          <h1 className="locked-title" aria-label="PROYECTO 21">
-            <span className="wm-word">PROYECTO</span>
-            <span className="wm-num">21</span>
-          </h1>
-          <LineDot />
-          <CountdownMarker n={active.countdown} />
-          <p className="eyebrow">{settings.locked_text}</p>
+          <h1 className="visually-hidden">PROYECTO 21</h1>
+          <Wordmark size="lg" />
+          <div className="locked-status">
+            <CountdownMarker n={active.countdown} mark />
+            <p className="eyebrow">{settings.locked_text}</p>
+          </div>
         </main>
+        <Footer />
       </div>
     )
   }
@@ -28,14 +35,13 @@ export default async function Page() {
   return (
     <div className="shell">
       <header className="shell-header">
-        <span className="eyebrow">Proyecto 21</span>
+        <Wordmark size="sm" />
         <CountdownMarker n={day.countdown_number} />
       </header>
       <main className="shell-main">
-        {day.title && <h1 className="day-title">{day.title}</h1>}
-        {day.intro_text && <p className="prose">{day.intro_text}</p>}
-        {day.instructions && <p className="prose muted">{day.instructions}</p>}
+        <DayView day={day} />
       </main>
+      <Footer />
     </div>
   )
 }

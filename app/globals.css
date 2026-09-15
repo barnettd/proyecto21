@@ -76,24 +76,200 @@ body {
   gap: 2.25rem;
 }
 
-.locked-title {
-  margin: 0;
+.locked {
+  gap: 3.5rem;
+}
+
+.locked-status {
   display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ── Brand: wordmark ─────────────────────────────────────────────
+   Grid: [PROYECTO][21] / [timeline][waveform]. Everything scales in em. */
+.wordmark {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  column-gap: 0.45em;
+  align-items: end;
   line-height: 1;
+  color: var(--blanco);
+}
+
+.wordmark-lg {
+  font-size: clamp(0.95rem, 4.6vw, 1.3rem);
+}
+
+.wordmark-sm {
+  font-size: 0.5rem;
 }
 
 .wm-word {
-  font-size: clamp(1.1rem, 5.4vw, 1.5rem);
-  font-weight: 500;
-  letter-spacing: 0.3em;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  margin-bottom: 0.55em; /* sits above the 21 baseline, as on the board */
 }
 
 .wm-num {
-  font-size: clamp(3.25rem, 16vw, 4.5rem);
-  font-weight: 700;
-  letter-spacing: -0.04em;
+  font-size: 3.4em;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  margin-left: -0.05em;
+}
+
+.wordmark .wm-line {
+  margin-top: 0.7em;
+  margin-right: 0.35em;
+}
+
+.wordmark .wm-wave {
+  margin-top: 0.3em;
+  margin-left: 0.25em;
+  height: 1.3em;
+}
+
+/* Timeline: hairline ending in a dot */
+.wm-line {
+  position: relative;
+  display: block;
+  height: max(1px, 0.09em);
+  background: var(--ambar);
+  align-self: center;
+}
+
+.wm-line::after {
+  content: '';
+  position: absolute;
+  right: -0.25em;
+  top: 50%;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: inherit;
+  transform: translateY(-50%);
+}
+
+/* Waveform: centered vertical bars */
+.wm-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.36em;
+  height: 1.2em;
+}
+
+.wm-wave > span {
+  width: max(1px, 0.12em);
+  border-radius: 1px;
+  background: var(--ambar);
+}
+
+.wm-line.is-muted,
+.wm-wave.is-muted > span {
+  background: #4a4a47;
+}
+
+/* ── Brand: seal ─────────────────────────────────────────────── */
+.seal {
+  flex: none;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.35em;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #1b1b1b;
+  box-shadow: inset 0 0 0 1px #2e2e2e;
+}
+
+.seal-md {
+  width: 7.5rem;
+  font-size: 1rem;
+}
+
+.seal-sm {
+  width: 3.25rem;
+  font-size: 0.45rem;
+}
+
+.seal-text {
+  font-size: 2.35em;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.seal-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+}
+
+.seal-mark .wm-line {
+  width: 2.6em;
+}
+
+/* ── Brand: P.21 / NN system variant ────────────────────────── */
+.marker-lg {
+  font-size: 1.05rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.marker-n {
+  font-weight: 500;
+}
+
+.marker-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  font-size: 0.75em;
+}
+
+.marker-mark .wm-line {
+  width: 3.2em;
+}
+
+/* ── Shell chrome ────────────────────────────────────────────── */
+.shell-header {
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid #242424;
+}
+
+.shell-footer {
+  padding-top: 1.1rem;
+  border-top: 1px solid #242424;
+  text-align: center;
+  font-size: 0.5625rem;
+}
+
+.shell-footer .slash {
+  color: var(--ambar);
+  margin-inline: 0.6em;
+}
+
+.completion-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.completion-head .completion-title {
+  margin: 0;
 }
 
 .day-title {
@@ -112,6 +288,156 @@ body {
 
 .prose.muted {
   color: var(--gris);
+}
+
+.day-kicker {
+  margin: 0 0 0.75rem;
+}
+
+.track-card {
+  margin: 0.5rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.spotify-embed {
+  width: 100%;
+  height: 152px;
+  border: 0;
+  border-radius: 12px;
+  background: #1c1c1c;
+}
+
+.track-text {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  line-height: 1.5;
+}
+
+.track-text span {
+  color: var(--gris);
+}
+
+.track-link {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--gris);
+  text-decoration: none;
+}
+
+.track-link:hover {
+  color: var(--blanco);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.8rem;
+  margin: 0.5rem 0 1.75rem;
+}
+
+.divider .wm-line {
+  width: 9rem;
+}
+
+.track-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.field-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+.field input {
+  font: inherit;
+  font-size: 1rem; /* ≥16px: stops iOS zooming on focus */
+  color: var(--blanco);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #3a3a3a;
+  border-radius: 0;
+  padding: 0.6rem 0;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field input::placeholder {
+  color: #555;
+}
+
+.field input:focus {
+  border-bottom-color: var(--ambar);
+}
+
+.link-button {
+  align-self: flex-start;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--gris);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.form-error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #e2a89b;
+}
+
+.submit {
+  margin-top: 0.75rem;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--carbon);
+  background: var(--ambar);
+  border: 0;
+  border-radius: 999px;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.completion {
+  margin-top: 0.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #2a2a2a;
+}
+
+.completion-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ambar);
 }
 
 .line-dot {
