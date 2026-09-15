@@ -1,5 +1,5 @@
 import { connection } from 'next/server'
-import { CountdownMarker, Footer, Wordmark } from '@/components/Brand'
+import { Footer, Wordmark } from '@/components/Brand'
 import { Countdown } from '@/components/Countdown'
 import { DayView } from '@/components/DayView'
 import { loadContent } from '@/lib/content'
@@ -23,7 +23,6 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           <h1 className="visually-hidden">PROYECTO 21</h1>
           <Wordmark size="lg" />
           <div className="locked-status">
-            <CountdownMarker n={active.countdown} mark />
             {active.opensAt ? (
               <Countdown target={active.opensAt} serverNow={Date.now()} />
             ) : (
@@ -31,7 +30,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
             )}
           </div>
         </main>
-        <Footer />
+        <Footer dayNumber={21 - active.countdown} countdown={active.countdown} />
       </div>
     )
   }
@@ -41,12 +40,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     <div className="shell">
       <header className="shell-header">
         <Wordmark size="sm" />
-        <CountdownMarker n={day.countdown_number} />
       </header>
       <main className="shell-main">
         <DayView day={day} />
       </main>
-      <Footer />
+      <Footer dayNumber={day.day_number} countdown={day.countdown_number} />
     </div>
   )
 }

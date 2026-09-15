@@ -74,10 +74,12 @@ export function LineDot() {
   )
 }
 
-export function Footer() {
+/** Day label on the left, P.21 / NN system variant on the right. */
+export function Footer({ dayNumber, countdown }: { dayNumber: number; countdown: number }) {
   return (
-    <footer className="shell-footer eyebrow">
-      Música <span className="slash">/</span> Memoria <span className="slash">/</span> Continuidad
+    <footer className="shell-footer">
+      <span className="footer-day">D{dayNumber}</span>
+      <CountdownMarker n={countdown} mark />
     </footer>
   )
 }

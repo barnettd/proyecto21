@@ -293,15 +293,24 @@ body {
 }
 
 .shell-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   padding-top: 1.1rem;
   border-top: 1px solid #242424;
-  text-align: center;
-  font-size: 0.5625rem;
+  font-size: 0.8125rem;
+  line-height: 1;
 }
 
-.shell-footer .slash {
-  color: var(--ambar);
-  margin-inline: 0.6em;
+.footer-day {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.shell-footer .marker-lg {
+  font-size: inherit;
+  align-items: flex-end;
+  gap: 0.5rem;
 }
 
 .completion-head {
