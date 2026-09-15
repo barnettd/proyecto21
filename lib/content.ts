@@ -8,9 +8,14 @@ import type { Day, ResponseRecord, Settings, SubmittedTrack, Track } from './typ
 let client: SupabaseClient | null | undefined
 function supabase() {
   if (client !== undefined) return client
-  const url = process.env.SUPABASE_URL
-  // Vercel's Supabase integration may inject either the legacy or the newer secret key name.
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SECRET_KEY
+  // Vercel's Supabase integration may use the legacy or newer key name, with or without a custom prefix.
+  const env = process.env
+  const url = env.SUPABASE_URL ?? env.STORAGE_SUPABASE_URL
+  const key =
+    env.SUPABASE_SERVICE_ROLE_KEY ??
+    env.SUPABASE_SECRET_KEY ??
+    env.STORAGE_SUPABASE_SERVICE_ROLE_KEY ??
+    env.STORAGE_SUPABASE_SECRET_KEY
   client = url && key ? createClient(url, key, { auth: { persistSession: false } }) : null
   return client
 }
@@ -53,6 +58,18 @@ async function fromSupabase(db: SupabaseClient) {
       locked_text: settingsRes.data?.locked_text ?? seedSettings.locked_text,
     },
   }
+}
+
+/** For /api/health: is the database configured and are the tables reachable? Reveals no content. */
+export async function storageStatus(): Promise<'ok' | 'not_configured' | 'error'> {
+  const db = supabase()
+  if (!db) return 'not_configured'
+  const { error, count } = await db.from('days').select('id', { count: 'exact', head: true })
+  if (error) {
+    console.error('[p21] health check failed', error)
+    return 'error'
+  }
+  return count ? 'ok' : 'error'
 }
 
 export async function getTracks(dayId: string): Promise<Track[]> {
