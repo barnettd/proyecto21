@@ -64,7 +64,8 @@ alter table media enable row level security;
 -- Seed D0–D21 (all -03:00 Buenos Aires). Days start as draft → locked until marked ready.
 insert into days (id, day_number, countdown_number, activation_datetime, status, experience_type, title)
 select 'd' || n, n, greatest(21 - n, 0),
-  (date '2026-09-15' + n) + (case when n = 16 then time '22:00' else time '08:00' end) at time zone 'America/Argentina/Buenos_Aires',
+  -- Parenthesize the whole timestamp: AT TIME ZONE binds tighter than +.
+  ((date '2026-09-15' + n) + (case when n = 16 then time '22:00' else time '08:00' end)) at time zone 'America/Argentina/Buenos_Aires',
   case when n = 0 then 'ready' else 'draft' end,
   t.type, t.title
 from (values

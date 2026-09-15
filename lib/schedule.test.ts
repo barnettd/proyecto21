@@ -18,22 +18,30 @@ const day = (n: number, iso: string, extra: Partial<Day> = {}): Day => ({
   ...extra,
 })
 
+const D1_OPENS = '2026-09-16T08:00:00-03:00'
 const days = [
   day(0, '2026-09-15T08:00:00-03:00'),
-  day(1, '2026-09-16T08:00:00-03:00'),
+  day(1, D1_OPENS),
   day(2, '2026-09-17T08:00:00-03:00'),
 ]
 
-test('locked before anything activates', () => {
+test('locked before anything activates, counting down to D1', () => {
   assert.deepEqual(resolveActiveDay(days, new Date('2026-09-14T12:00:00Z'), null), {
     kind: 'locked',
     countdown: 21,
+    opensAt: D1_OPENS,
   })
 })
 
-test('D0 shows locked with its countdown', () => {
+test('D0 shows locked with its countdown and D1 as the target', () => {
   const r = resolveActiveDay(days, new Date('2026-09-16T07:59:00-03:00'), null)
-  assert.deepEqual(r, { kind: 'locked', countdown: 21 })
+  assert.deepEqual(r, { kind: 'locked', countdown: 21, opensAt: D1_OPENS })
+})
+
+test('countdown targets D1 even while D1 is still draft', () => {
+  const drafts = [day(0, days[0].activation_datetime), day(1, D1_OPENS, { status: 'draft' })]
+  const r = resolveActiveDay(drafts, new Date('2026-09-15T20:00:00-03:00'), null)
+  assert.deepEqual(r, { kind: 'locked', countdown: 21, opensAt: D1_OPENS })
 })
 
 test('D1 opens exactly at 08:00 Buenos Aires', () => {
@@ -51,16 +59,17 @@ test('force override beats the schedule, including future days', () => {
   assert.equal(r.kind === 'day' && r.day.day_number, 2)
 })
 
-test('draft day is never exposed by the schedule', () => {
-  const drafts = [day(0, days[0].activation_datetime), day(1, days[1].activation_datetime, { status: 'draft' })]
+test('a due draft day stays locked and promises no time', () => {
+  const drafts = [day(0, days[0].activation_datetime), day(1, D1_OPENS, { status: 'draft' })]
   assert.deepEqual(resolveActiveDay(drafts, new Date('2026-09-16T12:00:00Z'), null), {
     kind: 'locked',
     countdown: 20,
+    opensAt: null,
   })
 })
 
 test('forcing a draft day previews it', () => {
-  const drafts = [day(0, days[0].activation_datetime), day(1, days[1].activation_datetime, { status: 'draft' })]
+  const drafts = [day(0, days[0].activation_datetime), day(1, D1_OPENS, { status: 'draft' })]
   const r = resolveActiveDay(drafts, new Date('2026-09-14T12:00:00Z'), 1)
   assert.equal(r.kind === 'day' && r.day.day_number, 1)
 })

@@ -1,5 +1,6 @@
 import { connection } from 'next/server'
 import { CountdownMarker, Footer, Wordmark } from '@/components/Brand'
+import { Countdown } from '@/components/Countdown'
 import { DayView } from '@/components/DayView'
 import { loadContent } from '@/lib/content'
 import { resolveActiveDay } from '@/lib/schedule'
@@ -23,7 +24,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           <Wordmark size="lg" />
           <div className="locked-status">
             <CountdownMarker n={active.countdown} mark />
-            <p className="eyebrow">{settings.locked_text}</p>
+            {active.opensAt ? (
+              <Countdown target={active.opensAt} serverNow={Date.now()} />
+            ) : (
+              <p className="eyebrow">{settings.locked_text}</p>
+            )}
           </div>
         </main>
         <Footer />

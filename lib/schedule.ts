@@ -2,7 +2,8 @@ import type { Day } from './types.ts'
 
 export type Resolution =
   | { kind: 'day'; day: Day }
-  | { kind: 'locked'; countdown: number }
+  /** opensAt: when the next experience opens (drives the countdown), or null if we shouldn't promise a time. */
+  | { kind: 'locked'; countdown: number; opensAt: string | null }
 
 /**
  * Picks the single experience the participant may see right now.
@@ -28,10 +29,22 @@ export function resolveActiveDay(
       .sort((a, b) => b.day_number - a.day_number)[0]
   }
 
-  if (!current) return { kind: 'locked', countdown: 21 }
-  const hiddenDraft = current.status === 'draft' && forceActiveDay === null
-  if (hiddenDraft || current.experience_type === 'locked') {
-    return { kind: 'locked', countdown: current.countdown_number }
+  if (!current) return { kind: 'locked', countdown: 21, opensAt: nextOpening(usable, now) }
+
+  // A day whose time has come but whose content isn't ready: stay locked, promise nothing.
+  if (current.status === 'draft' && forceActiveDay === null && current.experience_type !== 'locked') {
+    return { kind: 'locked', countdown: current.countdown_number, opensAt: null }
+  }
+  if (current.experience_type === 'locked') {
+    return { kind: 'locked', countdown: current.countdown_number, opensAt: nextOpening(usable, now) }
   }
   return { kind: 'day', day: current }
+}
+
+/** Earliest future activation of a real (non-locked) experience. Drafts count: the time is the promise. */
+function nextOpening(days: Day[], now: Date): string | null {
+  const next = days
+    .filter((d) => d.experience_type !== 'locked' && new Date(d.activation_datetime).getTime() > now.getTime())
+    .sort((a, b) => new Date(a.activation_datetime).getTime() - new Date(b.activation_datetime).getTime())[0]
+  return next?.activation_datetime ?? null
 }
