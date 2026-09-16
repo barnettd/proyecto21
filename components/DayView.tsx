@@ -1,5 +1,7 @@
 import { BracketFlow, type BracketConfig } from '@/components/BracketFlow'
+import { KitFlow, type KitConfig } from '@/components/KitFlow'
 import { LineDot, Seal, Wordmark } from '@/components/Brand'
+import { PrintableFlow, type PrintableConfig } from '@/components/PrintableFlow'
 import { Countdown } from '@/components/Countdown'
 import { MultiTrackFlow, type FlowConfig } from '@/components/MultiTrackFlow'
 import { PreviewReset } from '@/components/PreviewReset'
@@ -77,6 +79,14 @@ export async function DayView({
         </p>
       </section>
     ) : null
+  }
+
+  if (day.experience_type === 'printable') {
+    return <PrintableFlow dayId={day.id} config={cfg as unknown as PrintableConfig} preview={preview} />
+  }
+
+  if (day.experience_type === 'track_list') {
+    return <KitFlow dayId={day.id} config={cfg as unknown as KitConfig} preview={preview} />
   }
 
   if (day.experience_type === 'bracket') {

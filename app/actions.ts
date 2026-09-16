@@ -166,3 +166,38 @@ export async function submitBracket(_prev: SubmitState, form: FormData): Promise
     final_track: finalTrack,
   })
 }
+
+/** One track, plus whatever extra the day wants recorded (D4 printable, D5 kit). */
+async function submitOneTrack(
+  type: Day['experience_type'],
+  responseType: string,
+  form: FormData,
+  extra: (day: Day) => Record<string, unknown> = () => ({}),
+): Promise<SubmitState> {
+  const day = await activeDayOfType(type, form)
+  if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
+  if (await getResponse(day.id)) return { ok: true }
+
+  const id = await resolveSpotifyInput(clip(form.get('track')))
+  if (!id) {
+    return { ok: false, error: 'Ese link no parece de una canción. En Spotify: Compartir → Copiar enlace.' }
+  }
+  const tag = typeof day.config_json.response_tag === 'string' ? day.config_json.response_tag : null
+  const track: TaggedTrack = { spotify_url: spotifyTrackUrl(id), ...(await fetchTrackMeta(id)), tag }
+
+  return persist(day, responseType, [track], extra(day))
+}
+
+/** D4: she downloads and solves on paper, then answers with one song. */
+export async function submitPrintable(_prev: SubmitState, form: FormData): Promise<SubmitState> {
+  return submitOneTrack('printable', 'printable', form, () => ({
+    printable_opened: String(form.get('opened') ?? '') === 'true',
+  }))
+}
+
+/** D5: three tracks from P21, then one from her to complete the kit. */
+export async function submitKit(_prev: SubmitState, form: FormData): Promise<SubmitState> {
+  return submitOneTrack('track_list', 'track_list', form, (day) => ({
+    kit: Array.isArray(day.config_json.compartments) ? day.config_json.compartments : [],
+  }))
+}

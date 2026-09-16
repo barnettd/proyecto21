@@ -1324,3 +1324,10 @@ body:has(.preview-days):has(.preview-bar:not(.preview-days)) .shell {
 body:has(.preview-days) .bracket-hud {
   top: 6.8rem;
 }
+
+/* Selector de canción reutilizable */
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}

@@ -6,6 +6,7 @@ export type ExperienceType =
   | 'multi_track'
   | 'track_plus_text'
   | 'track_list'
+  | 'printable'
   | 'choice'
   | 'bracket'
   | 'media_exchange'

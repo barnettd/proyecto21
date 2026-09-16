@@ -10,7 +10,7 @@ const plan: Array<[number, string, ExperienceType, string?]> = [
   [1, 'Escena de apertura', 'multi_track'],
   [2, 'Solo una sobrevive', 'bracket'],
   [3, 'Shower Songs', 'multi_track'],
-  [4, 'Word Search', 'reveal'],
+  [4, 'Sopa de letras', 'printable'],
   [5, 'Recovery Kit', 'track_list'],
   [6, 'Una línea', 'track_plus_text'],
   [7, 'Memory Recovery', 'multi_track'],
@@ -32,6 +32,77 @@ const plan: Array<[number, string, ExperienceType, string?]> = [
 
 /** Participant-facing copy, per day. Draft until approved. */
 const copy: Record<number, Partial<Day>> = {
+  4: {
+    title: 'Sopa de letras',
+    completion_text: 'Recibida.\nA veces alcanza con elegir la canción correcta.',
+    config_json: {
+      response_tag: 'D4_WHEN_WORDS_FAIL',
+      response_label: 'Tu canción',
+      availability_label: 'Esta página permanece disponible por',
+      entry: {
+        title: 'HOY HAY QUE IMPRIMIR.',
+        text: 'Hoy P21 sale un rato de la pantalla.\nDescargá el archivo, imprimilo y resolvelo a mano.\nNo necesitás nada más que unos minutos y algo para marcar.',
+        cta: 'DESCARGAR',
+        fine_print: 'Imprimí en tamaño real (100%).',
+        note: 'Cuando termines, volvé acá.',
+        continue_cta: 'YA LO RESOLVÍ',
+      },
+      // PROVISORIO: reemplazar por el imprimible final.
+      printable: { url: '/d4-sopa-de-letras.pdf', filename: 'P21-sopa-de-letras.pdf' },
+      reveal: {
+        title: 'WHEN WORDS FAIL, MUSIC SPEAKS',
+        text: 'Hay cosas que una canción puede decir mejor que una explicación.',
+        prompt: 'Elegí una canción que alguna vez hayas usado —o usarías— para decir algo que cuesta decir con palabras.',
+        cta: 'ESTA DICE ALGO POR MÍ',
+      },
+      deadline_note: 'Tenés hasta las 23:59 de hoy.',
+    },
+  },
+  5: {
+    title: 'Recovery Kit',
+    completion_text: 'Kit completo.\nGuardalo para cuando haga falta.',
+    config_json: {
+      response_tag: 'D5_RECOVERY_USER',
+      response_label: 'Tu aporte',
+      availability_label: 'Esta página permanece disponible por',
+      progress_label: '{n} / {total}',
+      entry: {
+        title: 'RECOVERY KIT',
+        text: 'No todos los días necesitan empuje.\nAlgunos necesitan bajar el ruido, quedarse quietos o simplemente dejar de exigir un poco.\n\nPreparé tres.',
+        cta: 'ABRIR KIT',
+      },
+      // PROVISORIAS: las tres canciones del kit, a definir.
+      compartments: [
+        {
+          label: 'Compartimento 01',
+          title: 'PARA BAJAR EL RUIDO',
+          guide: 'Para cuando todo está un poco demasiado fuerte.',
+          cta: 'SIGUIENTE',
+          track: { title: 'Tiempo Al Tiempo', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/2vUrrcNMrSQnjFu6dE1yrg' },
+        },
+        {
+          label: 'Compartimento 02',
+          title: 'PARA QUEDARSE QUIETA',
+          guide: 'Para cuando no hace falta arreglar nada.',
+          cta: 'SIGUIENTE',
+          track: { title: 'El Otro Cambio, Los Que Se Fueron', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/0jOCJkMvYzutcNTX9WtAVp' },
+        },
+        {
+          label: 'Compartimento 03',
+          title: 'PARA CUANDO EL DÍA YA FUE SUFICIENTE',
+          guide: 'Para cerrar la puerta mentalmente y dejarlo ahí.',
+          cta: 'SIGUIENTE',
+          track: { title: 'Tengo una Muñeca Que Regala Besos', artist: 'Fito Paez, Joaquín Sabina', spotify_url: 'https://open.spotify.com/track/0udM4azyzvy8lQXl5tHP1d' },
+        },
+      ],
+      contribution: {
+        title: 'FALTA UNA.',
+        text: 'Si este kit fuera tuyo, ¿qué canción debería estar acá?',
+        cta: 'AGREGAR AL KIT',
+      },
+      deadline_note: 'Tenés hasta las 23:59 de hoy.',
+    },
+  },
   3: {
     title: 'Shower Songs',
     completion_text: 'Set registrado.\nEl shampoo queda oficialmente habilitado como micrófono.',

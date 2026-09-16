@@ -10,6 +10,10 @@ export function hasContent(day: Day): boolean {
       return Boolean(day.intro_text || day.instructions)
     case 'multi_track':
       return list(cfg.modules).length > 0 && Boolean(cfg.entry) && Boolean(cfg.listen)
+    case 'printable':
+      return Boolean(cfg.entry) && Boolean(cfg.reveal)
+    case 'track_list':
+      return list(cfg.compartments).length > 0 && Boolean(cfg.entry) && Boolean(cfg.contribution)
     case 'bracket':
       return list(cfg.tracks).length >= 2 && Boolean(cfg.entry) && Boolean(cfg.wildcard)
     default:
