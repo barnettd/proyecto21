@@ -1,7 +1,7 @@
 'use server'
 
 import { after } from 'next/server'
-import { getResponse, loadContent, saveResponse } from '@/lib/content'
+import { deleteLocalResponse, getResponse, loadContent, saveResponse } from '@/lib/content'
 import { notifyResponse } from '@/lib/notify'
 import { resolveActiveDay } from '@/lib/schedule'
 import { fetchTrackMeta, resolveSpotifyInput, spotifyTrackUrl } from '@/lib/spotify'
@@ -85,4 +85,10 @@ export async function submitMultiTrack(_prev: SubmitState, form: FormData): Prom
   }))
 
   return persist(day, 'multi_track', tracks)
+}
+
+/** Dev-only: clears the local preview response. In production it does nothing. */
+export async function resetPreview(dayId: string): Promise<void> {
+  if (process.env.NODE_ENV === 'production') return
+  await deleteLocalResponse(dayId)
 }

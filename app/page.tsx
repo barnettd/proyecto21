@@ -1,5 +1,5 @@
 import { connection } from 'next/server'
-import { Footer, Wordmark } from '@/components/Brand'
+import { Footer, Seal, Wordmark } from '@/components/Brand'
 import { Countdown } from '@/components/Countdown'
 import { DayView } from '@/components/DayView'
 import { loadContent } from '@/lib/content'
@@ -36,13 +36,18 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   }
 
   const { day } = active
+  const nextOpensAt =
+    days
+      .filter((d) => d.status !== 'disabled' && new Date(d.activation_datetime) > new Date())
+      .sort((a, b) => new Date(a.activation_datetime).getTime() - new Date(b.activation_datetime).getTime())[0]
+      ?.activation_datetime ?? null
   return (
     <div className="shell">
       <header className="shell-header">
-        <Wordmark size="sm" />
+        <Seal size="xs" />
       </header>
       <main className="shell-main">
-        <DayView day={day} />
+        <DayView day={day} nextOpensAt={nextOpensAt} serverNow={Date.now()} />
       </main>
       <Footer dayNumber={day.day_number} countdown={day.countdown_number} />
     </div>

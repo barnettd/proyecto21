@@ -4,32 +4,31 @@
 update days set
   title = 'Escena de apertura',
   experience_type = 'multi_track',
-  completion_text = 'Gracias.
-Ya tenemos por dónde empezar.
-Seguí cada paso cuando aparezca.',
+  completion_text = 'Gracias por las respuestas y por ser parte de P.21.
+Seguí el siguiente paso cuando aparezca.',
   config_json = $json${
     "track_label": "Canción de apertura",
     "response_label": "Tus canciones",
     "entry": {
-      "lead": "Algunas cosas empiezan antes de entenderse.",
-      "text": "No busques la respuesta correcta; pensá y elegí siempre lo que realmente te represente.",
+      "lead": "Algunas cosas empiezan antes de entenderse. Gracias por ser parte de P.21.",
+      "text": "Habrá preguntas y tareas, pero no respuestas ni soluciones correctas. Pensá y elegí siempre lo que te represente.",
       "suggestions_label": "Dos sugerencias",
       "suggestions": ["Guardá la llave.", "Llevá tus auriculares con vos."],
       "cta": "EMPEZAR"
     },
     "listen": {
-      "text": "Esto funciona mejor si no intentás adivinar qué estoy buscando.\nElegí siempre lo que realmente elegirías, aunque todavía no sepas por qué te lo estoy preguntando.\n\nPara empezar, una canción de mi lado.\nPonete los auriculares. Escuchala completa.",
+      "text": "Es acá donde propongo empezar P.21: regalándote la escucha de esta canción.\n¿Y cuándo no, Fito Páez?",
       "primary_cta": "ESCUCHAR EN SPOTIFY",
-      "secondary_cta": "Ya la escuché",
-      "while_text": "Escuchá. Después seguimos."
+      "secondary_cta": "SEGUIR",
+      "while_text": "Este es solo el preview. Escuchala completa en Spotify y seguí cuando termines."
     },
-    "modules_intro": "Ahora vos. Tres canciones. Tres razones distintas.",
+    "modules_intro": "Es tu turno: tres razones, tres canciones.",
     "modules": [
       {
         "n": "01",
         "name": "RECARGA",
         "tag": "D1_RECARGA",
-        "guide": "Fito dice que el mundo cabe en una canción, y a veces alcanza una sola para cambiar el aire de un momento.",
+        "guide": "Fito dice que «el mundo cabe en una canción», y en alguna medida es verdad: hay temas que tienen la fuerza exacta para cambiar el aire de un lugar de un segundo a otro, y también el de la habitación interior. Son esos tres minutos donde no importa lo que pase afuera: todo se acomoda.",
         "question": "¿Qué canción es tu recarga de energía instantánea, esa que ponés cuando necesitás que el día tome otro rumbo?"
       },
       {
@@ -43,12 +42,13 @@ Seguí cada paso cuando aparezca.',
         "n": "03",
         "name": "ARRANQUE",
         "tag": "D1_ARRANQUE",
-        "guide": "Hay un momento muy preciso justo antes de empezar algo nuevo: cerrás la puerta, arrancás el motor y el camino todavía está completamente abierto delante tuyo. Todavía no pasó nada, pero por unos segundos todo parece posible.",
-        "question": "Tenés la ruta libre por delante y esa sensación de que algo bueno está por empezar. ¿Qué canción suena primero en el estéreo?"
+        "guide": "Hay un instante mágico, casi magnético, justo antes de arrancar un viaje esperado: el momento en que cerrás la puerta del auto, el camino está limpio por delante y sentís ese chispazo de adrenalina, ilusión y expectativa pura por lo que viene.",
+        "question": "Estás arrancando por esa carretera, con el camino libre frente a vos y la certeza de que algo bueno está por empezar. ¿Qué canción suena primero en la radio para darle play a ese momento?"
       }
     ],
     "deadline_note": "Podés pensarlas. Tenés hasta las 23:59 de hoy.",
-    "submit_label": "ELEGÍ ESTAS"
+    "submit_label": "ELEGÍ ESTAS",
+    "availability_label": "Esta página permanece disponible por"
   }$json$::jsonb
 where id = 'd1';
 

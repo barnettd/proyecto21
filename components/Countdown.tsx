@@ -9,7 +9,18 @@ const pad = (n: number) => String(n).padStart(2, '0')
  * HH:MM:SS until `target`. Ticks against the server's clock (not the phone's),
  * and refreshes the page at zero so the new experience replaces the lock.
  */
-export function Countdown({ target, serverNow }: { target: string; serverNow: number }) {
+export function Countdown({
+  target,
+  serverNow,
+  label = 'Disponible en',
+  variant = 'block',
+}: {
+  target: string
+  serverNow: number
+  label?: string
+  /** 'inline' renders one quiet line instead of the big digits. */
+  variant?: 'block' | 'inline'
+}) {
   const router = useRouter()
   // First render uses the server time on both sides, so hydration matches.
   const [now, setNow] = useState(serverNow)
@@ -38,9 +49,17 @@ export function Countdown({ target, serverNow }: { target: string; serverNow: nu
   const m = Math.floor((total % 3600) / 60)
   const s = total % 60
 
+  if (variant === 'inline') {
+    return (
+      <p className="countdown-inline" role="timer">
+        {label} <span>{`${pad(h)}:${pad(m)}:${pad(s)}`}</span>
+      </p>
+    )
+  }
+
   return (
-    <div className="countdown" role="timer" aria-label={`Disponible en ${h} horas, ${m} minutos y ${s} segundos`}>
-      <p className="eyebrow">Disponible en</p>
+    <div className="countdown" role="timer" aria-label={`${label} ${h} horas, ${m} minutos y ${s} segundos`}>
+      <p className="eyebrow">{label}</p>
       <div className="countdown-grid" aria-hidden="true">
         <span className="countdown-num">{pad(h)}</span>
         <span className="countdown-colon">:</span>

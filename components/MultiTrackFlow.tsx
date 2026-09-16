@@ -1,9 +1,10 @@
 'use client'
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useActionState, useEffect, useState } from 'react'
 import { submitMultiTrack, type SubmitState } from '@/app/actions'
-import { Seal } from '@/components/Brand'
+import { Wordmark } from '@/components/Brand'
 import { TrackCard } from '@/components/TrackCard'
 import { parseSpotifyTrackId } from '@/lib/spotify'
 import type { SubmittedTrack } from '@/lib/types'
@@ -107,6 +108,9 @@ export function MultiTrackFlow({
       {step === 'listen' && <Listen config={config} track={openingTrack} onNext={() => setStep('modules')} />}
       {step === 'modules' && (
         <form action={action} className="step">
+          <div className="banner">
+            <Image src="/d1-mundo.png" alt="" width={1086} height={1448} sizes="(max-width: 40rem) 100vw, 34rem" />
+          </div>
           <p className="modules-intro">{config.modules_intro}</p>
 
           {config.modules.map((m, i) => (
@@ -142,7 +146,7 @@ function Entry({ config, onNext }: { config: FlowConfig; onNext: () => void }) {
   const { lead, text, suggestions, suggestions_label, cta } = config.entry
   return (
     <section className="step step-entry">
-      <Seal size="md" />
+      <Wordmark size="lg" live />
       {lead && <p className="entry-lead">{lead}</p>}
       <p className="prose">{text}</p>
       {suggestions && suggestions.length > 0 && (
@@ -172,7 +176,16 @@ function Listen({
   onNext: () => void
 }) {
   return (
-    <section className="step">
+    <section className="step step-listen">
+      <Image
+        className="hero-image"
+        src="/d1-mundo.png"
+        alt=""
+        width={1086}
+        height={1448}
+        priority
+        sizes="(max-width: 40rem) 100vw, 34rem"
+      />
       <p className="prose">{config.listen.text}</p>
       {track && <TrackCard track={track} label={config.track_label} showLink={false} />}
       {track?.spotify_url && (
@@ -181,7 +194,7 @@ function Listen({
         </a>
       )}
       {config.listen.while_text && <p className="prose muted listen-note">{config.listen.while_text}</p>}
-      <button type="button" className="link-button step-back" onClick={onNext}>
+      <button type="button" className="submit submit-secondary" onClick={onNext}>
         {config.listen.secondary_cta}
       </button>
     </section>

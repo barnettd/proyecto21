@@ -1,5 +1,7 @@
 import { LineDot, Seal } from '@/components/Brand'
+import { Countdown } from '@/components/Countdown'
 import { MultiTrackFlow, type FlowConfig } from '@/components/MultiTrackFlow'
+import { PreviewReset } from '@/components/PreviewReset'
 import { SingleTrackForm } from '@/components/SingleTrackForm'
 import { TrackCard } from '@/components/TrackCard'
 import { getResponse, getTracks } from '@/lib/content'
@@ -7,19 +9,35 @@ import type { Day, SubmittedTrack } from '@/lib/types'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : undefined)
 
-export async function DayView({ day }: { day: Day }) {
+export async function DayView({
+  day,
+  nextOpensAt,
+  serverNow,
+}: {
+  day: Day
+  /** When the next experience opens: drives the "esta página permanece disponible" line. */
+  nextOpensAt: string | null
+  serverNow: number
+}) {
   const [tracks, response] = await Promise.all([getTracks(day.id), getResponse(day.id)])
   const cfg = day.config_json
   const given = tracks.filter((t) => t.source === 'P21')
 
+  const preview = process.env.NODE_ENV !== 'production'
+
   if (response) {
     return (
-      <Completion
-        text={day.completion_text}
-        countdown={day.countdown_number}
-        label={str(cfg.response_label)}
-        tracks={(response.payload_json.tracks as SubmittedTrack[] | undefined) ?? []}
-      />
+      <>
+        <Completion
+          text={day.completion_text}
+          label={str(cfg.response_label)}
+          tracks={(response.payload_json.tracks as SubmittedTrack[] | undefined) ?? []}
+          nextOpensAt={nextOpensAt}
+          serverNow={serverNow}
+          availabilityLabel={str(cfg.availability_label) ?? 'Esta página permanece disponible por'}
+        />
+        {preview && <PreviewReset dayId={day.id} />}
+      </>
     )
   }
 
@@ -30,7 +48,7 @@ export async function DayView({ day }: { day: Day }) {
         dayId={day.id}
         config={cfg as unknown as FlowConfig}
         openingTrack={given[0] ?? null}
-        preview={process.env.NODE_ENV !== 'production'}
+        preview={preview}
       />
     )
   }
@@ -58,14 +76,18 @@ export async function DayView({ day }: { day: Day }) {
 
 function Completion({
   text,
-  countdown,
   label,
   tracks,
+  nextOpensAt,
+  serverNow,
+  availabilityLabel,
 }: {
   text: string | null
-  countdown: number
   label?: string
   tracks: SubmittedTrack[]
+  nextOpensAt: string | null
+  serverNow: number
+  availabilityLabel: string
 }) {
   const [first, ...rest] = (text ?? 'Recibido.').split('\n')
   return (
@@ -74,13 +96,13 @@ function Completion({
         <Seal size="sm" />
         <p className="completion-title">{first}</p>
       </div>
-      <p className="eyebrow completion-marker">
-        P.21 <span className="slash">/</span> {String(countdown).padStart(2, '0')} ✓
-      </p>
       {rest.length > 0 && <p className="prose">{rest.join('\n')}</p>}
       {tracks.map((t, i) => (
         <TrackCard key={i} track={t} label={i === 0 ? label : undefined} showLink={false} />
       ))}
+      {nextOpensAt && (
+        <Countdown target={nextOpensAt} serverNow={serverNow} label={availabilityLabel} variant="inline" />
+      )}
     </section>
   )
 }

@@ -145,6 +145,15 @@ export async function saveResponse(
   return 'saved'
 }
 
+/** Dev-only: wipes the local preview response so the flow can be walked again. Never touches Supabase. */
+export async function deleteLocalResponse(dayId: string): Promise<void> {
+  if (!localStoreAllowed()) return
+  const store = await readLocal()
+  store.responses = store.responses.filter((r) => r.day_id !== dayId)
+  store.tracks = store.tracks.filter((t) => t.day_id !== dayId || t.source !== 'HER')
+  await writeLocal(store)
+}
+
 // Local JSON store: development only, so previews work without Supabase.
 const LOCAL_PATH = path.join(process.cwd(), '.data', 'p21-local.json')
 type LocalStore = { responses: ResponseRecord[]; tracks: Track[] }

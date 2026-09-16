@@ -6,11 +6,11 @@
 const BARS = [0.28, 0.6, 1, 0.5, 0.85, 0.35]
 
 /** The waveform: short vertical bars. */
-export function Wave({ muted = false }: { muted?: boolean }) {
+export function Wave({ muted = false, live = false }: { muted?: boolean; live?: boolean }) {
   return (
-    <span className={`wm-wave${muted ? ' is-muted' : ''}`} aria-hidden="true">
+    <span className={`wm-wave${muted ? ' is-muted' : ''}${live ? ' is-live' : ''}`} aria-hidden="true">
       {BARS.map((h, i) => (
-        <span key={i} style={{ height: `${h * 100}%` }} />
+        <span key={i} style={{ height: `${h * 100}%`, animationDelay: `${i * 0.18}s` }} />
       ))}
     </span>
   )
@@ -22,25 +22,25 @@ export function Timeline({ muted = false }: { muted?: boolean }) {
 }
 
 /** Primary logo: PROYECTO + 21, timeline under the word, waveform under the number. */
-export function Wordmark({ size = 'lg' }: { size?: 'sm' | 'lg' }) {
+export function Wordmark({ size = 'lg', live = false }: { size?: 'sm' | 'lg'; live?: boolean }) {
   return (
     <div className={`wordmark wordmark-${size}`} role="img" aria-label="PROYECTO 21">
       <span className="wm-word">PROYECTO</span>
       <span className="wm-num">21</span>
       <Timeline />
-      <Wave />
+      <Wave live={live} />
     </div>
   )
 }
 
 /** Compact seal: P.21 in a circle. */
-export function Seal({ size = 'md' }: { size?: 'sm' | 'md' }) {
+export function Seal({ size = 'md', live = false }: { size?: 'xs' | 'sm' | 'md'; live?: boolean }) {
   return (
     <div className={`seal seal-${size}`} role="img" aria-label="P.21">
       <span className="seal-text">P.21</span>
       <span className="seal-mark">
         <Timeline />
-        <Wave />
+        <Wave live={live} />
       </span>
     </div>
   )

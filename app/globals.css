@@ -786,3 +786,95 @@ body {
 body:has(.preview-bar) .shell {
   padding-bottom: 5.5rem;
 }
+
+/* ── Ajustes de lectura y marca ──────────────────────────────── */
+.prose {
+  font-size: 1.0625rem;
+}
+
+.seal-xs {
+  width: 2.5rem;
+  font-size: 0.35rem;
+}
+
+/* Imagen principal (pantalla de la canción) y franja (pantalla de preguntas) */
+.hero-image {
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  display: block;
+}
+
+.banner {
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 16 / 7;
+}
+
+.banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+}
+
+/* Botón secundario: visible, pero por debajo del principal */
+.submit-secondary {
+  background: transparent;
+  color: var(--blanco);
+  border: 1px solid #3d3d3d;
+}
+
+.step-listen .listen-note {
+  text-align: center;
+  font-size: 0.9375rem;
+  margin: -0.4rem 0 0;
+}
+
+.countdown-inline {
+  margin: 1.5rem 0 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  color: var(--gris);
+}
+
+.countdown-inline span {
+  color: var(--blanco);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin-left: 0.35em;
+}
+
+/* ── Movimiento: entrada de pantalla y onda viva ─────────────── */
+.step {
+  animation: step-in 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.wm-wave.is-live > span {
+  transform-origin: center;
+  animation: wave-pulse 1.9s ease-in-out infinite alternate;
+}
+
+@keyframes wave-pulse {
+  from {
+    transform: scaleY(0.5);
+  }
+  to {
+    transform: scaleY(1.3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step,
+  .wm-wave.is-live > span {
+    animation: none;
+  }
+}
