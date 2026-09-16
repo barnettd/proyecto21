@@ -582,3 +582,66 @@ body {
 .completion-marker .slash {
   color: var(--ambar);
 }
+
+/* ── Pantalla de entrada ─────────────────────────────────────── */
+.step-entry {
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.step-entry .wordmark {
+  margin-bottom: 0.5rem;
+}
+
+.entry-lead {
+  margin: 0;
+  font-size: clamp(1.25rem, 5.6vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.step-entry .prose {
+  color: #c9c9c4;
+  line-height: 1.7;
+}
+
+.suggestions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid #242424;
+  border-bottom: 1px solid #242424;
+}
+
+.suggestion-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.suggestion-list li {
+  position: relative;
+  padding-left: 1.4rem;
+  line-height: 1.5;
+}
+
+.suggestion-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.8rem;
+  height: 1px;
+  background: var(--ambar);
+}
+
+.step-entry .submit {
+  width: 100%;
+  margin-top: 0.5rem;
+}

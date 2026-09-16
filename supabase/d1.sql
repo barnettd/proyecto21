@@ -11,7 +11,10 @@ Seguí cada paso cuando aparezca.',
     "track_label": "Canción de apertura",
     "response_label": "Tus canciones",
     "entry": {
-      "text": "Algunas cosas empiezan antes de entenderse.\nNo busques la respuesta correcta; pensá y elegí siempre lo que realmente te represente.\n\nDos sugerencias:\nGuardá la llave.\nLlevá tus auriculares con vos.",
+      "lead": "Algunas cosas empiezan antes de entenderse.",
+      "text": "No busques la respuesta correcta; pensá y elegí siempre lo que realmente te represente.",
+      "suggestions_label": "Dos sugerencias",
+      "suggestions": ["Guardá la llave.", "Llevá tus auriculares con vos."],
       "cta": "EMPEZAR"
     },
     "listen": {

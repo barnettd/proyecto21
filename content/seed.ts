@@ -40,7 +40,10 @@ const copy: Record<number, Partial<Day>> = {
       track_label: 'Canción de apertura',
       response_label: 'Tus canciones',
       entry: {
-        text: 'Algunas cosas empiezan antes de entenderse.\nNo busques la respuesta correcta; pensá y elegí siempre lo que realmente te represente.\n\nDos sugerencias:\nGuardá la llave.\nLlevá tus auriculares con vos.',
+        lead: 'Algunas cosas empiezan antes de entenderse.',
+        text: 'No busques la respuesta correcta; pensá y elegí siempre lo que realmente te represente.',
+        suggestions_label: 'Dos sugerencias',
+        suggestions: ['Guardá la llave.', 'Llevá tus auriculares con vos.'],
         cta: 'EMPEZAR',
       },
       listen: {
@@ -96,6 +99,16 @@ export const seedDays: Day[] = plan.map(([n, title, type, time = '08:00']) => {
     ...copy[n],
   }
 })
+
+
+// Solo para pruebas locales: adelanta la apertura de D1 a N segundos.
+if (process.env.NODE_ENV !== 'production' && process.env.P21_TEST_D1_IN_SECONDS) {
+  const d1 = seedDays.find((d) => d.day_number === 1)
+  if (d1) {
+    d1.activation_datetime = new Date(Date.now() + Number(process.env.P21_TEST_D1_IN_SECONDS) * 1000).toISOString()
+    d1.status = 'ready'
+  }
+}
 
 export const seedTracks: Track[] = [
   {

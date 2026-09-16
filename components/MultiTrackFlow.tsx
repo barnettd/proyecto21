@@ -3,13 +3,21 @@
 import { useRouter } from 'next/navigation'
 import { useActionState, useEffect, useState } from 'react'
 import { submitMultiTrack, type SubmitState } from '@/app/actions'
+import { Seal } from '@/components/Brand'
 import { TrackCard } from '@/components/TrackCard'
 import { parseSpotifyTrackId } from '@/lib/spotify'
 import type { SubmittedTrack } from '@/lib/types'
 
 export type FlowModule = { n: string; name: string; guide: string; question: string; placeholder?: string }
 export type FlowConfig = {
-  entry: { text: string; cta: string }
+  entry: {
+    /** Opening line, set larger. Falls back to `text` when absent. */
+    lead?: string
+    text: string
+    suggestions_label?: string
+    suggestions?: string[]
+    cta: string
+  }
   listen: { text: string; primary_cta: string; secondary_cta: string; while_text?: string }
   modules_intro: string
   modules: FlowModule[]
@@ -80,9 +88,22 @@ export function MultiTrackFlow({
   const canSubmit = filled && unique && !pending && !state.ok
 
   if (step === 'entry') {
+    const { lead, text, suggestions, suggestions_label } = config.entry
     return (
-      <section className="step">
-        <p className="prose">{config.entry.text}</p>
+      <section className="step step-entry">
+        <Seal size="md" />
+        {lead && <p className="entry-lead">{lead}</p>}
+        <p className="prose">{text}</p>
+        {suggestions && suggestions.length > 0 && (
+          <div className="suggestions">
+            {suggestions_label && <p className="eyebrow">{suggestions_label}</p>}
+            <ul className="suggestion-list">
+              {suggestions.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         <button type="button" className="submit" onClick={() => setStep('listen')}>
           {config.entry.cta}
         </button>
