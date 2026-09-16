@@ -115,11 +115,11 @@ export async function saveResponse(
 ): Promise<'saved' | 'duplicate'> {
   const rows = tracks.map((t, i) => ({
     day_id: dayId,
-    source: 'HER' as const,
     source_name: null,
     sort_order: i,
     playlist_status: 'candidate',
     ...t,
+    source: t.source ?? ('HER' as const),
     tag: t.tag ?? null,
   }))
 

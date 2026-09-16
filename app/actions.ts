@@ -3,24 +3,43 @@
 import { after } from 'next/server'
 import { deleteLocalResponse, getResponse, loadContent, saveResponse } from '@/lib/content'
 import { notifyResponse } from '@/lib/notify'
+import { decisionLog, validatePicks } from '@/lib/bracket'
 import { resolveActiveDay } from '@/lib/schedule'
-import { fetchTrackMeta, resolveSpotifyInput, spotifyTrackUrl } from '@/lib/spotify'
+import { fetchTrackMeta, parseSpotifyTrackId, resolveSpotifyInput, spotifyTrackUrl } from '@/lib/spotify'
 import type { Day, TaggedTrack } from '@/lib/types'
 
 export type SubmitState = { ok: boolean; error?: string }
 
 const clip = (v: FormDataEntryValue | null) => String(v ?? '').trim().slice(0, 200)
 
-/** The active day, resolved server-side so a stale tab can't write into a day that has passed. */
-async function activeDayOfType(type: Day['experience_type']): Promise<Day | null> {
+/**
+ * The active day, resolved server-side so a stale tab can't write into a day that has passed.
+ * Outside production, a local preview may name the day it is showing, so days that are not
+ * yet active can be walked end to end. The hidden field is ignored in production.
+ */
+async function activeDayOfType(type: Day['experience_type'], form?: FormData): Promise<Day | null> {
   const { days, settings } = await loadContent()
+
+  if (process.env.NODE_ENV !== 'production') {
+    const previewId = String(form?.get('preview_day') ?? '')
+    if (previewId) {
+      const day = days.find((d) => d.id === previewId)
+      return day?.experience_type === type ? day : null
+    }
+  }
+
   const active = resolveActiveDay(days, new Date(), settings.force_active_day)
   return active.kind === 'day' && active.day.experience_type === type ? active.day : null
 }
 
-async function persist(day: Day, responseType: string, tracks: TaggedTrack[]): Promise<SubmitState> {
+async function persist(
+  day: Day,
+  responseType: string,
+  tracks: TaggedTrack[],
+  extra: Record<string, unknown> = {},
+): Promise<SubmitState> {
   try {
-    const result = await saveResponse(day.id, responseType, { tracks }, tracks)
+    const result = await saveResponse(day.id, responseType, { tracks, ...extra }, tracks)
     // Email after the response is sent, so a slow mail server never delays her.
     if (result === 'saved') after(() => notifyResponse(day, tracks))
     return { ok: true }
@@ -31,7 +50,7 @@ async function persist(day: Day, responseType: string, tracks: TaggedTrack[]): P
 }
 
 export async function submitSingleTrack(_prev: SubmitState, form: FormData): Promise<SubmitState> {
-  const day = await activeDayOfType('single_track')
+  const day = await activeDayOfType('single_track', form)
   if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
   if (await getResponse(day.id)) return { ok: true }
 
@@ -57,7 +76,7 @@ type ModuleConfig = { name?: string; tag?: string }
 
 /** N tracks, one per configured module, each with its own tag. All required, no repeats. */
 export async function submitMultiTrack(_prev: SubmitState, form: FormData): Promise<SubmitState> {
-  const day = await activeDayOfType('multi_track')
+  const day = await activeDayOfType('multi_track', form)
   if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
   if (await getResponse(day.id)) return { ok: true }
 
@@ -91,4 +110,47 @@ export async function submitMultiTrack(_prev: SubmitState, form: FormData): Prom
 export async function resetPreview(dayId: string): Promise<void> {
   if (process.env.NODE_ENV === 'production') return
   await deleteLocalResponse(dayId)
+}
+
+type ConfigTrack = { title?: string; artist?: string; spotify_url?: string }
+
+/** Seven decisions plus a wildcard that never competed. */
+export async function submitBracket(_prev: SubmitState, form: FormData): Promise<SubmitState> {
+  const day = await activeDayOfType('bracket', form)
+  if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
+  if (await getResponse(day.id)) return { ok: true }
+
+  const configTracks = (Array.isArray(day.config_json.tracks) ? day.config_json.tracks : []) as ConfigTrack[]
+  if (configTracks.length < 2) return { ok: false, error: 'No se pudo guardar. Probá de nuevo en un rato.' }
+
+  let raw: unknown
+  try {
+    raw = JSON.parse(String(form.get('picks') ?? ''))
+  } catch {
+    return { ok: false, error: 'Faltan decisiones.' }
+  }
+  const checked = validatePicks(raw, configTracks.length)
+  if (!checked.ok) return { ok: false, error: checked.error }
+
+  const wildcardId = await resolveSpotifyInput(clip(form.get('wildcard')))
+  if (!wildcardId) {
+    return { ok: false, error: 'Ese link no parece de una canción. En Spotify: Compartir → Copiar enlace.' }
+  }
+  if (configTracks.some((t) => t.spotify_url && parseSpotifyTrackId(t.spotify_url) === wildcardId)) {
+    return { ok: false, error: 'Esa ya estaba en la llave. Elegí una que no haya competido.' }
+  }
+
+  const survivor = configTracks[checked.picks[6]]
+  const tracks: TaggedTrack[] = [
+    {
+      spotify_url: survivor.spotify_url ?? null,
+      title: survivor.title ?? null,
+      artist: survivor.artist ?? null,
+      tag: 'D2_WINNER',
+      source: 'P21',
+    },
+    { spotify_url: spotifyTrackUrl(wildcardId), ...(await fetchTrackMeta(wildcardId)), tag: 'D2_WILDCARD' },
+  ]
+
+  return persist(day, 'bracket', tracks, { decisions: decisionLog(checked.picks) })
 }

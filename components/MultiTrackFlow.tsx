@@ -55,6 +55,8 @@ export function MultiTrackFlow({
   const [values, setValues] = useState<string[]>(() => config.modules.map(() => ''))
 
   const draftKey = `p21-draft-${dayId}`
+  // Until the saved draft has been read, saving would overwrite it with the initial state.
+  const [restored, setRestored] = useState(false)
 
   // Restore draft after mount, so the server and client render the same first pass.
   useEffect(() => {
@@ -66,16 +68,19 @@ export function MultiTrackFlow({
       if (parsed.step === 'listen' || parsed.step === 'modules') setStep(parsed.step)
     } catch {
       /* private mode or cleared storage: start fresh */
+    } finally {
+      setRestored(true)
     }
   }, [draftKey, config.modules.length])
 
   useEffect(() => {
+    if (!restored) return
     try {
       localStorage.setItem(draftKey, JSON.stringify({ step, values }))
     } catch {
       /* storage unavailable: drafts just won't persist */
     }
-  }, [draftKey, step, values])
+  }, [restored, draftKey, step, values])
 
   useEffect(() => {
     if (!state.ok) return
@@ -108,6 +113,7 @@ export function MultiTrackFlow({
       {step === 'listen' && <Listen config={config} track={openingTrack} onNext={() => setStep('modules')} />}
       {step === 'modules' && (
         <form action={action} className="step">
+          {preview && <input type="hidden" name="preview_day" value={dayId} />}
           <p className="modules-intro">{config.modules_intro}</p>
           <div className="banner">
             <Image src="/d1-mundo.png" alt="" width={1086} height={1448} sizes="(max-width: 40rem) 100vw, 34rem" />

@@ -893,3 +893,184 @@ body:has(.preview-bar) .shell {
   object-fit: cover;
   object-position: center 45%;
 }
+
+/* ── D2: llave de torneo ─────────────────────────────────────── */
+.bracket-title {
+  margin: 0;
+  font-size: clamp(1.5rem, 7vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+
+.step-bracket {
+  gap: 1.75rem;
+}
+
+.bracket-progress {
+  margin: 0;
+  color: var(--ambar);
+}
+
+.round {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.round-label {
+  margin: 0;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+/* Cada cruce: dos ranuras unidas por una línea ámbar a la izquierda */
+.mu {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 1.1rem;
+}
+
+.mu::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.1rem;
+  bottom: 1.1rem;
+  width: 1px;
+  background: #333;
+}
+
+.mu.is-active::before {
+  background: var(--ambar);
+}
+
+.mu.is-done::before {
+  background: #4a4a47;
+}
+
+.slot {
+  position: relative;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #242424;
+  border-radius: 10px;
+  background: #151515;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.slot::before {
+  content: '';
+  position: absolute;
+  left: -1.1rem;
+  top: 50%;
+  width: 1.1rem;
+  height: 1px;
+  background: #333;
+}
+
+.mu.is-active .slot::before {
+  background: var(--ambar);
+}
+
+.slot-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.slot-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.slot-artist {
+  font-size: 0.75rem;
+  color: var(--gris);
+}
+
+.mu.is-active .slot {
+  border-color: #3a3a3a;
+  background: #1a1a1a;
+}
+
+.slot-pick {
+  margin-top: 0;
+  padding: 0.7rem 1rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+}
+
+.slot.is-winner {
+  border-color: var(--ambar);
+}
+
+.slot.is-winner .slot-title::after {
+  content: ' ✓';
+  color: var(--ambar);
+}
+
+.slot.is-loser {
+  opacity: 0.35;
+}
+
+.slot.is-loser .slot-title {
+  text-decoration: line-through;
+  text-decoration-color: #555;
+}
+
+.slot.is-empty {
+  border-style: dashed;
+  border-color: #262626;
+  background: transparent;
+  align-items: center;
+  color: #3f3f3c;
+}
+
+.mu.is-locked .slot,
+.mu.is-pending .slot {
+  opacity: 0.55;
+}
+
+.slot-dash {
+  font-size: 0.875rem;
+}
+
+.wildcard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.35rem 1.25rem 1.5rem;
+  border: 1px solid #242424;
+  border-radius: 14px;
+  background: #161616;
+}
+
+/* La barra flotante de vista previa no debe tapar el botón final */
+body:has(.preview-bar) .shell {
+  padding-bottom: 7.5rem;
+}
+
+/* Respetar los saltos de línea del texto de apertura */
+.entry-lead {
+  white-space: pre-line;
+}
+
+/* La barra de vista previa va arriba: los botones de acción viven abajo */
+.preview-bar {
+  top: calc(0.5rem + env(safe-area-inset-top));
+  bottom: auto;
+}
+
+body:has(.preview-bar) .shell {
+  padding-top: 4.25rem;
+  padding-bottom: var(--gutter);
+}

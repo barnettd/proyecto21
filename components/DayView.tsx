@@ -1,3 +1,4 @@
+import { BracketFlow, type BracketConfig } from '@/components/BracketFlow'
 import { LineDot, Seal } from '@/components/Brand'
 import { Countdown } from '@/components/Countdown'
 import { MultiTrackFlow, type FlowConfig } from '@/components/MultiTrackFlow'
@@ -39,6 +40,10 @@ export async function DayView({
         {preview && <PreviewReset dayId={day.id} />}
       </>
     )
+  }
+
+  if (day.experience_type === 'bracket') {
+    return <BracketFlow dayId={day.id} config={cfg as unknown as BracketConfig} preview={preview} />
   }
 
   // Multi-step days carry all of their copy in config_json and render their own track card.

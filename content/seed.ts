@@ -8,8 +8,8 @@ import type { Day, ExperienceType, Track } from '../lib/types.ts'
 const plan: Array<[number, string, ExperienceType, string?]> = [
   [0, 'The Package', 'locked'],
   [1, 'Escena de apertura', 'multi_track'],
-  [2, 'Shower Songs', 'multi_track'],
-  [3, 'Solo una sobrevive', 'bracket'],
+  [2, 'Solo una sobrevive', 'bracket'],
+  [3, 'Shower Songs', 'multi_track'],
   [4, 'Word Search', 'reveal'],
   [5, 'Recovery Kit', 'track_list'],
   [6, 'Una línea', 'track_plus_text'],
@@ -32,6 +32,44 @@ const plan: Array<[number, string, ExperienceType, string?]> = [
 
 /** Participant-facing copy, per day. Draft until approved. */
 const copy: Record<number, Partial<Day>> = {
+  2: {
+    title: 'Solo una sobrevive',
+    completion_text: 'Sobreviviente registrada.\nWildcard adentro.\nSeguimos.',
+    config_json: {
+      response_label: 'Lo que queda',
+      availability_label: 'Esta página permanece disponible por',
+      entry: {
+        title: 'SOLO UNA SOBREVIVE',
+        text: 'Hoy no necesito explicaciones.\nSolo decisiones.\n\nOcho entran. Una queda.',
+        rule: 'Si dudás, elegí la que pondrías ahora.',
+        cta: 'EMPEZAR',
+      },
+      rounds: { qf: 'Cuartos', sf: 'Semis', final: 'Final' },
+      select_label: 'SE QUEDA',
+      progress_label: 'Decisión {n} / {total}',
+      winner: {
+        title: 'UNA SOBREVIVIÓ.',
+        bridge: 'Pero faltaba una que nunca estuvo en la llave.',
+      },
+      wildcard: {
+        title: 'TU WILDCARD',
+        prompt: 'Elegí una canción que debería haber estado en esta competencia.',
+        cta: 'SUMAR WILDCARD',
+      },
+      deadline_note: 'Tenés hasta las 23:59 de hoy.',
+      // PROVISORIAS: ocho canciones de prueba hasta que lleguen las definitivas.
+      tracks: [
+        { title: 'Here Comes The Sun', artist: 'The Beatles', spotify_url: 'https://open.spotify.com/track/6dGnYIeXmHdcikdzNNDMm2' },
+        { title: 'El Mundo Cabe En Una Canción', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/5fpoGUETUlpC45OUUjXvJu' },
+        { title: 'Margarita', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/44fpTaUuSFvwzeJe4yEDDe' },
+        { title: 'Normal 1', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/4FZwazC4ne86nEBD6i6ZdR' },
+        { title: 'El Otro Cambio, Los Que Se Fueron', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/0jOCJkMvYzutcNTX9WtAVp' },
+        { title: 'Tiempo Al Tiempo', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/2vUrrcNMrSQnjFu6dE1yrg' },
+        { title: 'Tengo una Muñeca Que Regala Besos', artist: 'Fito Paez, Joaquín Sabina', spotify_url: 'https://open.spotify.com/track/0udM4azyzvy8lQXl5tHP1d' },
+        { title: 'El Mundo Entero', artist: 'Ruben Rada, Fito Paez', spotify_url: 'https://open.spotify.com/track/4LYffEwKS6i6peurdkR3c9' },
+      ],
+    },
+  },
   1: {
     title: 'Escena de apertura',
     completion_text:
