@@ -101,8 +101,9 @@ export const seedDays: Day[] = plan.map(([n, title, type, time = '08:00']) => {
 })
 
 
-// Solo para pruebas locales: adelanta la apertura de D1 a N segundos.
-if (process.env.NODE_ENV !== 'production' && process.env.P21_TEST_D1_IN_SECONDS) {
+// Atajo de prueba: adelanta la apertura de D1 a N segundos. Solo afecta al contenido
+// de respaldo, y la variable no existe en el servidor real.
+if (process.env.P21_TEST_D1_IN_SECONDS) {
   const d1 = seedDays.find((d) => d.day_number === 1)
   if (d1) {
     d1.activation_datetime = new Date(Date.now() + Number(process.env.P21_TEST_D1_IN_SECONDS) * 1000).toISOString()
