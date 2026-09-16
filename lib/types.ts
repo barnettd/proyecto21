@@ -52,7 +52,7 @@ export type Track = {
 export type SubmittedTrack = Pick<Track, 'title' | 'artist' | 'spotify_url'>
 
 /** A submitted track plus the semantic tag of the slot it came from (e.g. D1_RECARGA). */
-export type TaggedTrack = SubmittedTrack & { tag?: string | null; source?: TrackSource }
+export type TaggedTrack = SubmittedTrack & { tag?: string | null; source?: TrackSource; playlist_status?: string }
 
 export type ResponseRecord = {
   id: string

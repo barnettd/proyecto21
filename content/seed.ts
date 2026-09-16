@@ -39,22 +39,46 @@ const copy: Record<number, Partial<Day>> = {
       response_label: 'Lo que queda',
       availability_label: 'Esta página permanece disponible por',
       entry: {
-        title: 'SOLO UNA SOBREVIVE',
-        text: 'Hoy no necesito explicaciones.\nSolo decisiones.\n\nOcho entran. Una queda.',
+        title: 'Knock-Outs: Una Sobrevivirá',
+        text: 'Hoy no necesito explicaciones.\nSolo decisiones.\n\nNo hay que pensar, hay que elegir y decidir: 1v1',
         rule: 'Si dudás, elegí la que pondrías ahora.',
         cta: 'EMPEZAR',
       },
       rounds: { qf: 'Cuartos', sf: 'Semis', final: 'Final' },
-      select_label: 'SE QUEDA',
+      instructions: 'Escuchá ambos previews. Elegí uno.',
+      select_label: 'ELEGIR',
+      locked_label: 'Se revela al avanzar',
+      interstitials: {
+        after_qf: { text: 'Fácil, ¿no? La primera ronda lo es. Veamos la segunda.', cta: 'CONTINUAR' },
+        // PROVISORIO: texto entre semis y final, a confirmar.
+        after_sf: { text: 'Quedan dos. Acá ya no hay dónde esconderse.', cta: 'CONTINUAR' },
+      },
       progress_label: 'Decisión {n} / {total}',
       winner: {
-        title: 'UNA SOBREVIVIÓ.',
+        title: 'Es oficial: tu top 1.',
         bridge: 'Pero faltaba una que nunca estuvo en la llave.',
       },
       wildcard: {
         title: 'TU WILDCARD',
-        prompt: 'Elegí una canción que debería haber estado en esta competencia.',
-        cta: 'SUMAR WILDCARD',
+        prompt: 'Elegí una canción que debería haber estado en esta competencia y podría haber llegado a la final.',
+        cta: 'BIG MISS!',
+      },
+      bonus: {
+        title: 'Bonus Track',
+        text: 'Lo pediste, elegí una.',
+        select_label: 'ELEGIR',
+      },
+      closing: {
+        title: 'Bonus Track',
+        text: 'Gracias por tu contribución en P.21.\nPara cerrar, propongo que pienses cuál sería tu próxima elección; no tenés que elegir.',
+        label_final: 'Tu elección',
+        label_track: 'De mi lado',
+        // PROVISORIA: canción de cierre, a definir.
+        track: {
+          title: 'El Mundo Entero',
+          artist: 'Ruben Rada, Fito Paez',
+          spotify_url: 'https://open.spotify.com/track/4LYffEwKS6i6peurdkR3c9',
+        },
       },
       deadline_note: 'Tenés hasta las 23:59 de hoy.',
       // PROVISORIAS: ocho canciones de prueba hasta que lleguen las definitivas.

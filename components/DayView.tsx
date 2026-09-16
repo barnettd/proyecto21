@@ -1,5 +1,5 @@
 import { BracketFlow, type BracketConfig } from '@/components/BracketFlow'
-import { LineDot, Seal } from '@/components/Brand'
+import { LineDot, Seal, Wordmark } from '@/components/Brand'
 import { Countdown } from '@/components/Countdown'
 import { MultiTrackFlow, type FlowConfig } from '@/components/MultiTrackFlow'
 import { PreviewReset } from '@/components/PreviewReset'
@@ -27,6 +27,23 @@ export async function DayView({
   const preview = process.env.NODE_ENV !== 'production'
 
   if (response) {
+    const closing = cfg.closing as
+      | { title?: string; text?: string; label_final?: string; label_track?: string; track?: SubmittedTrack }
+      | undefined
+    if (closing) {
+      return (
+        <>
+          <Closing
+            closing={closing}
+            finalTrack={(response.payload_json.final_track as SubmittedTrack | undefined) ?? null}
+            nextOpensAt={nextOpensAt}
+            serverNow={serverNow}
+            availabilityLabel={str(cfg.availability_label) ?? 'Esta página permanece disponible por'}
+          />
+          {preview && <PreviewReset dayId={day.id} />}
+        </>
+      )
+    }
     return (
       <>
         <Completion
@@ -116,6 +133,44 @@ function Completion({
       {tracks.map((t, i) => (
         <TrackCard key={i} track={t} label={i === 0 ? label : undefined} showLink={false} />
       ))}
+      {nextOpensAt && (
+        <Countdown target={nextOpensAt} serverNow={serverNow} label={availabilityLabel} variant="inline" />
+      )}
+    </section>
+  )
+}
+
+/** Closing screen: her final pick, one track from P21, and nothing about what comes next. */
+function Closing({
+  closing,
+  finalTrack,
+  nextOpensAt,
+  serverNow,
+  availabilityLabel,
+}: {
+  closing: { title?: string; text?: string; label_final?: string; label_track?: string; track?: SubmittedTrack }
+  finalTrack: SubmittedTrack | null
+  nextOpensAt: string | null
+  serverNow: number
+  availabilityLabel: string
+}) {
+  return (
+    <section className="step closing" aria-live="polite">
+      <Wordmark size="lg" live />
+      {closing.title && <h2 className="bracket-title">{closing.title}</h2>}
+      {closing.text && <p className="prose">{closing.text}</p>}
+      {finalTrack && (
+        <>
+          <p className="round-label">{closing.label_final ?? 'Tu elección'}</p>
+          <TrackCard track={finalTrack} showLink={false} />
+        </>
+      )}
+      {closing.track && (
+        <>
+          <p className="round-label">{closing.label_track ?? 'De mi lado'}</p>
+          <TrackCard track={closing.track} showLink={false} />
+        </>
+      )}
       {nextOpensAt && (
         <Countdown target={nextOpensAt} serverNow={serverNow} label={availabilityLabel} variant="inline" />
       )}

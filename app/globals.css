@@ -1108,3 +1108,98 @@ body:has(.preview-days) .shell {
 body:has(.preview-days):has(.preview-bar:not(.preview-days)) .shell {
   padding-top: 7.5rem;
 }
+
+/* ── D2: ajustes de la llave ─────────────────────────────────── */
+.step-bracket .bracket-title,
+.step-entry .bracket-title {
+  color: var(--ambar);
+}
+
+/* El contador queda a la vista mientras baja por la llave */
+.bracket-progress {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 0;
+  padding: 0.75rem 0;
+  background: var(--carbon);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.bracket-instructions {
+  margin: -0.75rem 0 0;
+  font-size: 0.9375rem;
+}
+
+/* Cruce todavía bloqueado: candado, sin revelar las canciones */
+.slot.is-sealed {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 0.9rem;
+  border-style: dashed;
+  border-color: #262626;
+  background: transparent;
+  color: #5a5a56;
+}
+
+.lock-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: none;
+}
+
+.slot-locked-text {
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+}
+
+/* Respiro entre rondas */
+.breather {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2.5rem 0;
+}
+
+/* El plazo, con más presencia que un pie de página */
+.deadline-note {
+  margin: 0.5rem 0 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid #2c2c2c;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #d8d8d3;
+}
+
+.bonus-duel {
+  padding-left: 0;
+  gap: 0.9rem;
+}
+
+.bonus-duel::before {
+  display: none;
+}
+
+.bonus-duel .slot::before {
+  display: none;
+}
+
+/* Cierre del día */
+.closing {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.closing .wordmark {
+  margin-bottom: 0.5rem;
+}
