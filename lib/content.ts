@@ -8,20 +8,30 @@ import type { Day, ResponseRecord, Settings, SubmittedTrack, Track } from './typ
 let client: SupabaseClient | null | undefined
 function supabase() {
   if (client !== undefined) return client
-  // Vercel's Supabase integration may use the legacy or newer key name, with or without a custom prefix.
-  const env = process.env
-  const url = env.SUPABASE_URL ?? env.STORAGE_SUPABASE_URL
-  const key =
-    env.SUPABASE_SERVICE_ROLE_KEY ??
-    env.SUPABASE_SECRET_KEY ??
-    env.STORAGE_SUPABASE_SERVICE_ROLE_KEY ??
-    env.STORAGE_SUPABASE_SECRET_KEY
+  // Vercel's Supabase integration may use the legacy or newer key name, with or without a custom
+  // prefix. Empty vars count as absent: a blank placeholder must not shadow a real value.
+  const url = firstSet('SUPABASE_URL', 'STORAGE_SUPABASE_URL')
+  const key = firstSet(
+    'SUPABASE_SERVICE_ROLE_KEY',
+    'SUPABASE_SECRET_KEY',
+    'STORAGE_SUPABASE_SERVICE_ROLE_KEY',
+    'STORAGE_SUPABASE_SECRET_KEY',
+  )
   client = url && key ? createClient(url, key, { auth: { persistSession: false } }) : null
   return client
 }
 
+/** First env var that is set to a non-blank value. */
+function firstSet(...names: string[]): string | undefined {
+  for (const name of names) {
+    const value = process.env[name]?.trim()
+    if (value) return value
+  }
+  return undefined
+}
+
 function envForce(): number | null {
-  const raw = process.env.FORCE_ACTIVE_DAY
+  const raw = process.env.FORCE_ACTIVE_DAY?.trim()
   return raw && /^\d+$/.test(raw) ? Number(raw) : null
 }
 
