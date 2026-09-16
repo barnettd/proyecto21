@@ -25,7 +25,14 @@ export async function DayView({ day }: { day: Day }) {
 
   // Multi-step days carry all of their copy in config_json and render their own track card.
   if (day.experience_type === 'multi_track') {
-    return <MultiTrackFlow dayId={day.id} config={cfg as unknown as FlowConfig} openingTrack={given[0] ?? null} />
+    return (
+      <MultiTrackFlow
+        dayId={day.id}
+        config={cfg as unknown as FlowConfig}
+        openingTrack={given[0] ?? null}
+        preview={process.env.NODE_ENV !== 'production'}
+      />
+    )
   }
 
   return (

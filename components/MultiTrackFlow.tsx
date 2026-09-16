@@ -26,6 +26,7 @@ export type FlowConfig = {
   track_label?: string
 }
 
+type Step = 'entry' | 'listen' | 'modules'
 const SHORT_LINK = /^https:\/\/spotify\.(link|app\.link)\//
 
 /** Client-side identity of a pasted value: track id, or the short link itself (server resolves it). */
@@ -39,14 +40,17 @@ export function MultiTrackFlow({
   dayId,
   config,
   openingTrack,
+  preview = false,
 }: {
   dayId: string
   config: FlowConfig
   openingTrack: SubmittedTrack | null
+  /** Shows the step switcher. Never enabled in production. */
+  preview?: boolean
 }) {
   const router = useRouter()
   const [state, action, pending] = useActionState<SubmitState, FormData>(submitMultiTrack, { ok: false })
-  const [step, setStep] = useState<'entry' | 'listen' | 'modules'>('entry')
+  const [step, setStep] = useState<Step>('entry')
   const [values, setValues] = useState<string[]>(() => config.modules.map(() => ''))
 
   const draftKey = `p21-draft-${dayId}`
@@ -87,90 +91,178 @@ export function MultiTrackFlow({
   const unique = new Set(keys.filter(Boolean)).size === keys.length
   const canSubmit = filled && unique && !pending && !state.ok
 
-  if (step === 'entry') {
-    const { lead, text, suggestions, suggestions_label } = config.entry
-    return (
-      <section className="step step-entry">
-        <Seal size="md" />
-        {lead && <p className="entry-lead">{lead}</p>}
-        <p className="prose">{text}</p>
-        {suggestions && suggestions.length > 0 && (
-          <div className="suggestions">
-            {suggestions_label && <p className="eyebrow">{suggestions_label}</p>}
-            <ul className="suggestion-list">
-              {suggestions.map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-        <button type="button" className="submit" onClick={() => setStep('listen')}>
-          {config.entry.cta}
-        </button>
-      </section>
-    )
-  }
-
-  if (step === 'listen') {
-    return (
-      <section className="step">
-        <p className="prose">{config.listen.text}</p>
-        {openingTrack && <TrackCard track={openingTrack} label={config.track_label} showLink={false} />}
-        {openingTrack?.spotify_url && (
-          <a className="submit submit-link" href={openingTrack.spotify_url} target="_blank" rel="noopener noreferrer">
-            {config.listen.primary_cta}
-          </a>
-        )}
-        {config.listen.while_text && <p className="prose muted listen-note">{config.listen.while_text}</p>}
-        <button type="button" className="link-button step-back" onClick={() => setStep('modules')}>
-          {config.listen.secondary_cta}
-        </button>
-      </section>
-    )
+  const reset = () => {
+    setValues(config.modules.map(() => ''))
+    setStep('entry')
+    try {
+      localStorage.removeItem(draftKey)
+    } catch {
+      /* ignore */
+    }
   }
 
   return (
-    <form action={action} className="step">
-      <p className="prose">{config.modules_intro}</p>
+    <>
+      {step === 'entry' && <Entry config={config} onNext={() => setStep('listen')} />}
+      {step === 'listen' && <Listen config={config} track={openingTrack} onNext={() => setStep('modules')} />}
+      {step === 'modules' && (
+        <form action={action} className="step">
+          <p className="modules-intro">{config.modules_intro}</p>
 
-      {config.modules.map((m, i) => {
-        const dup = Boolean(keys[i]) && keys.indexOf(keys[i]) !== i
-        return (
-          <fieldset className="module" key={m.name}>
-            <legend className="module-head">
-              <span className="module-n">{m.n}</span>
-              <span className="module-name">{m.name}</span>
-            </legend>
-            <p className="prose muted">{m.guide}</p>
-            <p className="prose module-question">{m.question}</p>
-            <label className="field">
-              <span className="field-label">Canción · link de Spotify</span>
-              <input
-                name={`track_${i}`}
-                value={values[i]}
-                onChange={(e) => setValues((v) => v.map((old, j) => (j === i ? e.target.value : old)))}
-                inputMode="url"
-                autoComplete="off"
-                autoCapitalize="none"
-                spellCheck={false}
-                placeholder={m.placeholder ?? 'https://open.spotify.com/track/…'}
-                aria-invalid={dup || undefined}
-              />
-            </label>
-            {dup && <p className="form-error">Esta ya la elegiste en otro módulo.</p>}
-          </fieldset>
-        )
-      })}
+          {config.modules.map((m, i) => (
+            <Module
+              key={m.name}
+              module={m}
+              value={values[i]}
+              trackId={keys[i] && parseSpotifyTrackId(values[i]) ? parseSpotifyTrackId(values[i]) : null}
+              duplicate={Boolean(keys[i]) && keys.indexOf(keys[i]) !== i}
+              index={i}
+              onChange={(v) => setValues((old) => old.map((prev, j) => (j === i ? v : prev)))}
+            />
+          ))}
 
-      {config.deadline_note && <p className="eyebrow deadline">{config.deadline_note}</p>}
-      {state.error && (
-        <p className="form-error" role="alert">
-          {state.error}
-        </p>
+          {config.deadline_note && <p className="eyebrow deadline">{config.deadline_note}</p>}
+          {state.error && (
+            <p className="form-error" role="alert">
+              {state.error}
+            </p>
+          )}
+          <button type="submit" className="submit" disabled={!canSubmit}>
+            {pending || state.ok ? 'Enviando…' : config.submit_label}
+          </button>
+        </form>
       )}
-      <button type="submit" className="submit" disabled={!canSubmit}>
-        {pending || state.ok ? 'Enviando…' : config.submit_label}
+
+      {preview && <PreviewBar step={step} onStep={setStep} onReset={reset} />}
+    </>
+  )
+}
+
+function Entry({ config, onNext }: { config: FlowConfig; onNext: () => void }) {
+  const { lead, text, suggestions, suggestions_label, cta } = config.entry
+  return (
+    <section className="step step-entry">
+      <Seal size="md" />
+      {lead && <p className="entry-lead">{lead}</p>}
+      <p className="prose">{text}</p>
+      {suggestions && suggestions.length > 0 && (
+        <div className="suggestions">
+          {suggestions_label && <p className="eyebrow">{suggestions_label}</p>}
+          <ul className="suggestion-list">
+            {suggestions.map((s) => (
+              <li key={s}>{s}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <button type="button" className="submit" onClick={onNext}>
+        {cta}
       </button>
-    </form>
+    </section>
+  )
+}
+
+function Listen({
+  config,
+  track,
+  onNext,
+}: {
+  config: FlowConfig
+  track: SubmittedTrack | null
+  onNext: () => void
+}) {
+  return (
+    <section className="step">
+      <p className="prose">{config.listen.text}</p>
+      {track && <TrackCard track={track} label={config.track_label} showLink={false} />}
+      {track?.spotify_url && (
+        <a className="submit submit-link" href={track.spotify_url} target="_blank" rel="noopener noreferrer">
+          {config.listen.primary_cta}
+        </a>
+      )}
+      {config.listen.while_text && <p className="prose muted listen-note">{config.listen.while_text}</p>}
+      <button type="button" className="link-button step-back" onClick={onNext}>
+        {config.listen.secondary_cta}
+      </button>
+    </section>
+  )
+}
+
+function Module({
+  module: m,
+  value,
+  trackId,
+  duplicate,
+  index,
+  onChange,
+}: {
+  module: FlowModule
+  value: string
+  trackId: string | null
+  duplicate: boolean
+  index: number
+  onChange: (v: string) => void
+}) {
+  return (
+    <fieldset className="module">
+      <legend className="module-head">
+        <span className="module-n">{m.n}</span>
+        <span className="module-name">{m.name}</span>
+      </legend>
+      <p className="module-guide">{m.guide}</p>
+      <p className="module-question">{m.question}</p>
+
+      <label className="field field-boxed">
+        <span className="visually-hidden">Link de Spotify para {m.name}</span>
+        <span className="field-icon" aria-hidden="true">
+          ♪
+        </span>
+        <input
+          name={`track_${index}`}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          inputMode="url"
+          autoComplete="off"
+          autoCapitalize="none"
+          spellCheck={false}
+          placeholder={m.placeholder ?? 'Pegá acá el link de Spotify'}
+          aria-invalid={duplicate || undefined}
+        />
+      </label>
+
+      {duplicate ? (
+        <p className="form-error">Esta ya la elegiste en otro módulo.</p>
+      ) : trackId ? (
+        <iframe
+          className="spotify-embed spotify-embed-compact"
+          src={`https://open.spotify.com/embed/track/${trackId}?theme=0`}
+          title="Canción elegida"
+          allow="encrypted-media"
+          loading="lazy"
+        />
+      ) : (
+        index === 0 && <p className="field-hint">En Spotify: Compartir → Copiar enlace</p>
+      )}
+    </fieldset>
+  )
+}
+
+function PreviewBar({ step, onStep, onReset }: { step: Step; onStep: (s: Step) => void; onReset: () => void }) {
+  const steps: Array<[Step, string]> = [
+    ['entry', '1 Inicio'],
+    ['listen', '2 Canción'],
+    ['modules', '3 Preguntas'],
+  ]
+  return (
+    <nav className="preview-bar" aria-label="Vista previa">
+      {steps.map(([s, label]) => (
+        <button key={s} type="button" className={s === step ? 'is-on' : ''} onClick={() => onStep(s)}>
+          {label}
+        </button>
+      ))}
+      <button type="button" onClick={onReset} title="Reiniciar la vista previa">
+        ↺
+      </button>
+    </nav>
   )
 }
