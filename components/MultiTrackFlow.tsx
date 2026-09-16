@@ -108,10 +108,10 @@ export function MultiTrackFlow({
       {step === 'listen' && <Listen config={config} track={openingTrack} onNext={() => setStep('modules')} />}
       {step === 'modules' && (
         <form action={action} className="step">
+          <p className="modules-intro">{config.modules_intro}</p>
           <div className="banner">
             <Image src="/d1-mundo.png" alt="" width={1086} height={1448} sizes="(max-width: 40rem) 100vw, 34rem" />
           </div>
-          <p className="modules-intro">{config.modules_intro}</p>
 
           {config.modules.map((m, i) => (
             <Module
@@ -177,23 +177,24 @@ function Listen({
 }) {
   return (
     <section className="step step-listen">
-      <Image
-        className="hero-image"
-        src="/d1-mundo.png"
-        alt=""
-        width={1086}
-        height={1448}
-        priority
-        sizes="(max-width: 40rem) 100vw, 34rem"
-      />
       <p className="prose">{config.listen.text}</p>
+      <div className="hero">
+        <Image
+          src="/d1-mundo.png"
+          alt=""
+          width={1086}
+          height={1448}
+          priority
+          sizes="(max-width: 40rem) 100vw, 34rem"
+        />
+      </div>
       {track && <TrackCard track={track} label={config.track_label} showLink={false} />}
+      {config.listen.while_text && <p className="prose muted listen-note">{config.listen.while_text}</p>}
       {track?.spotify_url && (
         <a className="submit submit-link" href={track.spotify_url} target="_blank" rel="noopener noreferrer">
           {config.listen.primary_cta}
         </a>
       )}
-      {config.listen.while_text && <p className="prose muted listen-note">{config.listen.while_text}</p>}
       <button type="button" className="submit submit-secondary" onClick={onNext}>
         {config.listen.secondary_cta}
       </button>

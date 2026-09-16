@@ -878,3 +878,18 @@ body:has(.preview-bar) .shell {
     animation: none;
   }
 }
+
+/* Imagen apaisada: recorte centrado, para que ocupe el ancho sin ser vertical */
+.hero {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 45%;
+}

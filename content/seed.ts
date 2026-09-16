@@ -35,21 +35,21 @@ const copy: Record<number, Partial<Day>> = {
   1: {
     title: 'Escena de apertura',
     completion_text:
-      'Gracias por las respuestas y por ser parte de P.21.\nSeguí el siguiente paso cuando aparezca.',
+      'Gracias por ser parte de P.21.\nSeguí el siguiente paso cuando aparezca.',
     config_json: {
       track_label: 'Canción de apertura',
       response_label: 'Tus canciones',
       entry: {
-        lead: 'Algunas cosas empiezan antes de entenderse. Gracias por ser parte de P.21.',
+        lead: 'Algunas cosas empiezan antes de entenderse.',
         text: 'Habrá preguntas y tareas, pero no respuestas ni soluciones correctas. Pensá y elegí siempre lo que te represente.',
         suggestions_label: 'Dos sugerencias',
         suggestions: ['Guardá la llave.', 'Llevá tus auriculares con vos.'],
         cta: 'EMPEZAR',
       },
       listen: {
-        text: 'Es acá donde propongo empezar P.21: regalándote la escucha de esta canción.\n¿Y cuándo no, Fito Páez?',
+        text: 'Aquí comienza P.21: regalándote la escucha de esta canción (¿y cuándo no, Fito Páez?).',
         primary_cta: 'ESCUCHAR EN SPOTIFY',
-        secondary_cta: 'SEGUIR',
+        secondary_cta: 'YA LA ESCUCHÉ',
         while_text: 'Este es solo el preview. Escuchala completa en Spotify y seguí cuando termines.',
       },
       modules_intro: 'Es tu turno: tres razones, tres canciones.',
