@@ -1,6 +1,8 @@
 'use server'
 
+import { after } from 'next/server'
 import { getResponse, loadContent, saveResponse } from '@/lib/content'
+import { notifyResponse } from '@/lib/notify'
 import { resolveActiveDay } from '@/lib/schedule'
 import { fetchTrackMeta, resolveSpotifyInput, spotifyTrackUrl } from '@/lib/spotify'
 import type { SubmittedTrack } from '@/lib/types'
@@ -38,7 +40,9 @@ export async function submitSingleTrack(_prev: SubmitState, form: FormData): Pro
 
   const tag = typeof day.config_json.response_tag === 'string' ? day.config_json.response_tag : null
   try {
-    await saveResponse(day.id, 'single_track', { tracks: [track] }, [track], tag)
+    const result = await saveResponse(day.id, 'single_track', { tracks: [track] }, [track], tag)
+    // Email after the response is sent, so a slow mail server never delays her.
+    if (result === 'saved') after(() => notifyResponse(day, [track]))
     return { ok: true }
   } catch (err) {
     console.error('[p21] save failed', err)
