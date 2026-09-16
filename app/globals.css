@@ -1074,3 +1074,37 @@ body:has(.preview-bar) .shell {
   padding-top: 4.25rem;
   padding-bottom: var(--gutter);
 }
+
+/* ── Vista previa: dos filas (días arriba, pantallas abajo) ──── */
+.preview-days {
+  top: calc(0.5rem + env(safe-area-inset-top));
+}
+
+.preview-bar:not(.preview-days) {
+  top: calc(3.6rem + env(safe-area-inset-top));
+}
+
+.preview-select {
+  font: inherit;
+  font-size: 0.6875rem;
+  max-width: 13rem;
+  color: var(--blanco);
+  background: transparent;
+  border: 0;
+  padding: 0.35rem 0.2rem;
+  appearance: none;
+  text-align: center;
+}
+
+.preview-select option {
+  background: #141414;
+  color: var(--blanco);
+}
+
+body:has(.preview-days) .shell {
+  padding-top: 4.5rem;
+}
+
+body:has(.preview-days):has(.preview-bar:not(.preview-days)) .shell {
+  padding-top: 7.5rem;
+}

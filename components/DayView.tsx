@@ -6,10 +6,10 @@ import { PreviewReset } from '@/components/PreviewReset'
 import { SingleTrackForm } from '@/components/SingleTrackForm'
 import { TrackCard } from '@/components/TrackCard'
 import { getResponse, getTracks } from '@/lib/content'
+import { hasContent } from '@/lib/day-content'
 import type { Day, SubmittedTrack } from '@/lib/types'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : undefined)
-
 export async function DayView({
   day,
   nextOpensAt,
@@ -40,6 +40,17 @@ export async function DayView({
         {preview && <PreviewReset dayId={day.id} />}
       </>
     )
+  }
+
+  if (!hasContent(day)) {
+    return preview ? (
+      <section className="step">
+        <h1 className="day-title">{day.title}</h1>
+        <p className="prose muted">
+          Este día todavía no tiene contenido cargado. Tipo previsto: {day.experience_type}.
+        </p>
+      </section>
+    ) : null
   }
 
   if (day.experience_type === 'bracket') {

@@ -2,7 +2,9 @@ import { connection } from 'next/server'
 import { Footer, Seal, Wordmark } from '@/components/Brand'
 import { Countdown } from '@/components/Countdown'
 import { DayView } from '@/components/DayView'
+import { PreviewDayBar, type PreviewDay } from '@/components/PreviewDayBar'
 import { loadContent } from '@/lib/content'
+import { hasContent } from '@/lib/day-content'
 import { resolveActiveDay } from '@/lib/schedule'
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -16,9 +18,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       : null
   const active = resolveActiveDay(days, new Date(), previewDay ?? settings.force_active_day)
 
+  // Dev-only day switcher: lists every day, marking the ones without a component yet.
+  const preview = process.env.NODE_ENV !== 'production'
+  const previewDays: PreviewDay[] = preview
+    ? days.map((d) => ({
+        n: d.day_number,
+        title: d.title,
+        built: d.experience_type === 'locked' || hasContent(d),
+      }))
+    : []
+  const currentDay = active.kind === 'day' ? active.day.day_number : (previewDay ?? 21 - active.countdown)
+
   if (active.kind === 'locked') {
     return (
       <div className="shell">
+        {preview && <PreviewDayBar days={previewDays} current={currentDay} />}
         <main className="shell-main locked">
           <h1 className="visually-hidden">PROYECTO 21</h1>
           <Wordmark size="lg" />
@@ -43,6 +57,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       ?.activation_datetime ?? null
   return (
     <div className="shell">
+      {preview && <PreviewDayBar days={previewDays} current={currentDay} />}
       <header className="shell-header">
         <Seal size="xs" />
       </header>

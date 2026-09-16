@@ -99,8 +99,34 @@ export function BracketFlow({
     setStep('bracket')
   }
 
+  /** Preview shortcut: resolve every matchup in favour of the first slot. */
+  const skipToEnd = () => {
+    const filled: Picks = emptyPicks()
+    for (let i = 0; i < MATCHUP_COUNT; i++) {
+      const m = buildBracket(filled)[i]
+      filled[i] = m.a
+    }
+    setPicks(filled)
+    setStep('wildcard')
+  }
+
+  const bar = preview ? (
+    <nav className="preview-bar" aria-label="Pantallas (vista previa)">
+      <button type="button" className={step === 'entry' ? 'is-on' : ''} onClick={() => setStep('entry')}>
+        1 Inicio
+      </button>
+      <button type="button" className={step === 'bracket' ? 'is-on' : ''} onClick={reopen}>
+        2 Llave
+      </button>
+      <button type="button" className={step === 'wildcard' ? 'is-on' : ''} onClick={skipToEnd}>
+        3 Final
+      </button>
+    </nav>
+  ) : null
+
   if (step === 'entry') {
     return (
+      <>
       <section className="step step-entry">
         {config.entry.title && <h1 className="bracket-title">{config.entry.title}</h1>}
         <p className="entry-lead">{config.entry.text}</p>
@@ -109,6 +135,8 @@ export function BracketFlow({
           {config.entry.cta}
         </button>
       </section>
+      {bar}
+      </>
     )
   }
 
@@ -122,6 +150,7 @@ export function BracketFlow({
     ]
 
     return (
+      <>
       <section className="step step-bracket">
         <p className="eyebrow bracket-progress">
           {(config.progress_label ?? 'Decisión {n} / {total}')
@@ -149,6 +178,8 @@ export function BracketFlow({
 
         {config.deadline_note && <p className="eyebrow deadline">{config.deadline_note}</p>}
       </section>
+      {bar}
+      </>
     )
   }
 
@@ -160,6 +191,7 @@ export function BracketFlow({
   const canSubmit = Boolean(wildcardId) && !duplicate && !pending && !state.ok
 
   return (
+    <>
     <form action={action} className="step">
       <input type="hidden" name="picks" value={JSON.stringify(picks)} />
       {preview && <input type="hidden" name="preview_day" value={dayId} />}
@@ -212,18 +244,9 @@ export function BracketFlow({
       <button type="submit" className="submit" disabled={!canSubmit}>
         {pending || state.ok ? 'Enviando…' : config.wildcard.cta}
       </button>
-
-      {preview && (
-        <nav className="preview-bar" aria-label="Vista previa">
-          <button type="button" onClick={() => setStep('entry')}>
-            1 Inicio
-          </button>
-          <button type="button" onClick={reopen}>
-            ↺ Llave
-          </button>
-        </nav>
-      )}
     </form>
+    {bar}
+    </>
   )
 }
 
