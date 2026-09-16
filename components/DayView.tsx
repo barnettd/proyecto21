@@ -21,7 +21,8 @@ export async function DayView({
   serverNow: number
 }) {
   const [tracks, response] = await Promise.all([getTracks(day.id), getResponse(day.id)])
-  const cfg = day.config_json
+  // D1 shipped with its image hardcoded; keep it until its config carries `image`.
+  const cfg = day.id === 'd1' ? { image: '/d1-mundo.png', ...day.config_json } : day.config_json
   const given = tracks.filter((t) => t.source === 'P21')
 
   const preview = process.env.NODE_ENV !== 'production'

@@ -32,6 +32,58 @@ const plan: Array<[number, string, ExperienceType, string?]> = [
 
 /** Participant-facing copy, per day. Draft until approved. */
 const copy: Record<number, Partial<Day>> = {
+  3: {
+    title: 'Shower Songs',
+    completion_text: 'Set registrado.\nEl shampoo queda oficialmente habilitado como micrófono.',
+    config_json: {
+      sequential: true,
+      progress_label: '{n} / {total}',
+      track_label: 'De mi lado',
+      response_label: 'Tu set',
+      availability_label: 'Esta página permanece disponible por',
+      entry: {
+        title: 'SHOWER SONGS',
+        lead: 'Hay canciones que funcionan mejor con agua corriendo.',
+        text: 'Algunas se escuchan.\nOtras inevitablemente terminan siendo interpretadas con shampoo en mano.\n\nHoy necesito tu set.',
+        cta: 'EMPEZAR',
+      },
+      listen: {
+        text: 'Primero, una de mi lado.',
+        primary_cta: 'ESCUCHAR EN SPOTIFY',
+        secondary_cta: 'ARMAR MI SET',
+        while_text: 'Sí. Esta entra en la categoría.',
+      },
+      modules_intro: '',
+      modules: [
+        {
+          n: '01',
+          name: 'ABRIR EL SHOW',
+          tag: 'D3_SHOWER_OPENING',
+          guide: 'La primera cambia la acústica del baño y avisa que oficialmente empezó el show.',
+          question: '¿Qué canción abre tu set de ducha?',
+          cta: 'SIGUIENTE',
+        },
+        {
+          n: '02',
+          name: 'MICRÓFONO DE SHAMPOO',
+          tag: 'D3_SHOWER_MIC',
+          guide: 'Hay canciones que no se escuchan: se interpretan. Aunque nadie lo haya pedido.',
+          question: '¿Cuál es esa que inevitablemente terminás cantando como si el shampoo fuera un micrófono?',
+          cta: 'SIGUIENTE',
+        },
+        {
+          n: '03',
+          name: 'ENCORE',
+          tag: 'D3_SHOWER_ENCORE',
+          guide: 'La ducha ya terminó. Técnicamente deberías salir. Pero todavía queda una canción.',
+          question: '¿Cuál merece quedarse hasta el final?',
+          cta: 'ESTE ES MI SET',
+        },
+      ],
+      deadline_note: 'Tenés hasta las 23:59 de hoy.',
+      submit_label: 'ESTE ES MI SET',
+    },
+  },
   2: {
     title: 'Solo una sobrevive',
     completion_text: 'Sobreviviente registrada.\nWildcard adentro.\nSeguimos.',
@@ -99,6 +151,7 @@ const copy: Record<number, Partial<Day>> = {
     completion_text:
       'Gracias por ser parte de P.21.\nSeguí el siguiente paso cuando aparezca.',
     config_json: {
+      image: '/d1-mundo.png',
       track_label: 'Canción de apertura',
       response_label: 'Tus canciones',
       entry: {
@@ -188,6 +241,20 @@ export const seedTracks: Track[] = [
     playlist_status: 'candidate',
   },
 ]
+
+// PROVISORIA: canción de ducha de P21, a definir.
+seedTracks.push({
+  id: 't-d3-p21',
+  day_id: 'd3',
+  source: 'P21',
+  source_name: 'PROYECTO 21',
+  title: 'Normal 1',
+  artist: 'Fito Paez',
+  spotify_url: 'https://open.spotify.com/track/4FZwazC4ne86nEBD6i6ZdR',
+  tag: 'SHOWER',
+  sort_order: 0,
+  playlist_status: 'candidate',
+})
 
 export const seedSettings = {
   force_active_day: null,
