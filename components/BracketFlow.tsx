@@ -1,9 +1,10 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useActionState, useEffect, useRef, useState } from 'react'
+import { Fragment, useActionState, useEffect, useRef, useState } from 'react'
 import { submitBracket, type SubmitState } from '@/app/actions'
 import { activeMatchup, bracketWinner, buildBracket, MATCHUP_COUNT, type Matchup } from '@/lib/bracket'
+import { Countdown } from '@/components/Countdown'
 import { parseSpotifyTrackId } from '@/lib/spotify'
 
 export type BracketTrack = { title: string; artist: string; spotify_url: string }
@@ -13,6 +14,7 @@ export type BracketConfig = {
   entry: { title?: string; text: string; rule?: string; cta: string }
   tracks: BracketTrack[]
   instructions?: string
+  deadline_label?: string
   select_label: string
   locked_label?: string
   progress_label?: string
@@ -34,10 +36,15 @@ const ROUND_ENDS: Record<number, 'after_qf' | 'after_sf'> = { 3: 'after_qf', 5: 
 export function BracketFlow({
   dayId,
   config,
+  deadlineAt,
+  serverNow,
   preview = false,
 }: {
   dayId: string
   config: BracketConfig
+  /** 23:59:59 of today: shown as a live countdown while she decides. */
+  deadlineAt: string
+  serverNow: number
   preview?: boolean
 }) {
   const router = useRouter()
@@ -91,9 +98,14 @@ export function BracketFlow({
   const survivorIndex = bracketWinner(picks)
 
   useEffect(() => {
-    if (step !== 'bracket' || pause) return
+    window.scrollTo({ top: 0 })
+  }, [step])
+
+  useEffect(() => {
+    // The first matchup is already at the top; only later ones need bringing into view.
+    if (step !== 'bracket' || pause || !active || active.index === 0) return
     activeRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })
-  }, [active?.index, step, pause])
+  }, [active, step, pause])
 
   useEffect(() => {
     if (step === 'bracket' && survivorIndex != null && !pause) setStep('wildcard')
@@ -170,11 +182,20 @@ export function BracketFlow({
     return (
       <>
         <section className="step step-bracket">
-          <p className="bracket-progress">
-            {(config.progress_label ?? 'Decisión {n} / {total}')
-              .replace('{n}', String(Math.min(decided + 1, MATCHUP_COUNT)))
-              .replace('{total}', String(MATCHUP_COUNT))}
-          </p>
+          <div className="bracket-hud">
+            <span className="hud-progress">
+              {(config.progress_label ?? 'Decisión {n} / {total}')
+                .replace('{n}', String(Math.min(decided + 1, MATCHUP_COUNT)))
+                .replace('{total}', String(MATCHUP_COUNT))}
+            </span>
+            <Countdown
+              target={deadlineAt}
+              serverNow={serverNow}
+              label={config.deadline_label ?? 'Cierra en'}
+              variant="inline"
+              refreshOnZero={false}
+            />
+          </div>
 
           {breather ? (
             <div className="breather">
@@ -185,7 +206,7 @@ export function BracketFlow({
             </div>
           ) : (
             <>
-              {config.instructions && <p className="prose muted bracket-instructions">{config.instructions}</p>}
+              {config.instructions && <p className="bracket-instructions">{config.instructions}</p>}
               {rounds.map(([label, matchups]) => (
                 <div className="round" key={label}>
                   <p className="round-label">{label}</p>
@@ -204,7 +225,6 @@ export function BracketFlow({
                   ))}
                 </div>
               ))}
-              {config.deadline_note && <p className="deadline-note">{config.deadline_note}</p>}
             </>
           )}
         </section>
@@ -400,8 +420,17 @@ function MatchupBlock({
       <div className="mu is-locked" ref={ref}>
         {[0, 1].map((i) => (
           <div className="slot is-sealed" key={i}>
-            <LockIcon />
-            <span className="slot-locked-text">{lockedLabel}</span>
+            <div className="skeleton" aria-hidden="true">
+              <span className="skeleton-art" />
+              <span className="skeleton-lines">
+                <span />
+                <span />
+              </span>
+            </div>
+            <p className="sealed-note">
+              <LockIcon />
+              {lockedLabel}
+            </p>
           </div>
         ))}
       </div>
@@ -412,11 +441,14 @@ function MatchupBlock({
     <div className={`mu ${state}`} ref={ref}>
       {[matchup.a, matchup.b].map((slot, i) => {
         if (slot == null) return null
+        const vs = isActive && i === 1 ? <span className="vs" key="vs" aria-hidden="true">VS</span> : null
         const track = tracks[slot]
         const isWinner = picked === slot
         const isLoser = picked != null && picked !== slot
         return (
-          <div className={`slot${isWinner ? ' is-winner' : ''}${isLoser ? ' is-loser' : ''}`} key={i}>
+          <Fragment key={i}>
+          {vs}
+          <div className={`slot${isWinner ? ' is-winner' : ''}${isLoser ? ' is-loser' : ''}`}>
             <div className="slot-head">
               <span className="slot-title">{track.title}</span>
               <span className="slot-artist">{track.artist}</span>
@@ -428,6 +460,7 @@ function MatchupBlock({
               </button>
             )}
           </div>
+          </Fragment>
         )
       })}
     </div>

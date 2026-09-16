@@ -14,12 +14,15 @@ export function Countdown({
   serverNow,
   label = 'Disponible en',
   variant = 'block',
+  refreshOnZero = true,
 }: {
   target: string
   serverNow: number
   label?: string
   /** 'inline' renders one quiet line instead of the big digits. */
   variant?: 'block' | 'inline'
+  /** Deadlines just reach zero; only openings should reload the page. */
+  refreshOnZero?: boolean
 }) {
   const router = useRouter()
   // First render uses the server time on both sides, so hydration matches.
@@ -38,11 +41,11 @@ export function Countdown({
 
   // At zero, ask the server for the page; retry in case its clock lags by a few seconds.
   useEffect(() => {
-    if (!done) return
+    if (!done || !refreshOnZero) return
     router.refresh()
     const id = setInterval(() => router.refresh(), 5000)
     return () => clearInterval(id)
-  }, [done, router])
+  }, [done, refreshOnZero, router])
 
   const total = Math.floor(remaining / 1000)
   const h = Math.floor(total / 3600)

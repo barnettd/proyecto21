@@ -1203,3 +1203,124 @@ body:has(.preview-days):has(.preview-bar:not(.preview-days)) .shell {
 .closing .wordmark {
   margin-bottom: 0.5rem;
 }
+
+/* ── D2: barra fija con decisión y cuenta regresiva del plazo ── */
+.bracket-hud {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  background: var(--carbon);
+  border-bottom: 1px solid #242424;
+}
+
+.hud-progress {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.bracket-hud .countdown-inline {
+  margin: 0;
+  font-size: 0.75rem;
+}
+
+.bracket-instructions {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--blanco);
+}
+
+/* VS entre los dos contendientes */
+.vs {
+  align-self: center;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #6f6f6b;
+  padding: 0.1rem 0;
+}
+
+/* Cruce bloqueado: esqueleto del preview con un candado discreto */
+.slot.is-sealed {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
+  border-style: dashed;
+  border-color: #242424;
+  background: #121212;
+}
+
+.skeleton {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.skeleton-art {
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 6px;
+  background: #1d1d1d;
+}
+
+.skeleton-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.skeleton-lines span {
+  height: 0.5rem;
+  border-radius: 3px;
+  background: #1d1d1d;
+}
+
+.skeleton-lines span:last-child {
+  width: 55%;
+}
+
+.sealed-note {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.75rem;
+  color: #5f5f5b;
+}
+
+.lock-icon {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+/* Títulos en ámbar y plazo con más presencia */
+.bracket-title,
+.day-title {
+  color: var(--ambar);
+}
+
+.deadline-note {
+  border-color: rgba(201, 151, 69, 0.4);
+  color: var(--blanco);
+}
+
+.closing-note {
+  margin: 0.5rem 0 0;
+  color: var(--gris);
+}
+
+/* En vista previa, la barra fija de la llave se acomoda debajo de los controles */
+body:has(.preview-days) .bracket-hud {
+  top: 6.8rem;
+}

@@ -48,3 +48,14 @@ function nextOpening(days: Day[], now: Date): string | null {
     .sort((a, b) => new Date(a.activation_datetime).getTime() - new Date(b.activation_datetime).getTime())[0]
   return next?.activation_datetime ?? null
 }
+
+/** 23:59:59 of the day's own date, Buenos Aires: the moment shown as its deadline. */
+export function deadlineFor(day: Day): string {
+  const date = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(day.activation_datetime))
+  return `${date}T23:59:59-03:00`
+}

@@ -14,24 +14,24 @@ Gracias por tu contribución en P.21.',
   "availability_label": "Esta página permanece disponible por",
   "entry": {
     "title": "Knock-Outs: Una Sobrevivirá",
-    "text": "Hoy no necesito explicaciones.\nSolo decisiones.\n\nNo hay que pensar, hay que elegir y decidir: 1v1",
+    "text": "Hoy no necesito explicaciones.\nSolo decisiones.",
     "rule": "Si dudás, elegí la que pondrías ahora.",
     "cta": "EMPEZAR"
   },
   "rounds": {
-    "qf": "Cuartos",
-    "sf": "Semis",
-    "final": "Final"
+    "qf": "Ronda 1",
+    "sf": "Ronda 2",
+    "final": "Ronda 3"
   },
   "select_label": "ELEGIR",
   "progress_label": "Decisión {n} / {total}",
   "winner": {
-    "title": "Es oficial: tu top 1.",
-    "bridge": "Pero faltaba una que nunca estuvo en la llave."
+    "title": "¡Es oficial: tu top 1!",
+    "bridge": "Aunque sabemos que es injusto para tu top 1, porque de seguro faltó una que nunca estuvo en la selección."
   },
   "wildcard": {
     "title": "TU WILDCARD",
-    "prompt": "Elegí una canción que debería haber estado en esta competencia y podría haber llegado a la final.",
+    "prompt": "Elegí una canción que debería haber estado en esta competencia y seguramente llegaba a la final.",
     "cta": "BIG MISS!"
   },
   "deadline_note": "Tenés hasta las 23:59 de hoy.",
@@ -77,7 +77,7 @@ Gracias por tu contribución en P.21.',
       "spotify_url": "https://open.spotify.com/track/4LYffEwKS6i6peurdkR3c9"
     }
   ],
-  "instructions": "Escuchá ambos previews. Elegí uno.",
+  "instructions": "Vas a recibir las canciones de a pares. Escuchá cada preview y elegí una de las dos.",
   "locked_label": "Se revela al avanzar",
   "interstitials": {
     "after_qf": {
@@ -91,20 +91,22 @@ Gracias por tu contribución en P.21.',
   },
   "bonus": {
     "title": "Bonus Track",
-    "text": "Lo pediste, elegí una.",
+    "text": "Para ser más justos, elegí una de las siguientes:",
     "select_label": "ELEGIR"
   },
   "closing": {
     "title": "Bonus Track",
-    "text": "Gracias por tu contribución en P.21.\nPara cerrar, propongo que pienses cuál sería tu próxima elección; no tenés que elegir.",
-    "label_final": "Tu elección",
-    "label_track": "De mi lado",
+    "text": "Gracias por tu contribución en P.21.\nPara cerrar la misión, te regalo la escucha de otra canción y te propongo que pienses cuál sería tu próxima elección. No tenés que decidir.",
+    "label_final": "Tu Top 1",
+    "label_track": "Propuesta P.21",
     "track": {
       "title": "El Mundo Entero",
       "artist": "Ruben Rada, Fito Paez",
       "spotify_url": "https://open.spotify.com/track/4LYffEwKS6i6peurdkR3c9"
-    }
-  }
+    },
+    "footer_note": "Seguí cada paso cuando aparezca."
+  },
+  "deadline_label": "Cierra en"
 }$json$::jsonb,
   status = 'ready'
 where id = 'd2';

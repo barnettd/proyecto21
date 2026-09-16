@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { resolveActiveDay } from './schedule.ts'
+import { deadlineFor, resolveActiveDay } from './schedule.ts'
 import type { Day } from './types.ts'
 
 const day = (n: number, iso: string, extra: Partial<Day> = {}): Day => ({
@@ -78,4 +78,12 @@ test('disabled day is skipped in favor of the previous one', () => {
   const withDisabled = [...days.slice(0, 2), day(2, days[2].activation_datetime, { status: 'disabled' })]
   const r = resolveActiveDay(withDisabled, new Date('2026-09-18T00:00:00Z'), null)
   assert.equal(r.kind === 'day' && r.day.day_number, 1)
+})
+
+test('the deadline is 23:59:59 of the day it opens, Buenos Aires time', () => {
+  const d1 = day(1, D1_OPENS)
+  assert.equal(deadlineFor(d1), '2026-09-16T23:59:59-03:00')
+  // A late-night day still belongs to its own date.
+  const d16 = day(16, '2026-10-01T22:00:00-03:00')
+  assert.equal(deadlineFor(d16), '2026-10-01T23:59:59-03:00')
 })

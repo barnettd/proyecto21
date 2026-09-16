@@ -7,6 +7,7 @@ import { SingleTrackForm } from '@/components/SingleTrackForm'
 import { TrackCard } from '@/components/TrackCard'
 import { getResponse, getTracks } from '@/lib/content'
 import { hasContent } from '@/lib/day-content'
+import { deadlineFor } from '@/lib/schedule'
 import type { Day, SubmittedTrack } from '@/lib/types'
 
 const str = (v: unknown) => (typeof v === 'string' ? v : undefined)
@@ -29,7 +30,14 @@ export async function DayView({
 
   if (response) {
     const closing = cfg.closing as
-      | { title?: string; text?: string; label_final?: string; label_track?: string; track?: SubmittedTrack }
+      | {
+          title?: string
+          text?: string
+          label_final?: string
+          label_track?: string
+          footer_note?: string
+          track?: SubmittedTrack
+        }
       | undefined
     if (closing) {
       return (
@@ -72,7 +80,15 @@ export async function DayView({
   }
 
   if (day.experience_type === 'bracket') {
-    return <BracketFlow dayId={day.id} config={cfg as unknown as BracketConfig} preview={preview} />
+    return (
+      <BracketFlow
+        dayId={day.id}
+        config={cfg as unknown as BracketConfig}
+        deadlineAt={deadlineFor(day)}
+        serverNow={serverNow}
+        preview={preview}
+      />
+    )
   }
 
   // Multi-step days carry all of their copy in config_json and render their own track card.
@@ -149,7 +165,14 @@ function Closing({
   serverNow,
   availabilityLabel,
 }: {
-  closing: { title?: string; text?: string; label_final?: string; label_track?: string; track?: SubmittedTrack }
+  closing: {
+    title?: string
+    text?: string
+    label_final?: string
+    label_track?: string
+    footer_note?: string
+    track?: SubmittedTrack
+  }
   finalTrack: SubmittedTrack | null
   nextOpensAt: string | null
   serverNow: number
@@ -160,20 +183,24 @@ function Closing({
       <Wordmark size="lg" live />
       {closing.title && <h2 className="bracket-title">{closing.title}</h2>}
       {closing.text && <p className="prose">{closing.text}</p>}
-      {finalTrack && (
-        <>
-          <p className="round-label">{closing.label_final ?? 'Tu elección'}</p>
-          <TrackCard track={finalTrack} showLink={false} />
-        </>
-      )}
       {closing.track && (
         <>
-          <p className="round-label">{closing.label_track ?? 'De mi lado'}</p>
+          <p className="round-label">{closing.label_track ?? 'Propuesta P.21'}</p>
           <TrackCard track={closing.track} showLink={false} />
         </>
       )}
-      {nextOpensAt && (
-        <Countdown target={nextOpensAt} serverNow={serverNow} label={availabilityLabel} variant="inline" />
+      {finalTrack && (
+        <>
+          <p className="round-label">{closing.label_final ?? 'Tu Top 1'}</p>
+          <TrackCard track={finalTrack} showLink={false} />
+        </>
+      )}
+      {closing.footer_note ? (
+        <p className="prose muted closing-note">{closing.footer_note}</p>
+      ) : (
+        nextOpensAt && (
+          <Countdown target={nextOpensAt} serverNow={serverNow} label={availabilityLabel} variant="inline" />
+        )
       )}
     </section>
   )
