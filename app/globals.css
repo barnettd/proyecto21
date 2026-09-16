@@ -498,3 +498,87 @@ body {
   max-width: 14rem;
   height: auto;
 }
+
+/* ── Multi-step day flow ─────────────────────────────────────── */
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.step .prose {
+  margin: 0;
+}
+
+.submit-link {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.listen-note {
+  text-align: center;
+  font-size: 0.9375rem;
+}
+
+.step-back {
+  align-self: center;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.module {
+  margin: 0;
+  padding: 1.5rem 0 0;
+  border: 0;
+  border-top: 1px solid #242424;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.module-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0;
+}
+
+.module-n {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--ambar);
+}
+
+.module-name {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+}
+
+.module-question {
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+.module .field {
+  margin-top: 0.25rem;
+}
+
+.deadline {
+  text-align: center;
+  line-height: 1.6;
+  letter-spacing: 0.16em;
+}
+
+.completion-marker {
+  margin: -0.5rem 0 1.25rem;
+  letter-spacing: 0.22em;
+}
+
+.completion-marker .slash {
+  color: var(--ambar);
+}

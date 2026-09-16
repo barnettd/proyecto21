@@ -2,7 +2,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { seedDays, seedSettings, seedTracks } from '../content/seed.ts'
-import type { Day, ResponseRecord, Settings, SubmittedTrack, Track } from './types.ts'
+import type { Day, ResponseRecord, Settings, TaggedTrack, Track } from './types.ts'
 
 // Server-only. The service role key must never reach the browser.
 let client: SupabaseClient | null | undefined
@@ -111,17 +111,16 @@ export async function saveResponse(
   dayId: string,
   responseType: string,
   payload: Record<string, unknown>,
-  tracks: SubmittedTrack[],
-  tag: string | null,
+  tracks: TaggedTrack[],
 ): Promise<'saved' | 'duplicate'> {
   const rows = tracks.map((t, i) => ({
     day_id: dayId,
     source: 'HER' as const,
     source_name: null,
-    tag,
     sort_order: i,
     playlist_status: 'candidate',
     ...t,
+    tag: t.tag ?? null,
   }))
 
   const db = supabase()

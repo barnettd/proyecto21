@@ -51,6 +51,9 @@ export type Track = {
 /** A track as submitted by the participant, before it gets a row id. */
 export type SubmittedTrack = Pick<Track, 'title' | 'artist' | 'spotify_url'>
 
+/** A submitted track plus the semantic tag of the slot it came from (e.g. D1_RECARGA). */
+export type TaggedTrack = SubmittedTrack & { tag?: string | null }
+
 export type ResponseRecord = {
   id: string
   day_id: string

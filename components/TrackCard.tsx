@@ -1,7 +1,16 @@
 import { parseSpotifyTrackId } from '@/lib/spotify'
 import type { SubmittedTrack } from '@/lib/types'
 
-export function TrackCard({ track, label }: { track: SubmittedTrack; label?: string }) {
+export function TrackCard({
+  track,
+  label,
+  showLink = true,
+}: {
+  track: SubmittedTrack
+  label?: string
+  /** Hide when a bigger CTA already opens Spotify. */
+  showLink?: boolean
+}) {
   const id = track.spotify_url ? parseSpotifyTrackId(track.spotify_url) : null
   return (
     <figure className="track-card">
@@ -20,7 +29,7 @@ export function TrackCard({ track, label }: { track: SubmittedTrack; label?: str
           {track.artist && <span> — {track.artist}</span>}
         </p>
       )}
-      {track.spotify_url && (
+      {showLink && track.spotify_url && (
         <a className="track-link" href={track.spotify_url} target="_blank" rel="noopener noreferrer">
           Abrir en Spotify
         </a>

@@ -5,47 +5,84 @@ import { getResponse, loadContent, saveResponse } from '@/lib/content'
 import { notifyResponse } from '@/lib/notify'
 import { resolveActiveDay } from '@/lib/schedule'
 import { fetchTrackMeta, resolveSpotifyInput, spotifyTrackUrl } from '@/lib/spotify'
-import type { SubmittedTrack } from '@/lib/types'
+import type { Day, TaggedTrack } from '@/lib/types'
 
 export type SubmitState = { ok: boolean; error?: string }
 
 const clip = (v: FormDataEntryValue | null) => String(v ?? '').trim().slice(0, 200)
 
-/**
- * The day is resolved on the server, never taken from the form, so a stale
- * tab can't write into a day that is no longer active.
- */
-export async function submitSingleTrack(_prev: SubmitState, form: FormData): Promise<SubmitState> {
+/** The active day, resolved server-side so a stale tab can't write into a day that has passed. */
+async function activeDayOfType(type: Day['experience_type']): Promise<Day | null> {
   const { days, settings } = await loadContent()
   const active = resolveActiveDay(days, new Date(), settings.force_active_day)
-  if (active.kind !== 'day' || active.day.experience_type !== 'single_track') {
-    return { ok: false, error: 'Esto ya no está disponible.' }
-  }
-  const { day } = active
-  if (await getResponse(day.id)) return { ok: true }
+  return active.kind === 'day' && active.day.experience_type === type ? active.day : null
+}
 
-  let track: SubmittedTrack
-  const link = clip(form.get('spotify_url'))
-  if (link) {
-    const id = await resolveSpotifyInput(link)
-    if (!id) {
-      return { ok: false, error: 'Ese link no parece de una canción. En Spotify: Compartir → Copiar enlace.' }
-    }
-    track = { spotify_url: spotifyTrackUrl(id), ...(await fetchTrackMeta(id)) }
-  } else {
-    const title = clip(form.get('title'))
-    if (!title) return { ok: false, error: 'Falta la canción.' }
-    track = { spotify_url: null, title, artist: clip(form.get('artist')) || null }
-  }
-
-  const tag = typeof day.config_json.response_tag === 'string' ? day.config_json.response_tag : null
+async function persist(day: Day, responseType: string, tracks: TaggedTrack[]): Promise<SubmitState> {
   try {
-    const result = await saveResponse(day.id, 'single_track', { tracks: [track] }, [track], tag)
+    const result = await saveResponse(day.id, responseType, { tracks }, tracks)
     // Email after the response is sent, so a slow mail server never delays her.
-    if (result === 'saved') after(() => notifyResponse(day, [track]))
+    if (result === 'saved') after(() => notifyResponse(day, tracks))
     return { ok: true }
   } catch (err) {
     console.error('[p21] save failed', err)
     return { ok: false, error: 'No se pudo guardar. Probá de nuevo en un rato.' }
   }
+}
+
+export async function submitSingleTrack(_prev: SubmitState, form: FormData): Promise<SubmitState> {
+  const day = await activeDayOfType('single_track')
+  if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
+  if (await getResponse(day.id)) return { ok: true }
+
+  let track: TaggedTrack
+  const link = clip(form.get('spotify_url'))
+  const tag = typeof day.config_json.response_tag === 'string' ? day.config_json.response_tag : null
+  if (link) {
+    const id = await resolveSpotifyInput(link)
+    if (!id) {
+      return { ok: false, error: 'Ese link no parece de una canción. En Spotify: Compartir → Copiar enlace.' }
+    }
+    track = { spotify_url: spotifyTrackUrl(id), ...(await fetchTrackMeta(id)), tag }
+  } else {
+    const title = clip(form.get('title'))
+    if (!title) return { ok: false, error: 'Falta la canción.' }
+    track = { spotify_url: null, title, artist: clip(form.get('artist')) || null, tag }
+  }
+
+  return persist(day, 'single_track', [track])
+}
+
+type ModuleConfig = { name?: string; tag?: string }
+
+/** N tracks, one per configured module, each with its own tag. All required, no repeats. */
+export async function submitMultiTrack(_prev: SubmitState, form: FormData): Promise<SubmitState> {
+  const day = await activeDayOfType('multi_track')
+  if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
+  if (await getResponse(day.id)) return { ok: true }
+
+  const modules = (Array.isArray(day.config_json.modules) ? day.config_json.modules : []) as ModuleConfig[]
+  if (!modules.length) return { ok: false, error: 'No se pudo guardar. Probá de nuevo en un rato.' }
+
+  const links = modules.map((_, i) => clip(form.get(`track_${i}`)))
+  if (links.some((l) => !l)) return { ok: false, error: 'Faltan canciones: son tres.' }
+
+  const ids = await Promise.all(links.map(resolveSpotifyInput))
+  const missing = ids.findIndex((id) => !id)
+  if (missing >= 0) {
+    const name = modules[missing]?.name ?? String(missing + 1)
+    return { ok: false, error: `El link de ${name} no parece de una canción. En Spotify: Compartir → Copiar enlace.` }
+  }
+  if (new Set(ids).size !== ids.length) {
+    return { ok: false, error: 'Hay una canción repetida. Elegí tres distintas.' }
+  }
+
+  const metas = await Promise.all(ids.map((id) => fetchTrackMeta(id as string)))
+  const tracks: TaggedTrack[] = ids.map((id, i) => ({
+    spotify_url: spotifyTrackUrl(id as string),
+    ...metas[i],
+    tag: modules[i]?.tag ?? null,
+  }))
+
+  return persist(day, 'multi_track', tracks)
 }
