@@ -1,4 +1,4 @@
--- D2 — Solo una sobrevive (llave de 16 canciones (octavos)).
+-- D2 — Solo una sobrevive (llave de 16 canciones, octavos).
 -- También corrige el orden: la spec nueva pone la llave en D2 y Shower Songs en D3.
 -- Correr en Supabase → SQL Editor. Es repetible.
 
