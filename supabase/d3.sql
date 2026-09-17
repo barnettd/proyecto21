@@ -57,11 +57,11 @@ El shampoo queda oficialmente habilitado como micrófono.',
   status = 'ready'
 where id = 'd3';
 
--- PROVISORIA: canción de ducha de P.21, a reemplazar por la definitiva.
+-- Canción de ducha de P.21.
 delete from tracks where day_id = 'd3' and source = 'P21';
 insert into tracks (day_id, source, source_name, title, artist, spotify_url, tag, sort_order, playlist_status)
-values ('d3', 'P21', 'PROYECTO 21', 'Normal 1', 'Fito Paez',
-        'https://open.spotify.com/track/4FZwazC4ne86nEBD6i6ZdR', 'SHOWER', 0, 'candidate');
+values ('d3', 'P21', 'PROYECTO 21', 'Locuras Contigo', 'Rombai',
+        'https://open.spotify.com/track/7LrrGFdnRwEwOSS59qF05G', 'SHOWER', 0, 'candidate');
 
 select day_number, title, status, experience_type,
   to_char(activation_datetime at time zone 'America/Argentina/Buenos_Aires', 'DD/MM HH24:MI') as abre,

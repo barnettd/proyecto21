@@ -324,15 +324,15 @@ export const seedTracks: Track[] = [
   },
 ]
 
-// PROVISORIA: canción de ducha de P21, a definir.
+// Canción de ducha de P21.
 seedTracks.push({
   id: 't-d3-p21',
   day_id: 'd3',
   source: 'P21',
   source_name: 'PROYECTO 21',
-  title: 'Normal 1',
-  artist: 'Fito Paez',
-  spotify_url: 'https://open.spotify.com/track/4FZwazC4ne86nEBD6i6ZdR',
+  title: 'Locuras Contigo',
+  artist: 'Rombai',
+  spotify_url: 'https://open.spotify.com/track/7LrrGFdnRwEwOSS59qF05G',
   tag: 'SHOWER',
   sort_order: 0,
   playlist_status: 'candidate',
