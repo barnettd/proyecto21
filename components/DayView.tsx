@@ -37,6 +37,7 @@ export async function DayView({
           text?: string
           label_final?: string
           label_track?: string
+          track_cta?: string
           footer_note?: string
           track?: SubmittedTrack
         }
@@ -180,6 +181,7 @@ function Closing({
     text?: string
     label_final?: string
     label_track?: string
+    track_cta?: string
     footer_note?: string
     track?: SubmittedTrack
   }
@@ -197,6 +199,16 @@ function Closing({
         <>
           <p className="round-label">{closing.label_track ?? 'Propuesta P.21'}</p>
           <TrackCard track={closing.track} showLink={false} />
+          {closing.track.spotify_url && (
+            <a
+              className="submit submit-link"
+              href={closing.track.spotify_url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {closing.track_cta ?? 'ESCUCHAR EN SPOTIFY'}
+            </a>
+          )}
         </>
       )}
       {finalTrack && (

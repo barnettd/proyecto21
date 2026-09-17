@@ -99,7 +99,7 @@ update days
 set config_json = jsonb_set(
   config_json,
   '{closing,track}',
-  $json${ "title": "El Mundo Entero", "artist": "Ruben Rada, Fito Paez", "spotify_url": "https://open.spotify.com/track/4LYffEwKS6i6peurdkR3c9" }$json$::jsonb
+  $json${"title": "Wish You Were Here", "artist": "Pink Floyd", "spotify_url": "https://open.spotify.com/track/6mFkJmJqdDVQ1REhVfGgd1"}$json$::jsonb
 )
 where id = 'd2';
 

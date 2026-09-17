@@ -197,13 +197,13 @@ const copy: Record<number, Partial<Day>> = {
         title: 'Bonus Track',
         text: 'Gracias por tu contribución en P.21.\nPara cerrar la misión, te regalo la escucha de otra canción y te propongo que pienses cuál sería tu próxima elección. No tenés que decidir.',
         label_final: 'Tu Top 1',
-        label_track: 'Propuesta P.21',
+        label_track: 'Escuchala con auriculares',
+        track_cta: 'ESCUCHAR EN SPOTIFY',
         footer_note: 'Seguí cada paso cuando aparezca.',
-        // PROVISORIA: canción de cierre, a definir.
         track: {
-          title: 'El Mundo Entero',
-          artist: 'Ruben Rada, Fito Paez',
-          spotify_url: 'https://open.spotify.com/track/4LYffEwKS6i6peurdkR3c9',
+          title: 'Wish You Were Here',
+          artist: 'Pink Floyd',
+          spotify_url: 'https://open.spotify.com/track/6mFkJmJqdDVQ1REhVfGgd1',
         },
       },
       deadline_note: 'Tenés hasta las 23:59 de hoy.',
