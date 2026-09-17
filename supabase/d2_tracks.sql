@@ -11,84 +11,84 @@ set config_json = jsonb_set(
   '{tracks}',
   $json$[
     {
-        "title": "Don't Look Back In Anger",
-        "artist": "Oasis",
-        "spotify_url": "https://open.spotify.com/track/7ppPZa3TRUSGKaks9wH7VT"
+      "title": "Ojos de Café",
+      "artist": "BALTA",
+      "spotify_url": "https://open.spotify.com/track/4Kr8Ci4zBhvCNbGrGXCbAm"
     },
     {
-        "title": "Angie",
-        "artist": "The Rolling Stones",
-        "spotify_url": "https://open.spotify.com/track/07OxAhTrD4gIOuxzB2E1QD"
+      "title": "No Es Mi Primera Vez",
+      "artist": "Alfonsina",
+      "spotify_url": "https://open.spotify.com/track/2J2PdM4LtvR96pkGQrpJFi"
     },
     {
-        "title": "Ironic",
-        "artist": "Alanis Morissette",
-        "spotify_url": "https://open.spotify.com/track/4oGTdOClZUxcM2H3UmXlwL"
+      "title": "Don't Speak",
+      "artist": "No Doubt",
+      "spotify_url": "https://open.spotify.com/track/6urCAbunOQI4bLhmGpX7iS"
     },
     {
-        "title": "Zombie",
-        "artist": "The Cranberries",
-        "spotify_url": "https://open.spotify.com/track/2IZZqH4K02UIYg5EohpNHF"
+      "title": "Zombie",
+      "artist": "The Cranberries",
+      "spotify_url": "https://open.spotify.com/track/2IZZqH4K02UIYg5EohpNHF"
     },
     {
-        "title": "Wake Me Up When September Ends",
-        "artist": "Green Day",
-        "spotify_url": "https://open.spotify.com/track/3ZffCQKLFLUvYM59XKLbVm"
+      "title": "Todo se transforma",
+      "artist": "Jorge Drexler",
+      "spotify_url": "https://open.spotify.com/track/4YEU9N2XAE0DfUwxWI5ijA"
     },
     {
-        "title": "I Belong To You",
-        "artist": "Lenny Kravitz",
-        "spotify_url": "https://open.spotify.com/track/2zee8Zcesqwnnwliw2Jy8M"
+      "title": "Depende",
+      "artist": "Jarabe De Palo",
+      "spotify_url": "https://open.spotify.com/track/6aaPUBUFw9KEW1p1inVQv9"
     },
     {
-        "title": "No Es Mi Primera Vez",
-        "artist": "Alfonsina",
-        "spotify_url": "https://open.spotify.com/track/2J2PdM4LtvR96pkGQrpJFi"
+      "title": "Don't Look Back In Anger",
+      "artist": "Oasis",
+      "spotify_url": "https://open.spotify.com/track/7ppPZa3TRUSGKaks9wH7VT"
     },
     {
-        "title": "Ojos de Café",
-        "artist": "BALTA",
-        "spotify_url": "https://open.spotify.com/track/4Kr8Ci4zBhvCNbGrGXCbAm"
+      "title": "Angie",
+      "artist": "The Rolling Stones",
+      "spotify_url": "https://open.spotify.com/track/07OxAhTrD4gIOuxzB2E1QD"
     },
     {
-        "title": "Sea",
-        "artist": "Jorge Drexler",
-        "spotify_url": "https://open.spotify.com/track/6z98uNlBjkisBUnv5zMQWE"
+      "title": "Tu misterioso alguien",
+      "artist": "Miranda!",
+      "spotify_url": "https://open.spotify.com/track/3OfS5conn3s0mlzgVTG1Sf"
     },
     {
-        "title": "Depende",
-        "artist": "Jarabe De Palo",
-        "spotify_url": "https://open.spotify.com/track/6aaPUBUFw9KEW1p1inVQv9"
+      "title": "Obsesionario en la Mayor",
+      "artist": "Tan Bionica",
+      "spotify_url": "https://open.spotify.com/track/5yI4trOBy1XAiAFWTX1LGg"
     },
     {
-        "title": "Tu misterioso alguien",
-        "artist": "Miranda!",
-        "spotify_url": "https://open.spotify.com/track/3OfS5conn3s0mlzgVTG1Sf"
+      "title": "Wake Me Up When September Ends",
+      "artist": "Green Day",
+      "spotify_url": "https://open.spotify.com/track/3ZffCQKLFLUvYM59XKLbVm"
     },
     {
-        "title": "Obsesionario en la Mayor",
-        "artist": "Tan Bionica",
-        "spotify_url": "https://open.spotify.com/track/5yI4trOBy1XAiAFWTX1LGg"
+      "title": "I Belong To You",
+      "artist": "Lenny Kravitz",
+      "spotify_url": "https://open.spotify.com/track/2zee8Zcesqwnnwliw2Jy8M"
     },
     {
-        "title": "Corazón partío",
-        "artist": "Alejandro Sanz",
-        "spotify_url": "https://open.spotify.com/track/0wQCKR9OFjYu5Kzrk7WivJ"
+      "title": "Corazón partío",
+      "artist": "Alejandro Sanz",
+      "spotify_url": "https://open.spotify.com/track/0wQCKR9OFjYu5Kzrk7WivJ"
     },
     {
-        "title": "Y, ¿Si fuera ella?",
-        "artist": "Alejandro Sanz",
-        "spotify_url": "https://open.spotify.com/track/0mL5t2lk3Wo9SZanWGVrKx"
+      "title": "Y, ¿Si fuera ella?",
+      "artist": "Alejandro Sanz",
+      "spotify_url": "https://open.spotify.com/track/0mL5t2lk3Wo9SZanWGVrKx"
     },
     {
-        "title": "Cuando nadie me ve (Unplugged)",
-        "artist": "Alejandro Sanz",
-        "spotify_url": "https://open.spotify.com/track/6iaw07BTiLrHVT2OQDgqiD"
+      "title": "Cuando nadie me ve (Unplugged)",
+      "artist": "Alejandro Sanz",
+      "spotify_url": "https://open.spotify.com/track/6iaw07BTiLrHVT2OQDgqiD"
     },
     {
-        "title": "Brillante Sobre El Mic (En Vivo)",
-        "artist": "Fito Paez",
-        "spotify_url": "https://open.spotify.com/track/47byqeud1VrnxcKZkPSu4M"
+      "title": "Brillante Sobre El Mic (En Vivo)",
+      "artist": "Fito Paez",
+      "spotify_url": "https://open.spotify.com/track/47byqeud1VrnxcKZkPSu4M"
     }
 ]$json$::jsonb
 )
@@ -103,7 +103,7 @@ set config_json = jsonb_set(
 )
 where id = 'd2';
 
--- Control: deben aparecer las ocho, en orden, y la de cierre.
+-- Control: deben aparecer las dieciséis, en orden, y la de cierre.
 select
   jsonb_array_length(config_json->'tracks') as cuantas,
   (select string_agg(t->>'title', ' · ' order by ord)

@@ -1,4 +1,4 @@
--- D2 — Solo una sobrevive (llave de 8 canciones).
+-- D2 — Solo una sobrevive (llave de 16 canciones (octavos)).
 -- También corrige el orden: la spec nueva pone la llave en D2 y Shower Songs en D3.
 -- Correr en Supabase → SQL Editor. Es repetible.
 
@@ -38,6 +38,36 @@ Gracias por tu contribución en P.21.',
   "deadline_note": "Tenés hasta las 23:59 de hoy.",
   "tracks": [
     {
+      "title": "Ojos de Café",
+      "artist": "BALTA",
+      "spotify_url": "https://open.spotify.com/track/4Kr8Ci4zBhvCNbGrGXCbAm"
+    },
+    {
+      "title": "No Es Mi Primera Vez",
+      "artist": "Alfonsina",
+      "spotify_url": "https://open.spotify.com/track/2J2PdM4LtvR96pkGQrpJFi"
+    },
+    {
+      "title": "Don't Speak",
+      "artist": "No Doubt",
+      "spotify_url": "https://open.spotify.com/track/6urCAbunOQI4bLhmGpX7iS"
+    },
+    {
+      "title": "Zombie",
+      "artist": "The Cranberries",
+      "spotify_url": "https://open.spotify.com/track/2IZZqH4K02UIYg5EohpNHF"
+    },
+    {
+      "title": "Todo se transforma",
+      "artist": "Jorge Drexler",
+      "spotify_url": "https://open.spotify.com/track/4YEU9N2XAE0DfUwxWI5ijA"
+    },
+    {
+      "title": "Depende",
+      "artist": "Jarabe De Palo",
+      "spotify_url": "https://open.spotify.com/track/6aaPUBUFw9KEW1p1inVQv9"
+    },
+    {
       "title": "Don't Look Back In Anger",
       "artist": "Oasis",
       "spotify_url": "https://open.spotify.com/track/7ppPZa3TRUSGKaks9wH7VT"
@@ -48,14 +78,14 @@ Gracias por tu contribución en P.21.',
       "spotify_url": "https://open.spotify.com/track/07OxAhTrD4gIOuxzB2E1QD"
     },
     {
-      "title": "Ironic",
-      "artist": "Alanis Morissette",
-      "spotify_url": "https://open.spotify.com/track/4oGTdOClZUxcM2H3UmXlwL"
+      "title": "Tu misterioso alguien",
+      "artist": "Miranda!",
+      "spotify_url": "https://open.spotify.com/track/3OfS5conn3s0mlzgVTG1Sf"
     },
     {
-      "title": "Zombie",
-      "artist": "The Cranberries",
-      "spotify_url": "https://open.spotify.com/track/2IZZqH4K02UIYg5EohpNHF"
+      "title": "Obsesionario en la Mayor",
+      "artist": "Tan Bionica",
+      "spotify_url": "https://open.spotify.com/track/5yI4trOBy1XAiAFWTX1LGg"
     },
     {
       "title": "Wake Me Up When September Ends",
@@ -66,36 +96,6 @@ Gracias por tu contribución en P.21.',
       "title": "I Belong To You",
       "artist": "Lenny Kravitz",
       "spotify_url": "https://open.spotify.com/track/2zee8Zcesqwnnwliw2Jy8M"
-    },
-    {
-      "title": "No Es Mi Primera Vez",
-      "artist": "Alfonsina",
-      "spotify_url": "https://open.spotify.com/track/2J2PdM4LtvR96pkGQrpJFi"
-    },
-    {
-      "title": "Ojos de Café",
-      "artist": "BALTA",
-      "spotify_url": "https://open.spotify.com/track/4Kr8Ci4zBhvCNbGrGXCbAm"
-    },
-    {
-      "title": "Sea",
-      "artist": "Jorge Drexler",
-      "spotify_url": "https://open.spotify.com/track/6z98uNlBjkisBUnv5zMQWE"
-    },
-    {
-      "title": "Depende",
-      "artist": "Jarabe De Palo",
-      "spotify_url": "https://open.spotify.com/track/6aaPUBUFw9KEW1p1inVQv9"
-    },
-    {
-      "title": "Tu misterioso alguien",
-      "artist": "Miranda!",
-      "spotify_url": "https://open.spotify.com/track/3OfS5conn3s0mlzgVTG1Sf"
-    },
-    {
-      "title": "Obsesionario en la Mayor",
-      "artist": "Tan Bionica",
-      "spotify_url": "https://open.spotify.com/track/5yI4trOBy1XAiAFWTX1LGg"
     },
     {
       "title": "Corazón partío",
