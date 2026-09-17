@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { Fragment, useActionState, useEffect, useRef, useState } from 'react'
 import { submitBracket, type SubmitState } from '@/app/actions'
-import { activeMatchup, bracketWinner, buildBracket, MATCHUP_COUNT, type Matchup } from '@/lib/bracket'
+import { activeMatchup, bracketWinner, buildBracket, matchupCount, roundCount, type Matchup } from '@/lib/bracket'
 import { Countdown } from '@/components/Countdown'
 import { parseSpotifyTrackId } from '@/lib/spotify'
 
@@ -18,8 +18,10 @@ export type BracketConfig = {
   select_label: string
   locked_label?: string
   progress_label?: string
-  rounds?: { qf?: string; sf?: string; final?: string }
-  interstitials?: { after_qf?: Interstitial; after_sf?: Interstitial }
+  /** One label per round; falls back to 'Ronda N'. */
+  rounds?: string[]
+  /** One breather per round, shown after finishing it (the final has none). */
+  interstitials?: Interstitial[]
   winner: { title: string; bridge: string }
   wildcard: { title: string; prompt: string; cta: string; placeholder?: string }
   bonus: { title: string; text: string; select_label?: string }
@@ -29,9 +31,7 @@ export type BracketConfig = {
 type Step = 'entry' | 'bracket' | 'wildcard' | 'bonus'
 type Picks = Array<number | null>
 
-const emptyPicks = (): Picks => Array(MATCHUP_COUNT).fill(null)
-/** Decisions that close a round: after these, a breather screen appears. */
-const ROUND_ENDS: Record<number, 'after_qf' | 'after_sf'> = { 3: 'after_qf', 5: 'after_sf' }
+const emptyPicks = (count: number): Picks => Array(count).fill(null)
 
 export function BracketFlow({
   dayId,
@@ -50,10 +50,13 @@ export function BracketFlow({
   const router = useRouter()
   const [state, action, pending] = useActionState<SubmitState, FormData>(submitBracket, { ok: false })
   const [step, setStep] = useState<Step>('entry')
-  const [picks, setPicks] = useState<Picks>(emptyPicks)
+  const trackCount = config.tracks.length
+  const total = matchupCount(trackCount)
+  const rounds = roundCount(trackCount)
+  const [picks, setPicks] = useState<Picks>(() => emptyPicks(total))
   const [wildcard, setWildcard] = useState('')
   const [bonusPick, setBonusPick] = useState<'survivor' | 'wildcard' | null>(null)
-  const [pause, setPause] = useState<'after_qf' | 'after_sf' | null>(null)
+  const [pause, setPause] = useState<number | null>(null)
   const activeRef = useRef<HTMLDivElement | null>(null)
 
   const draftKey = `p21-draft-${dayId}`
@@ -65,7 +68,7 @@ export function BracketFlow({
       const saved = localStorage.getItem(draftKey)
       if (!saved) return
       const p = JSON.parse(saved) as { step?: Step; picks?: Picks; wildcard?: string }
-      if (Array.isArray(p.picks) && p.picks.length === MATCHUP_COUNT) setPicks(p.picks)
+      if (Array.isArray(p.picks) && p.picks.length === total) setPicks(p.picks)
       if (typeof p.wildcard === 'string') setWildcard(p.wildcard)
       if (p.step === 'bracket' || p.step === 'wildcard' || p.step === 'bonus') setStep(p.step)
     } catch {
@@ -73,7 +76,7 @@ export function BracketFlow({
     } finally {
       setRestored(true)
     }
-  }, [draftKey])
+  }, [draftKey, total])
 
   useEffect(() => {
     if (!restored) return
@@ -94,8 +97,8 @@ export function BracketFlow({
     router.refresh()
   }, [state.ok, draftKey, router])
 
-  const active = activeMatchup(picks)
-  const survivorIndex = bracketWinner(picks)
+  const active = activeMatchup(picks, trackCount)
+  const survivorIndex = bracketWinner(picks, trackCount)
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
@@ -113,12 +116,15 @@ export function BracketFlow({
 
   const choose = (matchup: number, track: number) => {
     setPicks((prev) => prev.map((p, i) => (i === matchup ? track : i > matchup ? null : p)))
-    const end = ROUND_ENDS[matchup]
-    if (end && config.interstitials?.[end]) setPause(end)
+    // Closing a round earns a breather, except after the final.
+    const bracket = buildBracket(picks, trackCount)
+    const round = bracket[matchup].round
+    const lastOfRound = bracket.filter((m) => m.round === round).at(-1)?.index
+    if (matchup === lastOfRound && round < rounds - 1 && config.interstitials?.[round]) setPause(round)
   }
 
   const reopen = () => {
-    setPicks(emptyPicks())
+    setPicks(emptyPicks(total))
     setWildcard('')
     setBonusPick(null)
     setPause(null)
@@ -128,8 +134,8 @@ export function BracketFlow({
   /** Preview shortcut: resolve every matchup in favour of the first slot, and stub a wildcard. */
   const DEMO_WILDCARD = 'https://open.spotify.com/track/1TfqLAPs4K3s2rJMoCokcS'
   const skipToEnd = (target: Step) => {
-    const filled: Picks = emptyPicks()
-    for (let i = 0; i < MATCHUP_COUNT; i++) filled[i] = buildBracket(filled)[i].a
+    const filled: Picks = emptyPicks(total)
+    for (let i = 0; i < total; i++) filled[i] = buildBracket(filled, trackCount)[i].a
     setPicks(filled)
     setPause(null)
     if (target === 'bonus' && !parseSpotifyTrackId(wildcard)) setWildcard(DEMO_WILDCARD)
@@ -171,13 +177,12 @@ export function BracketFlow({
 
   if (step === 'bracket') {
     const decided = picks.filter((p) => p != null).length
-    const bracket = buildBracket(picks)
-    const rounds: Array<[string, Matchup[]]> = [
-      [config.rounds?.qf ?? 'Cuartos', bracket.slice(0, 4)],
-      [config.rounds?.sf ?? 'Semis', bracket.slice(4, 6)],
-      [config.rounds?.final ?? 'Final', bracket.slice(6)],
-    ]
-    const breather = pause ? config.interstitials?.[pause] : null
+    const bracket = buildBracket(picks, trackCount)
+    const byRound: Array<[string, Matchup[]]> = Array.from({ length: rounds }, (_, r) => [
+      config.rounds?.[r] ?? `Ronda ${r + 1}`,
+      bracket.filter((m) => m.round === r),
+    ])
+    const breather = pause != null ? config.interstitials?.[pause] : null
 
     return (
       <>
@@ -185,8 +190,8 @@ export function BracketFlow({
           <div className="bracket-hud">
             <span className="hud-progress">
               {(config.progress_label ?? 'Decisión {n} / {total}')
-                .replace('{n}', String(Math.min(decided + 1, MATCHUP_COUNT)))
-                .replace('{total}', String(MATCHUP_COUNT))}
+                .replace('{n}', String(Math.min(decided + 1, total)))
+                .replace('{total}', String(total))}
             </span>
             <Countdown
               target={deadlineAt}
@@ -207,7 +212,7 @@ export function BracketFlow({
           ) : (
             <>
               {config.instructions && <p className="bracket-instructions">{config.instructions}</p>}
-              {rounds.map(([label, matchups]) => (
+              {byRound.map(([label, matchups]) => (
                 <div className="round" key={label}>
                   <p className="round-label">{label}</p>
                   {matchups.map((m) => (

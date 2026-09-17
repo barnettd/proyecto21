@@ -143,7 +143,7 @@ export async function submitBracket(_prev: SubmitState, form: FormData): Promise
   const bonus = String(form.get('bonus') ?? '')
   if (bonus !== 'survivor' && bonus !== 'wildcard') return { ok: false, error: 'Falta la elección final.' }
 
-  const survivor = configTracks[checked.picks[6]]
+  const survivor = configTracks[checked.picks[checked.picks.length - 1]]
   const survivorTrack: TaggedTrack = {
     spotify_url: survivor.spotify_url ?? null,
     title: survivor.title ?? null,
@@ -161,7 +161,7 @@ export async function submitBracket(_prev: SubmitState, form: FormData): Promise
   const finalTrack = bonus === 'survivor' ? survivorTrack : wildcardTrack
 
   return persist(day, 'bracket', [survivorTrack, wildcardTrack], {
-    decisions: decisionLog(checked.picks),
+    decisions: decisionLog(checked.picks, configTracks.length),
     bonus_duel: { survivor: survivorTrack, wildcard: wildcardTrack, winner: bonus },
     final_track: finalTrack,
   })
