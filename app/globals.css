@@ -1383,12 +1383,18 @@ body:has(.preview-days) .bracket-hud {
   padding: calc(var(--gutter) * 2 + env(safe-area-inset-bottom)) var(--gutter);
 }
 
+.scene-words {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: scene-in 2s 0.6s ease-out both;
+}
+
 .scene-text {
   margin: 0;
   font-size: 1.0625rem;
   line-height: 1.6;
   color: var(--blanco);
-  animation: scene-in 2s 0.6s ease-out both;
 }
 
 .scene-audio {

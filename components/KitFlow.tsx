@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useActionState, useEffect, useState } from 'react'
 import { submitKit, type SubmitState } from '@/app/actions'
@@ -10,7 +11,7 @@ import type { SubmittedTrack } from '@/lib/types'
 
 export type Compartment = { label?: string; tag?: string; title: string; guide: string; cta?: string; track: SubmittedTrack }
 export type KitConfig = {
-  entry: { title: string; text: string; cta: string }
+  entry: { title: string; text: string; cta: string; image?: string }
   progress_label?: string
   compartments: Compartment[]
   contribution: {
@@ -107,6 +108,11 @@ export function KitFlow({
         <section className="step step-entry">
           <h1 className="bracket-title">{config.entry.title}</h1>
           <p className="prose">{config.entry.text}</p>
+          {config.entry.image && (
+            <div className="banner">
+              <Image src={config.entry.image} alt="" width={1086} height={1448} sizes="(max-width: 40rem) 100vw, 34rem" />
+            </div>
+          )}
           <button type="button" className="submit" onClick={() => setIndex(0)}>
             {config.entry.cta}
           </button>

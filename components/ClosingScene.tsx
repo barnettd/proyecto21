@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
+import { Wordmark } from '@/components/Brand'
 
 export type ClosingScene = {
   /** Imagen a sangre detrás del texto. */
@@ -54,7 +55,10 @@ export function ClosingScene({ scene }: { scene: ClosingScene }) {
         </div>
       )}
       <div className="scene-body">
-        <p className="scene-text">{scene.text}</p>
+        <div className="scene-words">
+          <Wordmark size="sm" live />
+          <p className="scene-text">{scene.text}</p>
+        </div>
         {scene.audio && (
           <>
             <audio ref={audioRef} src={scene.audio} loop preload="auto" />
