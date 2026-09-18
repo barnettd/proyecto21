@@ -76,15 +76,14 @@ const copy: Record<number, Partial<Day>> = {
       deadline_note: 'Tenés hasta las 23:59 de hoy.',
       closing: {
         title: 'RECIBIDA.',
-        text: 'A veces alcanza con elegir la canción correcta.\n\nVa una del otro lado: esta dice algo por mí.',
+        text: 'A veces alcanza con elegir la canción correcta.\n\nEn ese sentido, hoy quiero darte esta. Escuchala con auriculares.',
         label_track: 'De mi lado',
         track_cta: 'ESCUCHAR EN SPOTIFY',
         label_final: 'La tuya',
-        // PROVISORIA: la canción que le devolvemos, a definir.
         track: {
-          title: 'Say Something',
-          artist: 'A Great Big World, Christina Aguilera',
-          spotify_url: 'https://open.spotify.com/track/6Vc5wAMmXdKIAM7WUoEb7N',
+          title: 'Música para Camaleones',
+          artist: 'Fito Paez',
+          spotify_url: 'https://open.spotify.com/track/0AFnEocOUB6yPQTGeFhOye',
         },
       },
     },
