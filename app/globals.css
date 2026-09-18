@@ -1340,3 +1340,124 @@ body:has(.preview-days) .bracket-hud {
   flex-direction: column;
   gap: 0.6rem;
 }
+
+/* ── D5: la escena de cierre ─────────────────────────────────────
+   Ocupa la pantalla entera: imagen a sangre, una línea, y música. */
+.shell-scene {
+  max-width: none;
+  padding: 0;
+}
+
+.scene {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  animation: scene-in 1.4s ease-out both;
+}
+
+.scene-image {
+  position: absolute;
+  inset: 0;
+}
+
+.scene-image img {
+  object-fit: cover;
+}
+
+/* Que el texto se lea sobre cualquier foto. */
+.scene-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(17, 17, 17, 0.35) 0%, rgba(17, 17, 17, 0.9) 100%);
+}
+
+.scene-body {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: calc(var(--gutter) * 2 + env(safe-area-inset-bottom)) var(--gutter);
+}
+
+.scene-text {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--blanco);
+  animation: scene-in 2s 0.6s ease-out both;
+}
+
+.scene-audio {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid rgba(248, 248, 246, 0.25);
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.4);
+  color: var(--blanco);
+  font: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+.scene-audio.is-waiting {
+  border-color: var(--ambar);
+  color: var(--ambar);
+}
+
+.scene-audio-icon {
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+@keyframes scene-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene,
+  .scene-text {
+    animation: none;
+  }
+}
+
+/* Los campos de más del kit */
+.kit-track {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.kit-track .picker {
+  width: 100%;
+}
+
+.kit-remove {
+  font-size: 0.75rem;
+  color: var(--gris);
+}
+
+.kit-more {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.kit-more-text {
+  margin: 0;
+}

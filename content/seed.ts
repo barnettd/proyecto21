@@ -108,6 +108,7 @@ const copy: Record<number, Partial<Day>> = {
       compartments: [
         {
           label: 'Compartimento 01',
+          tag: 'D5_RECOVERY_01',
           title: 'PARA BAJAR EL RUIDO',
           guide: 'Para cuando todo está un poco demasiado fuerte.',
           cta: 'SIGUIENTE',
@@ -115,6 +116,7 @@ const copy: Record<number, Partial<Day>> = {
         },
         {
           label: 'Compartimento 02',
+          tag: 'D5_RECOVERY_02',
           title: 'PARA QUEDARSE QUIETA',
           guide: 'Para cuando no hace falta arreglar nada.',
           cta: 'SIGUIENTE',
@@ -122,6 +124,7 @@ const copy: Record<number, Partial<Day>> = {
         },
         {
           label: 'Compartimento 03',
+          tag: 'D5_RECOVERY_03',
           title: 'PARA CUANDO EL DÍA YA FUE SUFICIENTE',
           guide: 'Para cerrar la puerta mentalmente y dejarlo ahí.',
           cta: 'SIGUIENTE',
@@ -131,9 +134,17 @@ const copy: Record<number, Partial<Day>> = {
       contribution: {
         title: 'FALTA UNA.',
         text: 'Si este kit fuera tuyo, ¿qué canción debería estar acá?',
-        cta: 'AGREGAR AL KIT',
+        more_text: 'Si tenés más, mejor.',
+        more_cta: 'AGREGAR OTRA',
+        max: 5,
+        cta: 'COMPLETAR',
       },
       deadline_note: 'Tenés hasta las 23:59 de hoy.',
+      // PROVISORIOS: falta la imagen y el mp3 del cierre.
+      closing_scene: {
+        text: 'Seguí el próximo paso cuando aparezca.',
+        audio_label: 'Poner música',
+      },
     },
   },
   3: {

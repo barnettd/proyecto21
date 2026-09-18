@@ -4,7 +4,7 @@
 -- servidor: nunca llega al navegador.
 
 update days set
-  title = "Crucigrama",
+  title = 'Crucigrama',
   experience_type = 'printable',
   completion_text = 'Recibida.
 A veces alcanza con elegir la canción correcta.',

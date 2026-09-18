@@ -3,7 +3,7 @@ import { Footer, Seal, Wordmark } from '@/components/Brand'
 import { Countdown } from '@/components/Countdown'
 import { DayView } from '@/components/DayView'
 import { PreviewDayBar, type PreviewDay } from '@/components/PreviewDayBar'
-import { loadContent } from '@/lib/content'
+import { getResponse, loadContent } from '@/lib/content'
 import { hasContent } from '@/lib/day-content'
 import { resolveActiveDay } from '@/lib/schedule'
 
@@ -50,21 +50,26 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   }
 
   const { day } = active
+  // La escena de cierre ocupa la pantalla entera: sin sello arriba ni día abajo.
+  const scene = Boolean((day.config_json.closing_scene as { text?: string } | undefined)?.text)
+  const sceneOn = scene && Boolean(await getResponse(day.id))
   const nextOpensAt =
     days
       .filter((d) => d.status !== 'disabled' && new Date(d.activation_datetime) > new Date())
       .sort((a, b) => new Date(a.activation_datetime).getTime() - new Date(b.activation_datetime).getTime())[0]
       ?.activation_datetime ?? null
   return (
-    <div className="shell">
+    <div className={`shell${sceneOn ? ' shell-scene' : ''}`}>
       {preview && <PreviewDayBar days={previewDays} current={currentDay} />}
-      <header className="shell-header">
-        <Seal size="xs" />
-      </header>
+      {!sceneOn && (
+        <header className="shell-header">
+          <Seal size="xs" />
+        </header>
+      )}
       <main className="shell-main">
         <DayView day={day} nextOpensAt={nextOpensAt} serverNow={Date.now()} />
       </main>
-      <Footer dayNumber={day.day_number} />
+      {!sceneOn && <Footer dayNumber={day.day_number} />}
     </div>
   )
 }

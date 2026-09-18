@@ -218,9 +218,35 @@ export async function submitPrintable(_prev: SubmitState, form: FormData): Promi
   }))
 }
 
-/** D5: three tracks from P21, then one from her to complete the kit. */
+const MAX_KIT_TRACKS = 5
+
+/** D5: three tracks from P21, then between one and five from her. */
 export async function submitKit(_prev: SubmitState, form: FormData): Promise<SubmitState> {
-  return submitOneTrack('track_list', 'track_list', form, (day) => ({
-    kit: Array.isArray(day.config_json.compartments) ? day.config_json.compartments : [],
+  const day = await activeDayOfType('track_list', form)
+  if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
+  if (await getResponse(day.id)) return { ok: true }
+
+  // Los campos opcionales vacíos no cuentan: se descartan antes de validar.
+  const links = Array.from({ length: MAX_KIT_TRACKS }, (_, i) => clip(form.get(`track_${i}`))).filter(Boolean)
+  if (!links.length) return { ok: false, error: 'Falta la canción.' }
+
+  const ids = await Promise.all(links.map(resolveSpotifyInput))
+  const missing = ids.findIndex((id) => !id)
+  if (missing >= 0) {
+    return { ok: false, error: 'Uno de los links no parece de una canción. En Spotify: Compartir → Copiar enlace.' }
+  }
+  if (new Set(ids).size !== ids.length) return { ok: false, error: 'Hay una canción repetida.' }
+
+  const tagFor = (i: number) => `D5_RECOVERY_USER_${String(i + 1).padStart(2, '0')}`
+  const metas = await Promise.all(ids.map((id) => fetchTrackMeta(id as string)))
+  const tracks: TaggedTrack[] = ids.map((id, i) => ({
+    spotify_url: spotifyTrackUrl(id as string),
+    ...metas[i],
+    tag: tagFor(i),
   }))
+
+  return persist(day, 'track_list', tracks, {
+    kit: Array.isArray(day.config_json.compartments) ? day.config_json.compartments : [],
+    track_count: tracks.length,
+  })
 }

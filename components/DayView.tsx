@@ -2,6 +2,7 @@ import { BracketFlow, type BracketConfig } from '@/components/BracketFlow'
 import { KitFlow, type KitConfig } from '@/components/KitFlow'
 import { LineDot, Seal, Wordmark } from '@/components/Brand'
 import { PrintableFlow, type PrintableConfig } from '@/components/PrintableFlow'
+import { ClosingScene, type ClosingScene as Scene } from '@/components/ClosingScene'
 import { Countdown } from '@/components/Countdown'
 import { MultiTrackFlow, type FlowConfig } from '@/components/MultiTrackFlow'
 import { PreviewReset } from '@/components/PreviewReset'
@@ -31,6 +32,16 @@ export async function DayView({
   const preview = process.env.NODE_ENV !== 'production'
 
   if (response) {
+    const scene = cfg.closing_scene as Scene | undefined
+    if (scene?.text) {
+      return (
+        <>
+          <ClosingScene scene={scene} />
+          {preview && <PreviewReset dayId={day.id} />}
+        </>
+      )
+    }
+
     const closing = cfg.closing as
       | {
           title?: string

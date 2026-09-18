@@ -51,9 +51,9 @@ export function TrackPicker({
           allow="encrypted-media"
           loading="lazy"
         />
-      ) : (
+      ) : hint.trim() ? (
         <p className="field-hint">{hint}</p>
-      )}
+      ) : null}
     </div>
   )
 }
