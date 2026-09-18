@@ -38,6 +38,8 @@ export async function DayView({
           label_final?: string
           label_track?: string
           track_cta?: string
+          emphasis?: string
+          hers_first?: boolean
           footer_note?: string
           track?: SubmittedTrack
         }
@@ -191,6 +193,10 @@ function Closing({
     label_final?: string
     label_track?: string
     track_cta?: string
+    /** Renglón destacado entre el texto y la canción. */
+    emphasis?: string
+    /** Primero la que mandó ella, después la de P21. */
+    hers_first?: boolean
     footer_note?: string
     track?: SubmittedTrack
   }
@@ -199,39 +205,47 @@ function Closing({
   serverNow: number
   availabilityLabel: string
 }) {
+  const hers = finalTrack && (
+    <>
+      {closing.label_final && <p className="round-label">{closing.label_final}</p>}
+      <TrackCard track={finalTrack} showLink={false} />
+    </>
+  )
+
+  const mine = closing.track && (
+    <>
+      {closing.label_track !== '' && <p className="round-label">{closing.label_track ?? 'Propuesta P.21'}</p>}
+      {closing.text && <p className="prose">{closing.text}</p>}
+      {closing.emphasis && <p className="prose closing-emphasis">{closing.emphasis}</p>}
+      <TrackCard track={closing.track} showLink={false} />
+      {closing.track.spotify_url && (
+        <a className="submit submit-link" href={closing.track.spotify_url} target="_blank" rel="noopener noreferrer">
+          {closing.track_cta ?? 'ESCUCHAR EN SPOTIFY'}
+        </a>
+      )}
+    </>
+  )
+
   return (
     <section className="step closing" aria-live="polite">
       <Wordmark size="lg" live />
       {closing.title && <h2 className="bracket-title">{closing.title}</h2>}
-      {closing.text && <p className="prose">{closing.text}</p>}
-      {closing.track && (
+      {/* Sin canción de P21, el texto va suelto arriba. */}
+      {closing.text && !closing.track && <p className="prose">{closing.text}</p>}
+      {closing.hers_first ? (
         <>
-          <p className="round-label">{closing.label_track ?? 'Propuesta P.21'}</p>
-          <TrackCard track={closing.track} showLink={false} />
-          {closing.track.spotify_url && (
-            <a
-              className="submit submit-link"
-              href={closing.track.spotify_url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {closing.track_cta ?? 'ESCUCHAR EN SPOTIFY'}
-            </a>
-          )}
+          {hers}
+          {mine}
         </>
-      )}
-      {finalTrack && (
-        <>
-          <p className="round-label">{closing.label_final ?? 'Tu Top 1'}</p>
-          <TrackCard track={finalTrack} showLink={false} />
-        </>
-      )}
-      {closing.footer_note ? (
-        <p className="prose muted closing-note">{closing.footer_note}</p>
       ) : (
-        nextOpensAt && (
-          <Countdown target={nextOpensAt} serverNow={serverNow} label={availabilityLabel} variant="inline" />
-        )
+        <>
+          {mine}
+          {hers}
+        </>
+      )}
+      {closing.footer_note && <p className="prose muted closing-note">{closing.footer_note}</p>}
+      {nextOpensAt && (
+        <Countdown target={nextOpensAt} serverNow={serverNow} label={availabilityLabel} variant="inline" />
       )}
     </section>
   )

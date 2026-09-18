@@ -1318,6 +1318,12 @@ body:has(.preview-days):has(.preview-bar:not(.preview-days)) .shell {
   color: var(--blanco);
 }
 
+.closing-emphasis {
+  font-weight: 600;
+  color: var(--blanco);
+  margin-bottom: 1rem;
+}
+
 .closing-note {
   margin: 0.5rem 0 0;
   color: var(--gris);

@@ -76,10 +76,13 @@ const copy: Record<number, Partial<Day>> = {
       deadline_note: 'Tenés hasta las 23:59 de hoy.',
       closing: {
         title: 'RECIBIDA.',
-        text: 'A veces alcanza con elegir la canción correcta.\n\nEn ese sentido, hoy quiero darte esta. Escuchala con auriculares.',
-        label_track: 'De mi lado',
+        // Primero la de ella, sin rótulo; después la de P21 con su texto.
+        hers_first: true,
+        label_track: 'P.21',
+        text: 'A veces alcanza con elegir la canción correcta.\n\nHoy quiero dejarte una de mi lado.\nY sí, otra vez Fito Páez.',
+        emphasis: 'Escuchala con auriculares.',
         track_cta: 'ESCUCHAR EN SPOTIFY',
-        label_final: 'La tuya',
+        footer_note: 'Seguí el siguiente paso cuando aparezca.',
         track: {
           title: 'Música para Camaleones',
           artist: 'Fito Paez',
