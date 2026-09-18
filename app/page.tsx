@@ -44,7 +44,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
             )}
           </div>
         </main>
-        <Footer dayNumber={21 - active.countdown} countdown={active.countdown} />
+        <Footer dayNumber={21 - active.countdown} />
       </div>
     )
   }
@@ -64,7 +64,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       <main className="shell-main">
         <DayView day={day} nextOpensAt={nextOpensAt} serverNow={Date.now()} />
       </main>
-      <Footer dayNumber={day.day_number} countdown={day.countdown_number} />
+      <Footer dayNumber={day.day_number} />
     </div>
   )
 }

@@ -15,7 +15,8 @@ export type PrintableConfig = {
     text: string
     placeholder?: string
     cta: string
-    error: string
+    /** Uno por intento; el último se repite. Los primeros no dan pistas. */
+    errors: string[]
     /** Aparece recién después de varios intentos. */
     hint?: string
     /** Salida para que no quede trabada. Aparece más tarde todavía. */
@@ -192,9 +193,9 @@ export function PrintableFlow({
             />
           </label>
 
-          {wrong && (
+          {wrong && attempts > 0 && (
             <p className="form-error" role="alert">
-              {config.phrase.error}
+              {config.phrase.errors[Math.min(attempts - 1, config.phrase.errors.length - 1)]}
             </p>
           )}
           {config.phrase.hint && attempts >= HINT_AFTER && <p className="field-hint">{config.phrase.hint}</p>}

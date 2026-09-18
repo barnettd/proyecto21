@@ -74,12 +74,17 @@ export function LineDot() {
   )
 }
 
-/** Day label on the left, P.21 / NN system variant on the right. */
-export function Footer({ dayNumber, countdown }: { dayNumber: number; countdown: number }) {
+/** El día, con la marca chica debajo. La cuenta regresiva P.21/NN está guardada. */
+export function Footer({ dayNumber }: { dayNumber: number }) {
   return (
     <footer className="shell-footer">
-      <span className="footer-day">D{dayNumber}</span>
-      <CountdownMarker n={countdown} mark />
+      <div className="marker marker-lg">
+        <span className="footer-day">D{dayNumber}</span>
+        <span className="marker-mark">
+          <Timeline />
+          <Wave />
+        </span>
+      </div>
     </footer>
   )
 }

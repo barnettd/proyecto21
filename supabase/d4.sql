@@ -14,7 +14,7 @@ A veces alcanza con elegir la canción correcta.',
     "availability_label": "Esta página permanece disponible por",
     "entry": {
       "title": "HOY HAY QUE IMPRIMIR.",
-      "text": "Hoy P21 sale un rato de la pantalla.\nDescargá el crucigrama, imprimilo y resolvelo a mano.\nNo necesitás nada más que unos minutos y algo para escribir.",
+      "text": "Descargá el crucigrama, imprimilo y resolvelo a mano.\nNo necesitás nada más que unos minutos y algo para escribir.",
       "cta": "DESCARGAR",
       "fine_print": "Imprimí en tamaño real (100%).",
       "note": "Cuando lo tengas resuelto, volvé acá.",
@@ -29,7 +29,11 @@ A veces alcanza con elegir la canción correcta.',
       "text": "El crucigrama esconde una frase. Escribila acá.",
       "placeholder": "La frase",
       "cta": "ES ESTA",
-      "error": "No es esa. Volvé a mirar las casillas marcadas.",
+      "errors": [
+        "No. Y eso que la escribiste con mucha seguridad.",
+        "Tampoco. Por ahora gana el crucigrama.",
+        "No es esa. Volvé a mirar las casillas marcadas."
+      ],
       "hint": "Está en inglés.",
       "skip": "Seguir sin resolverlo",
       "answer": "when words fail, music speaks"
