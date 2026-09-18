@@ -40,7 +40,7 @@ A veces alcanza con elegir la canción correcta.',
     },
     "solved": {
       "title": "WHEN WORDS FAIL, MUSIC SPEAKS",
-      "text": "Es, más o menos, la premisa. Hay cosas que no salen en una conversación y sí salen en una canción: alcanza con mandarla en el momento justo para que la otra persona entienda.\n\nPensalo así: la última vez que alguien te mandó una canción sin explicar nada, entendiste igual.",
+      "text": "Es, más o menos, la premisa. Hay cosas que no salen en una conversación y sí salen en una canción: alcanza con mandarla en el momento justo para que la otra persona entienda.\n\nA veces la canción llega antes que la conversación. Y funciona incluso cuando del otro lado no saben qué estabas pensando.",
       "cta": "OK"
     },
     "reveal": {

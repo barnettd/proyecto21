@@ -43,7 +43,7 @@ export function buildDayEmail(mail: DayEmail): { subject: string; html: string; 
 </head>
 <body style="margin:0;padding:0;background:${CARBON};color:${BLANCO};">
 <!-- Vista previa en la bandeja, invisible en el cuerpo. -->
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escape(lead)}</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escape(lead.split('\n').join(' '))}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${CARBON};">
   <tr>
     <td align="center" style="padding:40px 20px;">
@@ -60,7 +60,7 @@ export function buildDayEmail(mail: DayEmail): { subject: string; html: string; 
         </tr>
         <tr>
           <td style="font-family:${STACK};font-size:17px;line-height:1.6;color:${BLANCO};padding-bottom:${estimate ? '20px' : '32px'};">
-            ${escape(lead)}
+            ${lead.split('\n').map(escape).join('<br>')}
           </td>
         </tr>
         ${
