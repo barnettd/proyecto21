@@ -55,6 +55,11 @@ if (args.has('preview')) {
 
 const to = args.get('to')
 if (!to || to === 'true') fail('Falta --to con la dirección de destino.')
+if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) fail(`--to no parece una dirección: ${to}`)
+// Los marcadores de posición se copian y pegan sin querer; mejor que no salgan.
+if (/^(ella|ejemplo|alguien|destinatari[oa]|tu-mail|su-direccion)@/i.test(to)) {
+  fail(`"${to}" es el ejemplo, no una dirección real. Poné la de verdad.`)
+}
 
 const key = process.env.RESEND_API_KEY?.trim() || fromEnvFile()
 if (!key) fail('Falta RESEND_API_KEY (en el entorno o en .env.local).')
