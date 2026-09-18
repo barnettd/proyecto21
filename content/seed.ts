@@ -104,7 +104,6 @@ const copy: Record<number, Partial<Day>> = {
         text: 'No todos los días necesitan empuje.\nAlgunos necesitan bajar el ruido, quedarse quietos o simplemente dejar de exigir un poco.\n\nPreparé tres.',
         cta: 'ABRIR KIT',
       },
-      // PROVISORIAS: las tres canciones del kit, a definir.
       compartments: [
         {
           label: 'Compartimento 01',
@@ -112,7 +111,7 @@ const copy: Record<number, Partial<Day>> = {
           title: 'PARA BAJAR EL RUIDO',
           guide: 'Para cuando todo está un poco demasiado fuerte.',
           cta: 'SIGUIENTE',
-          track: { title: 'Tiempo Al Tiempo', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/2vUrrcNMrSQnjFu6dE1yrg' },
+          track: { title: 'Todo Cambia', artist: 'Mercedes Sosa', spotify_url: 'https://open.spotify.com/track/0njOsb3y8TnwIJC7GnlWwD' },
         },
         {
           label: 'Compartimento 02',
@@ -120,7 +119,7 @@ const copy: Record<number, Partial<Day>> = {
           title: 'PARA QUEDARSE QUIETA',
           guide: 'Para cuando no hace falta arreglar nada.',
           cta: 'SIGUIENTE',
-          track: { title: 'El Otro Cambio, Los Que Se Fueron', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/0jOCJkMvYzutcNTX9WtAVp' },
+          track: { title: 'Al Final de Este Viaje en la Vida', artist: 'Silvio Rodríguez', spotify_url: 'https://open.spotify.com/track/6kKiwIng125tpfiFGwhvXh' },
         },
         {
           label: 'Compartimento 03',
@@ -128,7 +127,7 @@ const copy: Record<number, Partial<Day>> = {
           title: 'PARA CUANDO EL DÍA YA FUE SUFICIENTE',
           guide: 'Para cerrar la puerta mentalmente y dejarlo ahí.',
           cta: 'SIGUIENTE',
-          track: { title: 'Tengo una Muñeca Que Regala Besos', artist: 'Fito Paez, Joaquín Sabina', spotify_url: 'https://open.spotify.com/track/0udM4azyzvy8lQXl5tHP1d' },
+          track: { title: 'Piano Man', artist: 'Billy Joel', spotify_url: 'https://open.spotify.com/track/70C4NyhjD5OZUMzvWZ3njJ' },
         },
       ],
       contribution: {

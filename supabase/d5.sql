@@ -24,9 +24,9 @@ Guardalo para cuando haga falta.',
         "guide": "Para cuando todo está un poco demasiado fuerte.",
         "cta": "SIGUIENTE",
         "track": {
-          "title": "Tiempo Al Tiempo",
-          "artist": "Fito Paez",
-          "spotify_url": "https://open.spotify.com/track/2vUrrcNMrSQnjFu6dE1yrg"
+          "title": "Todo Cambia",
+          "artist": "Mercedes Sosa",
+          "spotify_url": "https://open.spotify.com/track/0njOsb3y8TnwIJC7GnlWwD"
         }
       },
       {
@@ -36,9 +36,9 @@ Guardalo para cuando haga falta.',
         "guide": "Para cuando no hace falta arreglar nada.",
         "cta": "SIGUIENTE",
         "track": {
-          "title": "El Otro Cambio, Los Que Se Fueron",
-          "artist": "Fito Paez",
-          "spotify_url": "https://open.spotify.com/track/0jOCJkMvYzutcNTX9WtAVp"
+          "title": "Al Final de Este Viaje en la Vida",
+          "artist": "Silvio Rodríguez",
+          "spotify_url": "https://open.spotify.com/track/6kKiwIng125tpfiFGwhvXh"
         }
       },
       {
@@ -48,9 +48,9 @@ Guardalo para cuando haga falta.',
         "guide": "Para cerrar la puerta mentalmente y dejarlo ahí.",
         "cta": "SIGUIENTE",
         "track": {
-          "title": "Tengo una Muñeca Que Regala Besos",
-          "artist": "Fito Paez, Joaquín Sabina",
-          "spotify_url": "https://open.spotify.com/track/0udM4azyzvy8lQXl5tHP1d"
+          "title": "Piano Man",
+          "artist": "Billy Joel",
+          "spotify_url": "https://open.spotify.com/track/70C4NyhjD5OZUMzvWZ3njJ"
         }
       }
     ],
