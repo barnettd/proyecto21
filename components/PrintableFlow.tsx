@@ -255,9 +255,6 @@ export function PrintableFlow({
         <button type="submit" className="submit" disabled={!ready || pending || state.ok}>
           {pending || state.ok ? 'Enviando…' : config.reveal.cta}
         </button>
-        <a className="link-button step-back" href={config.printable.url} download={config.printable.filename}>
-          Descargar de nuevo
-        </a>
       </form>
       {bar}
     </>

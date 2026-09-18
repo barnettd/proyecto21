@@ -47,7 +47,11 @@ export async function DayView({
         <>
           <Closing
             closing={closing}
-            finalTrack={(response.payload_json.final_track as SubmittedTrack | undefined) ?? null}
+            finalTrack={
+              (response.payload_json.final_track as SubmittedTrack | undefined) ??
+              (response.payload_json.tracks as SubmittedTrack[] | undefined)?.[0] ??
+              null
+            }
             nextOpensAt={nextOpensAt}
             serverNow={serverNow}
             availabilityLabel={str(cfg.availability_label) ?? 'Esta página permanece disponible por'}
