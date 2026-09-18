@@ -10,7 +10,7 @@ const plan: Array<[number, string, ExperienceType, string?]> = [
   [1, 'Escena de apertura', 'multi_track'],
   [2, 'Solo una sobrevive', 'bracket'],
   [3, 'Shower Songs', 'multi_track'],
-  [4, 'Sopa de letras', 'printable'],
+  [4, 'Crucigrama', 'printable'],
   [5, 'Recovery Kit', 'track_list'],
   [6, 'Una línea', 'track_plus_text'],
   [7, 'Memory Recovery', 'multi_track'],
@@ -33,7 +33,7 @@ const plan: Array<[number, string, ExperienceType, string?]> = [
 /** Participant-facing copy, per day. Draft until approved. */
 const copy: Record<number, Partial<Day>> = {
   4: {
-    title: 'Sopa de letras',
+    title: 'Crucigrama',
     completion_text: 'Recibida.\nA veces alcanza con elegir la canción correcta.',
     config_json: {
       response_tag: 'D4_WHEN_WORDS_FAIL',
@@ -41,17 +41,31 @@ const copy: Record<number, Partial<Day>> = {
       availability_label: 'Esta página permanece disponible por',
       entry: {
         title: 'HOY HAY QUE IMPRIMIR.',
-        text: 'Hoy P21 sale un rato de la pantalla.\nDescargá el archivo, imprimilo y resolvelo a mano.\nNo necesitás nada más que unos minutos y algo para marcar.',
+        text: 'Hoy P21 sale un rato de la pantalla.\nDescargá el crucigrama, imprimilo y resolvelo a mano.\nNo necesitás nada más que unos minutos y algo para escribir.',
         cta: 'DESCARGAR',
         fine_print: 'Imprimí en tamaño real (100%).',
-        note: 'Cuando termines, volvé acá.',
+        note: 'Cuando lo tengas resuelto, volvé acá.',
         continue_cta: 'YA LO RESOLVÍ',
       },
-      // PROVISORIO: reemplazar por el imprimible final.
-      printable: { url: '/d4-sopa-de-letras.pdf', filename: 'P21-sopa-de-letras.pdf' },
-      reveal: {
+      printable: { url: '/d4-crucigrama.pdf', filename: 'P21-crucigrama.pdf' },
+      phrase: {
+        title: 'LA FRASE',
+        text: 'El crucigrama esconde una frase. Escribila acá.',
+        placeholder: 'La frase',
+        cta: 'ES ESTA',
+        error: 'No es esa. Volvé a mirar las casillas marcadas.',
+        hint: 'Está en inglés.',
+        skip: 'Seguir sin resolverlo',
+        answer: 'when words fail, music speaks',
+      },
+      solved: {
         title: 'WHEN WORDS FAIL, MUSIC SPEAKS',
-        text: 'Hay cosas que una canción puede decir mejor que una explicación.',
+        text: 'Cuando las palabras fallan, habla la música.\n\nEs, más o menos, la premisa de todo esto. Hay cosas que no salen en una conversación y sí salen en una canción: alcanza con mandarla en el momento justo para que la otra persona entienda.\n\nYo creo que vos ya lo hiciste alguna vez, aunque no le hayas puesto ese nombre.',
+        cta: 'SIGO',
+      },
+      reveal: {
+        title: 'ESA CANCIÓN',
+        text: 'Ahora te toca a vos.',
         prompt: 'Elegí una canción que alguna vez hayas usado —o usarías— para decir algo que cuesta decir con palabras.',
         cta: 'ESTA DICE ALGO POR MÍ',
       },

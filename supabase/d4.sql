@@ -1,8 +1,10 @@
--- D4 — Sopa de letras / When words fail.
+-- D4 — Crucigrama / When words fail.
 -- Correr en Supabase → SQL Editor. Es repetible.
+-- La frase del crucigrama viaja en config_json.phrase.answer y se valida en el
+-- servidor: nunca llega al navegador.
 
 update days set
-  title = 'Sopa de letras',
+  title = "Crucigrama",
   experience_type = 'printable',
   completion_text = 'Recibida.
 A veces alcanza con elegir la canción correcta.',
@@ -12,16 +14,34 @@ A veces alcanza con elegir la canción correcta.',
     "availability_label": "Esta página permanece disponible por",
     "entry": {
       "title": "HOY HAY QUE IMPRIMIR.",
-      "text": "Hoy P21 sale un rato de la pantalla.\nDescargá el archivo, imprimilo y resolvelo a mano.\nNo necesitás nada más que unos minutos y algo para marcar.",
+      "text": "Hoy P21 sale un rato de la pantalla.\nDescargá el crucigrama, imprimilo y resolvelo a mano.\nNo necesitás nada más que unos minutos y algo para escribir.",
       "cta": "DESCARGAR",
       "fine_print": "Imprimí en tamaño real (100%).",
-      "note": "Cuando termines, volvé acá.",
+      "note": "Cuando lo tengas resuelto, volvé acá.",
       "continue_cta": "YA LO RESOLVÍ"
     },
-    "printable": { "url": "/d4-sopa-de-letras.pdf", "filename": "P21-sopa-de-letras.pdf" },
-    "reveal": {
+    "printable": {
+      "url": "/d4-crucigrama.pdf",
+      "filename": "P21-crucigrama.pdf"
+    },
+    "phrase": {
+      "title": "LA FRASE",
+      "text": "El crucigrama esconde una frase. Escribila acá.",
+      "placeholder": "La frase",
+      "cta": "ES ESTA",
+      "error": "No es esa. Volvé a mirar las casillas marcadas.",
+      "hint": "Está en inglés.",
+      "skip": "Seguir sin resolverlo",
+      "answer": "when words fail, music speaks"
+    },
+    "solved": {
       "title": "WHEN WORDS FAIL, MUSIC SPEAKS",
-      "text": "Hay cosas que una canción puede decir mejor que una explicación.",
+      "text": "Cuando las palabras fallan, habla la música.\n\nEs, más o menos, la premisa de todo esto. Hay cosas que no salen en una conversación y sí salen en una canción: alcanza con mandarla en el momento justo para que la otra persona entienda.\n\nYo creo que vos ya lo hiciste alguna vez, aunque no le hayas puesto ese nombre.",
+      "cta": "SIGO"
+    },
+    "reveal": {
+      "title": "ESA CANCIÓN",
+      "text": "Ahora te toca a vos.",
       "prompt": "Elegí una canción que alguna vez hayas usado —o usarías— para decir algo que cuesta decir con palabras.",
       "cta": "ESTA DICE ALGO POR MÍ"
     },
@@ -31,5 +51,6 @@ A veces alcanza con elegir la canción correcta.',
 where id = 'd4';
 
 select day_number, title, status, experience_type,
-  config_json->'printable'->>'url' as imprimible
+  config_json->'printable'->>'url' as imprimible,
+  config_json->'phrase'->>'answer' as frase
 from days where id = 'd4';

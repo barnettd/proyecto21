@@ -83,7 +83,12 @@ export async function DayView({
   }
 
   if (day.experience_type === 'printable') {
-    return <PrintableFlow dayId={day.id} config={cfg as unknown as PrintableConfig} preview={preview} />
+    // La respuesta del crucigrama se queda en el servidor: al navegador va todo menos eso.
+    const printable = cfg as unknown as PrintableConfig
+    const config: PrintableConfig = printable.phrase
+      ? { ...printable, phrase: { ...printable.phrase, answer: undefined } }
+      : printable
+    return <PrintableFlow dayId={day.id} config={config} preview={preview} />
   }
 
   if (day.experience_type === 'track_list') {

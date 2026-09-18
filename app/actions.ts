@@ -5,6 +5,7 @@ import { deleteLocalResponse, getResponse, loadContent, saveResponse } from '@/l
 import { notifyResponse } from '@/lib/notify'
 import { decisionLog, validatePicks } from '@/lib/bracket'
 import { resolveActiveDay } from '@/lib/schedule'
+import { phraseMatches } from '@/lib/text'
 import { fetchTrackMeta, parseSpotifyTrackId, resolveSpotifyInput, spotifyTrackUrl } from '@/lib/spotify'
 import type { Day, TaggedTrack } from '@/lib/types'
 
@@ -189,9 +190,31 @@ async function submitOneTrack(
 }
 
 /** D4: she downloads and solves on paper, then answers with one song. */
+/**
+ * D4: revisa la frase del crucigrama del lado del servidor, para que la
+ * respuesta no viaje al navegador. Devuelve solo sí o no.
+ */
+export async function verifyPhrase(guess: string, previewDayId?: string): Promise<boolean> {
+  const { days, settings } = await loadContent()
+
+  let day: Day | undefined
+  if (previewDayId && process.env.NODE_ENV !== 'production') {
+    day = days.find((d) => d.id === previewDayId)
+  } else {
+    const active = resolveActiveDay(days, new Date(), settings.force_active_day)
+    day = active.kind === 'day' ? active.day : undefined
+  }
+  if (!day || day.experience_type !== 'printable') return false
+
+  const phrase = day.config_json.phrase as { answer?: unknown } | undefined
+  return typeof phrase?.answer === 'string' && phraseMatches(phrase.answer, String(guess).slice(0, 200))
+}
+
 export async function submitPrintable(_prev: SubmitState, form: FormData): Promise<SubmitState> {
   return submitOneTrack('printable', 'printable', form, () => ({
     printable_opened: String(form.get('opened') ?? '') === 'true',
+    phrase_solved: String(form.get('phrase_solved') ?? '') === 'true',
+    phrase_attempts: Number(form.get('phrase_attempts') ?? 0) || 0,
   }))
 }
 
