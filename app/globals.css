@@ -1352,7 +1352,7 @@ body:has(.preview-days) .bracket-hud {
   position: relative;
   min-height: 100svh;
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   animation: scene-in 1.4s ease-out both;
 }
 
@@ -1370,17 +1370,42 @@ body:has(.preview-days) .bracket-hud {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(17, 17, 17, 0.35) 0%, rgba(17, 17, 17, 0.9) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(17, 17, 17, 0.92) 0%,
+    rgba(17, 17, 17, 0.45) 32%,
+    rgba(17, 17, 17, 0.55) 60%,
+    rgba(17, 17, 17, 0.94) 100%
+  );
 }
 
 .scene-body {
   position: relative;
   width: 100%;
+  max-width: 34rem;
+  margin: 0 auto;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
   justify-content: space-between;
-  gap: 1.5rem;
-  padding: calc(var(--gutter) * 2 + env(safe-area-inset-bottom)) var(--gutter);
+  gap: 2rem;
+  padding: calc(var(--gutter) * 1.5 + env(safe-area-inset-top)) var(--gutter)
+    calc(var(--gutter) * 1.5 + env(safe-area-inset-bottom));
+}
+
+/* La canción, abajo del todo. */
+.scene-track {
+  animation: scene-in 2s 1.2s ease-out both;
+}
+
+.scene-track .track-card {
+  margin: 0;
+}
+
+.scene-note {
+  margin: 0 0 0.6rem;
+  font-size: 0.8125rem;
+  color: var(--blanco);
+  opacity: 0.75;
 }
 
 .scene-words {

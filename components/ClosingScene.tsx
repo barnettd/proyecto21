@@ -3,6 +3,8 @@
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { Wordmark } from '@/components/Brand'
+import { TrackCard } from '@/components/TrackCard'
+import type { SubmittedTrack } from '@/lib/types'
 
 export type ClosingScene = {
   /** Imagen a sangre detrás del texto. */
@@ -11,6 +13,9 @@ export type ClosingScene = {
   audio?: string
   audio_label?: string
   text: string
+  /** Una canción para quedarse, con su invitación. */
+  track?: SubmittedTrack
+  track_note?: string
 }
 
 /**
@@ -59,6 +64,12 @@ export function ClosingScene({ scene }: { scene: ClosingScene }) {
           <Wordmark size="sm" live />
           <p className="scene-text">{scene.text}</p>
         </div>
+        {scene.track && (
+          <div className="scene-track">
+            {scene.track_note && <p className="scene-note">{scene.track_note}</p>}
+            <TrackCard track={scene.track} showLink={false} />
+          </div>
+        )}
         {scene.audio && (
           <>
             <audio ref={audioRef} src={scene.audio} loop preload="auto" />

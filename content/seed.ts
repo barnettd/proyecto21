@@ -143,6 +143,12 @@ const copy: Record<number, Partial<Day>> = {
       closing_scene: {
         image: '/d5-cierre.jpg',
         text: 'Seguí el próximo paso cuando aparezca.',
+        track_note: 'Antes de irte: escuchá esta y seguí la letra.',
+        track: {
+          title: 'Silencio',
+          artist: 'Jorge Drexler',
+          spotify_url: 'https://open.spotify.com/track/2gjB9GgSZFlj0YwItEACpQ',
+        },
       },
     },
   },
