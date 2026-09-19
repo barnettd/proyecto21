@@ -1439,6 +1439,31 @@ body:has(.preview-days) .bracket-hud {
   }
 }
 
+/* Imagen que se funde con la página, sin marco. */
+.banner-soft {
+  position: relative;
+  border-radius: 0;
+  overflow: visible;
+  /* La esfera está centrada: conviene verla entera, no en franja. */
+  aspect-ratio: 16 / 9;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.banner-soft img {
+  object-position: center;
+}
+
+/* Los bordes se funden con el fondo de la página. */
+.banner-soft::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background:
+    radial-gradient(78% 70% at 50% 50%, rgba(17, 17, 17, 0) 40%, var(--carbon) 100%),
+    linear-gradient(90deg, var(--carbon) 0%, rgba(17, 17, 17, 0) 18%, rgba(17, 17, 17, 0) 82%, var(--carbon) 100%);
+  pointer-events: none;
+}
+
 /* Los campos de más del kit */
 .kit-track {
   align-self: stretch;

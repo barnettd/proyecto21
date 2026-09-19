@@ -109,8 +109,8 @@ export function KitFlow({
           <h1 className="bracket-title">{config.entry.title}</h1>
           <p className="prose">{config.entry.text}</p>
           {config.entry.image && (
-            <div className="banner">
-              <Image src={config.entry.image} alt="" width={1086} height={1448} sizes="(max-width: 40rem) 100vw, 34rem" />
+            <div className="banner banner-soft">
+              <Image src={config.entry.image} alt="" width={1600} height={900} priority sizes="(max-width: 40rem) 100vw, 34rem" />
             </div>
           )}
           <button type="button" className="submit" onClick={() => setIndex(0)}>

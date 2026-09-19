@@ -103,6 +103,7 @@ const copy: Record<number, Partial<Day>> = {
         title: 'RECOVERY KIT',
         text: 'No todos los días necesitan empuje.\nAlgunos necesitan bajar el ruido, quedarse quietos o simplemente dejar de exigir un poco.\n\nPreparé tres.',
         cta: 'ABRIR KIT',
+        image: '/d5-inicio.jpg',
       },
       compartments: [
         {
@@ -139,8 +140,9 @@ const copy: Record<number, Partial<Day>> = {
         cta: 'COMPLETAR',
       },
       deadline_note: 'Tenés hasta las 23:59 de hoy.',
-      // PROVISORIOS: falta la imagen y el mp3 del cierre.
+      // PROVISORIO: falta el mp3 del cierre.
       closing_scene: {
+        image: '/d5-cierre.jpg',
         text: 'Seguí el próximo paso cuando aparezca.',
         audio_label: 'Poner música',
       },

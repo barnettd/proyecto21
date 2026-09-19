@@ -14,7 +14,8 @@ Guardalo para cuando haga falta.',
     "entry": {
       "title": "RECOVERY KIT",
       "text": "No todos los días necesitan empuje.\nAlgunos necesitan bajar el ruido, quedarse quietos o simplemente dejar de exigir un poco.\n\nPreparé tres.",
-      "cta": "ABRIR KIT"
+      "cta": "ABRIR KIT",
+      "image": "/d5-inicio.jpg"
     },
     "compartments": [
       {
@@ -64,6 +65,7 @@ Guardalo para cuando haga falta.',
     },
     "deadline_note": "Tenés hasta las 23:59 de hoy.",
     "closing_scene": {
+      "image": "/d5-cierre.jpg",
       "text": "Seguí el próximo paso cuando aparezca.",
       "audio_label": "Poner música"
     }
