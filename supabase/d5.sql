@@ -22,7 +22,7 @@ Guardalo para cuando haga falta.',
         "label": "Compartimento 01",
         "tag": "D5_RECOVERY_01",
         "title": "PARA BAJAR EL RUIDO",
-        "guide": "Para cuando todo está un poco demasiado fuerte.",
+        "guide": "Para cuando todo está un poco demasiado fuerte y lo único que ordena es acordarse de que nada se queda quieto.",
         "cta": "SIGUIENTE",
         "track": {
           "title": "Todo Cambia",
@@ -33,8 +33,8 @@ Guardalo para cuando haga falta.',
       {
         "label": "Compartimento 02",
         "tag": "D5_RECOVERY_02",
-        "title": "PARA QUEDARSE QUIETA",
-        "guide": "Para cuando no hace falta arreglar nada.",
+        "title": "PARA MIRAR EL CAMINO",
+        "guide": "Para cuando la cabeza se pone a repasar el viaje sin pedir permiso, y conviene dejarla.",
         "cta": "SIGUIENTE",
         "track": {
           "title": "Al Final de Este Viaje en la Vida",
@@ -46,7 +46,7 @@ Guardalo para cuando haga falta.',
         "label": "Compartimento 03",
         "tag": "D5_RECOVERY_03",
         "title": "PARA CUANDO EL DÍA YA FUE SUFICIENTE",
-        "guide": "Para cerrar la puerta mentalmente y dejarlo ahí.",
+        "guide": "Para cuando no querés resolver nada más y alcanza con mirar a los demás un rato.",
         "cta": "SIGUIENTE",
         "track": {
           "title": "Piano Man",
@@ -66,8 +66,7 @@ Guardalo para cuando haga falta.',
     "deadline_note": "Tenés hasta las 23:59 de hoy.",
     "closing_scene": {
       "image": "/d5-cierre.jpg",
-      "text": "Seguí el próximo paso cuando aparezca.",
-      "audio_label": "Poner música"
+      "text": "Seguí el próximo paso cuando aparezca."
     }
   }$json$::jsonb,
   status = 'ready'
