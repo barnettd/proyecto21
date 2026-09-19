@@ -68,6 +68,8 @@ Guardalo para cuando haga falta.',
       "image": "/d5-cierre.jpg",
       "text": "Seguí el próximo paso cuando aparezca.",
       "track_note": "Antes de irte: escuchá esta y seguí la letra.",
+      "track_cta": "ESCUCHAR EN SPOTIFY",
+      "track_hint": "En Spotify, tocá «Letra» para seguirla mientras suena.",
       "track": {
         "title": "Silencio",
         "artist": "Jorge Drexler",

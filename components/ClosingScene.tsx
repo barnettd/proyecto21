@@ -16,6 +16,9 @@ export type ClosingScene = {
   /** Una canción para quedarse, con su invitación. */
   track?: SubmittedTrack
   track_note?: string
+  track_cta?: string
+  /** Spotify no abre la letra desde un link: hay que decirle dónde tocar. */
+  track_hint?: string
 }
 
 /**
@@ -68,6 +71,17 @@ export function ClosingScene({ scene }: { scene: ClosingScene }) {
           <div className="scene-track">
             {scene.track_note && <p className="scene-note">{scene.track_note}</p>}
             <TrackCard track={scene.track} showLink={false} />
+            {scene.track.spotify_url && (
+              <a
+                className="submit submit-link"
+                href={scene.track.spotify_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {scene.track_cta ?? 'ESCUCHAR EN SPOTIFY'}
+              </a>
+            )}
+            {scene.track_hint && <p className="scene-hint">{scene.track_hint}</p>}
           </div>
         )}
         {scene.audio && (

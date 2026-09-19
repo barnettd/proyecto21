@@ -1402,10 +1402,22 @@ body:has(.preview-days) .bracket-hud {
 }
 
 .scene-note {
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.9rem;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--blanco);
+}
+
+.scene-hint {
+  margin: 0.6rem 0 0;
   font-size: 0.8125rem;
   color: var(--blanco);
-  opacity: 0.75;
+  opacity: 0.6;
+}
+
+/* El botón, debajo del preview. */
+.scene-track .submit-link {
+  margin-top: 0.9rem;
 }
 
 .scene-words {
