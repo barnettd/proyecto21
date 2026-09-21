@@ -91,7 +91,12 @@ update days set
           "cta": "CERRAR RECUPERACIÓN",
           "bonus": {
             "label": "Bonus Track",
-            "text": "Y esta, muchas veces, me recuerda a vos.\n\nGracias."
+            "text": "Y esta, muchas veces, me recuerda a vos.\n\nGracias.",
+            "track": {
+              "title": "Wonderwall",
+              "artist": "Oasis",
+              "spotify_url": "https://open.spotify.com/track/5qqabIl2vWzo9ApSC317sa"
+            }
           }
         }
       }

@@ -166,10 +166,14 @@ const copy: Record<number, Partial<Day>> = {
             label: 'P.21',
             text: 'Ahora la mía.',
             cta: 'CERRAR RECUPERACIÓN',
-            // PROVISORIA: falta la canción del bonus.
             bonus: {
               label: 'Bonus Track',
               text: 'Y esta, muchas veces, me recuerda a vos.\n\nGracias.',
+              track: {
+                title: 'Wonderwall',
+                artist: 'Oasis',
+                spotify_url: 'https://open.spotify.com/track/5qqabIl2vWzo9ApSC317sa',
+              },
             },
           },
         },
