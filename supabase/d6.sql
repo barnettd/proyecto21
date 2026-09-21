@@ -8,7 +8,7 @@ update days set
   config_json = $json${
     "response_label": "Lo que mandaste",
     "availability_label": "Esta página permanece disponible por",
-    "text_limit": 300,
+    "text_limit": 80,
     "opening": {
       "eyebrow": "D6",
       "title": "MEMORY RECOVERY",
@@ -19,7 +19,7 @@ update days set
     },
     "intro": {
       "title": "MEMORY RECOVERY",
-      "text": "Hoy sí, miramos para atrás, desde adentro.\n\nMenos poético y más específico: esos lugares, situaciones y personas que merecen su propia retrospectiva.\n\nTres de mi lado.\nTres del tuyo.",
+      "text": "Hoy sí, miramos para atrás, desde adentro.\n\nMenos poético y más específico: esos lugares, situaciones y personas que merecen su propia retrospectiva.\n\nTres y tres.",
       "cta": "EMPEZAR"
     },
     "fragments": [
@@ -27,7 +27,7 @@ update days set
         "key": "place",
         "progress": "1 / 3",
         "title": "LUGAR",
-        "lead": "Hay lugares que una canción puede traer de vuelta con una precisión bastante injusta.\n\nEmpiezo yo.",
+        "lead": "Hay lugares que una canción puede traer de vuelta con una precisión bastante injusta.\n\nPrimero yo.",
         "p21": {
           "track": {
             "title": "Mariposa tecknicolor",
@@ -38,9 +38,9 @@ update days set
         },
         "p21_cta": "AHORA VOS",
         "you": {
-          "title": "TU TURNO",
+          "title": "TU LUGAR",
           "text": "Elegí una canción que te devuelva a un lugar.\n\nPuede ser una casa, una ciudad, una ruta, un cuarto, una playa o cualquier lugar que exista distinto en tu memoria.",
-          "prompt": "¿Adónde te llevó?",
+          "prompt": "¿A qué lugar te trajo?",
           "cta": "GUARDAR"
         }
       },
@@ -48,7 +48,7 @@ update days set
         "key": "situation",
         "progress": "2 / 3",
         "title": "SITUACIÓN",
-        "lead": "A veces no vuelve un lugar ni una persona.\n\nVuelve una escena completa: algo que pasaba, una rutina, una noche, un viaje, una etapa.\n\nEsta es una de las mías.",
+        "lead": "A veces no vuelve a un lugar.\n\nVuelve una escena completa: algo que pasaba, una rutina, una noche, un viaje, una etapa.",
         "p21": {
           "track": {
             "title": "Un vestido y un amor",
@@ -59,7 +59,7 @@ update days set
         },
         "p21_cta": "AHORA VOS",
         "you": {
-          "title": "TU TURNO",
+          "title": "TU SITUACIÓN",
           "text": "Elegí una canción que te devuelva a una escena o momento concreto.\n\nAlgo que, cuando suena, no recordás solamente: casi podés volver a verlo.",
           "prompt": "¿Qué vuelve cuando suena?",
           "cta": "GUARDAR"
@@ -81,9 +81,9 @@ update days set
         },
         "p21_cta": "AHORA VOS",
         "you": {
-          "text": "Hay personas que terminan viviendo dentro de una canción sin haberlo decidido.\n\nEsta vez empezás vos.\n\nElegí una canción que inevitablemente te lleve a alguien.",
+          "text": "Hay personas que terminan viviendo dentro de una canción sin haberlo decidido.\n\nElegí una canción que inevitablemente te lleve a alguien.",
           "prompt": "¿Quién aparece cuando suena?",
-          "cta": "GUARDAR Y VER LA MÍA"
+          "cta": "GUARDAR Y ESCUCHAR TU PERSONA"
         },
         "reveal": {
           "label": "P.21",

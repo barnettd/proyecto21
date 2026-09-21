@@ -120,8 +120,10 @@ export async function submitMemory(_prev: SubmitState, form: FormData): Promise<
 
   const limit = typeof day.config_json.text_limit === 'number' ? day.config_json.text_limit : 300
   const slots = ['childhood', ...fragments.map((f) => f.key ?? '')]
+  const names = ['la primera', ...fragments.map((f) => f.title ?? f.key ?? '')]
   const links = slots.map((key) => clip(form.get(`track_${key}`)))
-  if (links.some((l) => !l)) return { ok: false, error: 'Falta alguna canción.' }
+  const sinLink = links.findIndex((l) => !l)
+  if (sinLink >= 0) return { ok: false, error: `Falta la canción de ${names[sinLink]}.` }
 
   const ids = await Promise.all(links.map(resolveSpotifyInput))
   if (ids.some((id) => !id)) {
@@ -136,7 +138,10 @@ export async function submitMemory(_prev: SubmitState, form: FormData): Promise<
   if (ids.some((id) => mine.includes(id))) return { ok: false, error: 'Esa es una de las mías. Elegí otra.' }
 
   const texts = fragments.map((f) => String(form.get(`text_${f.key ?? ''}`) ?? '').trim().slice(0, limit))
-  if (texts.some((t) => !t)) return { ok: false, error: 'Falta escribir alguno de los recuerdos.' }
+  const sinTexto = texts.findIndex((t) => !t)
+  if (sinTexto >= 0) {
+    return { ok: false, error: `Falta lo que escribís en ${fragments[sinTexto].title ?? fragments[sinTexto].key}.` }
+  }
 
   const metas = await Promise.all(ids.map((id) => fetchTrackMeta(id as string)))
   const tags = ['D6_CHILDHOOD_USER_TRACK', ...fragments.map((f) => `D6_${String(f.key ?? '').toUpperCase()}_USER_TRACK`)]

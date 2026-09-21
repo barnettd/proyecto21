@@ -39,6 +39,11 @@ type Step = { kind: 'opening' } | { kind: 'intro' } | { kind: 'p21'; i: number }
 const sameStep = (a: Step, b: Step) =>
   a.kind === b.kind && ('i' in a ? a.i : -1) === ('i' in b ? (b as { i: number }).i : -1)
 
+/** El plazo, visible en todas las pantallas. */
+function Deadline({ note }: { note?: string }) {
+  return note ? <p className="deadline-note">{note}</p> : null
+}
+
 export function MemoryFlow({
   dayId,
   config,
@@ -162,6 +167,7 @@ export function MemoryFlow({
             label="Link de Spotify de esa canción"
             error={errorFor(0)}
           />
+          <Deadline note={config.deadline_note} />
           <button
             type="button"
             className="submit"
@@ -182,6 +188,7 @@ export function MemoryFlow({
         <section className="step step-entry">
           <h2 className="bracket-title">{config.intro.title}</h2>
           <p className="prose">{config.intro.text}</p>
+          <Deadline note={config.deadline_note} />
           <button
             type="button"
             className="submit"
@@ -211,6 +218,7 @@ export function MemoryFlow({
               ESCUCHAR EN SPOTIFY
             </a>
           )}
+          <Deadline note={config.deadline_note} />
           <button type="button" className="submit submit-secondary" onClick={() => setStep({ kind: 'you', i: step.i })}>
             {f.p21_cta}
           </button>
@@ -245,8 +253,12 @@ export function MemoryFlow({
   // step.kind === 'you'
   const i = step.i
   const last = i === config.fragments.length - 1
-  const ready = trackReady(i + 1) && textReady(i)
   const next = afterYou(i)
+  // Al guardar viaja todo junto: si quedó algo atrás, hay que volver a buscarlo.
+  const missing = last
+    ? config.fragments.findIndex((_, n) => !trackReady(n + 1) || !textReady(n))
+    : -1
+  const ready = trackReady(i + 1) && textReady(i) && (!last || missing < 0)
 
   return (
     <>
@@ -296,7 +308,19 @@ export function MemoryFlow({
           </span>
         </label>
 
-        {config.deadline_note && last && <p className="deadline-note">{config.deadline_note}</p>}
+        <Deadline note={config.deadline_note} />
+        {missing >= 0 && missing !== i && (
+          <p className="form-error">
+            Falta completar {config.fragments[missing].title}.{' '}
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => setStep({ kind: 'you', i: missing })}
+            >
+              Ir ahí
+            </button>
+          </p>
+        )}
         {state.error && (
           <p className="form-error" role="alert">
             {state.error}
