@@ -16,20 +16,23 @@ export type DayEmail = {
   lead: string
   /** Renglón chico sobre cuánto lleva. Opcional. */
   estimate?: string
-  cta: string
+  /** Sin botón cuando el paso del día no es digital. */
+  cta?: string
   url: string
+  /** Renglón chico al pie, para el link cuando no hay botón. */
+  note?: string
 }
 
 export function buildDayEmail(mail: DayEmail): { subject: string; html: string; text: string } {
-  const { subject, lead, estimate, cta, url } = mail
+  const { subject, lead, estimate, cta, url, note } = mail
 
   const text = [
     'PROYECTO 21',
     '',
     lead,
     ...(estimate ? ['', estimate] : []),
-    '',
-    `${cta}: ${url}`,
+    ...(cta ? ['', `${cta}: ${url}`] : []),
+    ...(note ? ['', note] : []),
     '',
     'P.21',
   ].join('\n')
@@ -72,13 +75,26 @@ export function buildDayEmail(mail: DayEmail): { subject: string; html: string; 
         </tr>`
             : ''
         }
-        <tr>
+        ${
+          cta
+            ? `<tr>
           <td>
             <a href="${escape(url)}" style="display:inline-block;font-family:${STACK};font-size:14px;font-weight:700;letter-spacing:0.12em;color:${CARBON};background:${AMBAR};padding:15px 28px;text-decoration:none;">
               ${escape(cta)}
             </a>
           </td>
-        </tr>
+        </tr>`
+            : ''
+        }
+        ${
+          note
+            ? `<tr>
+          <td style="font-family:${STACK};font-size:13px;line-height:1.6;color:${GRIS};">
+            ${escape(note)}
+          </td>
+        </tr>`
+            : ''
+        }
         <tr>
           <td style="font-family:${STACK};font-size:12px;letter-spacing:0.14em;color:${GRIS};padding-top:44px;">
             P.21

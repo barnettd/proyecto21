@@ -18,10 +18,10 @@ const SITE = 'https://proyecto21.space'
 const mails: Record<number, DayEmail> = {
   6: {
     subject: 'Proyecto 21: disponible',
-    lead: 'Tu siguiente paso ya está disponible.\nAntes de abrirlo, fijate en tu mesa de luz: hay algo tuyo ahí.',
+    lead: 'El siguiente paso no es digital.\nHay un sobre esperándote en tu mesa de luz.',
     estimate: 'Tiempo estimado: 15 min',
-    cta: 'ABRIR PROYECTO 21',
     url: SITE,
+    note: 'Si el sobre no aparece: proyecto21.space',
   },
   5: {
     subject: 'Proyecto 21: disponible',
