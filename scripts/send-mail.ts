@@ -16,6 +16,13 @@ const SITE = 'https://proyecto21.space'
 
 /** Un mail por día. El texto se aprueba antes de programarlo. */
 const mails: Record<number, DayEmail> = {
+  6: {
+    subject: 'Proyecto 21: disponible',
+    lead: 'Tu siguiente paso ya está disponible.\nAntes de abrirlo, fijate en tu mesa de luz: hay algo tuyo ahí.',
+    estimate: 'Tiempo estimado: 15 min',
+    cta: 'ABRIR PROYECTO 21',
+    url: SITE,
+  },
   5: {
     subject: 'Proyecto 21: disponible',
     lead: 'Tu siguiente paso ya está disponible.\nHoy no hay nada que resolver.',
