@@ -101,7 +101,7 @@ update days set
         }
       }
     ],
-    "deadline_note": "Tenés hasta las 23:59 de hoy.",
+    "deadline_note": "Tenés hasta las 23:59 de hoy.\nHay prórroga de ser necesario.",
     "closing_scene": {
       "image": "/d6-cierre.jpg",
       "title": "RECUPERADO.",
