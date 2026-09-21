@@ -158,6 +158,38 @@ export async function submitMemory(_prev: SubmitState, form: FormData): Promise<
   return persist(day, 'memory', tracks, { notes })
 }
 
+type ScenarioConfig = { key?: string; title?: string }
+
+/** D7: cuatro escenas cotidianas con su canción, y la misión que queda abierta. */
+export async function submitScenarios(_prev: SubmitState, form: FormData): Promise<SubmitState> {
+  const day = await activeDayOfType('scenarios', form)
+  if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
+  if (await getResponse(day.id)) return { ok: true }
+
+  const scenarios = (Array.isArray(day.config_json.scenarios) ? day.config_json.scenarios : []) as ScenarioConfig[]
+  if (!scenarios.length) return { ok: false, error: 'No se pudo guardar. Probá de nuevo en un rato.' }
+
+  const links = scenarios.map((s) => clip(form.get(`track_${s.key ?? ''}`)))
+  const sinLink = links.findIndex((l) => !l)
+  if (sinLink >= 0) return { ok: false, error: `Falta la canción de ${scenarios[sinLink].title ?? sinLink + 1}.` }
+
+  const ids = await Promise.all(links.map(resolveSpotifyInput))
+  if (ids.some((id) => !id)) {
+    return { ok: false, error: 'Uno de los links no parece de una canción. En Spotify: Compartir → Copiar enlace.' }
+  }
+  if (new Set(ids).size !== ids.length) return { ok: false, error: 'Hay una canción repetida.' }
+
+  const metas = await Promise.all(ids.map((id) => fetchTrackMeta(id as string)))
+  const tracks: TaggedTrack[] = ids.map((id, i) => ({
+    spotify_url: spotifyTrackUrl(id as string),
+    ...metas[i],
+    tag: `D7_${String(scenarios[i].key ?? '').toUpperCase()}_USER_TRACK`,
+  }))
+
+  // Llegar hasta acá es aceptar el desafío: la misión queda abierta.
+  return persist(day, 'scenarios', tracks, { guitar_mission_accepted: true })
+}
+
 /** Dev-only: clears the local preview response. In production it does nothing. */
 export async function resetPreview(dayId: string): Promise<void> {
   if (process.env.NODE_ENV === 'production') return

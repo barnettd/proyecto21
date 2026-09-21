@@ -7,6 +7,7 @@ import { Countdown } from '@/components/Countdown'
 import { MemoryFlow, type MemoryConfig } from '@/components/MemoryFlow'
 import { MultiTrackFlow, type FlowConfig } from '@/components/MultiTrackFlow'
 import { PreviewReset } from '@/components/PreviewReset'
+import { ScenariosFlow, type ScenariosConfig } from '@/components/ScenariosFlow'
 import { SingleTrackForm } from '@/components/SingleTrackForm'
 import { TrackCard } from '@/components/TrackCard'
 import { getResponse, getTracks } from '@/lib/content'
@@ -107,6 +108,10 @@ export async function DayView({
       ? { ...printable, phrase: { ...printable.phrase, answer: undefined } }
       : printable
     return <PrintableFlow dayId={day.id} config={config} preview={preview} />
+  }
+
+  if (day.experience_type === 'scenarios') {
+    return <ScenariosFlow dayId={day.id} config={cfg as unknown as ScenariosConfig} preview={preview} />
   }
 
   if (day.experience_type === 'memory') {

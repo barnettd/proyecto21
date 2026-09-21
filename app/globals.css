@@ -1590,3 +1590,36 @@ body:has(.preview-days) .bracket-hud {
 .kit-more-text {
   margin: 0;
 }
+
+/* D7: los materiales del riff */
+.riff-video {
+  align-self: stretch;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #101010;
+}
+
+.riff-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.riff-audio {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.riff-audio audio {
+  width: 100%;
+}
+
+.riff-link {
+  align-self: flex-start;
+}

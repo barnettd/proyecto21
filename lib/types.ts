@@ -10,6 +10,7 @@ export type ExperienceType =
   | 'choice'
   | 'bracket'
   | 'memory'
+  | 'scenarios'
   | 'media_exchange'
   | 'archive'
   | 'reveal'

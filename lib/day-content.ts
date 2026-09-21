@@ -16,6 +16,8 @@ export function hasContent(day: Day): boolean {
       return list(cfg.compartments).length > 0 && Boolean(cfg.entry) && Boolean(cfg.contribution)
     case 'memory':
       return list(cfg.fragments).length > 0 && Boolean(cfg.opening) && Boolean(cfg.intro)
+    case 'scenarios':
+      return list(cfg.scenarios).length > 0 && Boolean(cfg.opening) && Boolean(cfg.challenge)
     case 'bracket':
       return list(cfg.tracks).length >= 2 && Boolean(cfg.entry) && Boolean(cfg.wildcard)
     default:
