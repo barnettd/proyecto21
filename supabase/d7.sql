@@ -1,9 +1,5 @@
 -- D7 — Soundtrack of Nothing.
 -- Correr en Supabase → SQL Editor. Es repetible.
---
--- Carga el día APAGADO (status = 'disabled'): mientras siga así, el sitio
--- sigue mostrando D6 aunque pase la hora de apertura de D7. Para encenderlo:
---   update days set status = 'ready' where id = 'd7';
 
 update days set
   title = 'Soundtrack of Nothing',
@@ -15,13 +11,12 @@ update days set
     "opening": {
       "eyebrow": "D7",
       "title": "SOUNDTRACK OF NOTHING",
-      "text": "No todo necesita ser importante para necesitar música.\n\nHoy vamos a ponerle soundtrack a cosas que normalmente no lo tendrían.",
+      "text": "No todo tiene que ser importante para ponerle música.\n\nHoy vamos a ponerle soundtrack a cosas que normalmente no lo tendrían.",
       "cta": "EMPEZAR"
     },
     "example": {
-      "label": "P.21",
-      "scene": "Mi escena: abrir la heladera sin saber exactamente qué estoy buscando y quedarme mirándola como si fuera a ofrecer una respuesta.",
-      "track_label": "Mi soundtrack",
+      "title": "ESCENA",
+      "scene": "Ese momento en que abrís la heladera sin saber exactamente qué estás buscando y te quedás mirándola como si fuera a ofrecer una respuesta.\n\nPuede tardar a veces un poco, y hoy le puse un soundtrack, a ver qué te parece:",
       "track": {
         "title": "Should I Stay or Should I Go",
         "artist": "The Clash",
@@ -75,7 +70,19 @@ update days set
     },
     "challenge": {
       "title": "DESAFÍO",
-      "text": "Aprendé un loop del riff principal de «Seven Nation Army», de The White Stripes.\n\nSolo un loop.\n\nNo tiene que sonar perfecto: el objetivo es que pueda reconocerse.",
+      "text": "Aprendé en la guitarra un loop del riff principal de «Seven Nation Army», de The White Stripes.\n\nSolo un loop.\n\nNo tiene que sonar perfecto: el objetivo es que pueda reconocerse.",
+      "track_label": "El original",
+      "track": {
+        "title": "Seven Nation Army",
+        "artist": "The White Stripes",
+        "spotify_url": "https://open.spotify.com/track/3dPQuX8Gs42Y7b454ybpMR"
+      },
+      "video": "https://www.youtube.com/embed/1x6W7UNtMqk",
+      "video_url": "https://www.youtube.com/watch?v=1x6W7UNtMqk",
+      "reference": "https://www.songsterr.com/a/wsa/white-stripes-seven-nation-army-tab-s605233",
+      "reference_label": "Ver la tablatura",
+      "help_url": "https://www.justinguitar.com/guitar-lessons/seven-nation-army-b1-309",
+      "help_label": "Otra clase, por si esa no te cierra",
       "cta": "ACEPTAR DESAFÍO"
     },
     "deadline_note": "Tenés hasta las 23:59 de hoy.",

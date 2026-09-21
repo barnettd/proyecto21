@@ -12,15 +12,21 @@ export type Scenario = { key: string; progress: string; title: string; text: str
 
 export type ScenariosConfig = {
   opening: { eyebrow?: string; title: string; text: string; cta: string }
-  example: { label?: string; scene: string; track_label?: string; track: SubmittedTrack; cta: string }
+  example: { title?: string; label?: string; scene: string; track_label?: string; track: SubmittedTrack; cta: string }
   scenarios: Scenario[]
   transition: { title: string; text: string; cta: string }
   mission: { title: string; text: string; cta: string }
   challenge: {
     title: string
     text: string
+    /** La canción original, para tenerla presente. */
+    track?: SubmittedTrack
+    track_label?: string
     /** Materiales para aprender el loop; cualquiera puede faltar. */
     video?: string
+    /** El mismo video en YouTube, por si el reproductor incrustado falla. */
+    video_url?: string
+    video_note?: string
     audio?: string
     audio_label?: string
     reference?: string
@@ -146,6 +152,7 @@ export function ScenariosFlow({
       <>
         <section className="step">
           {config.example.label && <p className="round-label">{config.example.label}</p>}
+          {config.example.title && <h2 className="bracket-title">{config.example.title}</h2>}
           <p className="prose">{config.example.scene}</p>
           <TrackCard track={config.example.track} label={config.example.track_label} showLink={false} />
           {config.example.track.spotify_url && (
@@ -227,10 +234,17 @@ export function ScenariosFlow({
         <h2 className="bracket-title">{c.title}</h2>
         <p className="prose">{c.text}</p>
 
+        {c.track && <TrackCard track={c.track} label={c.track_label} showLink={false} />}
+
         {c.video && (
           <div className="riff-video">
             <iframe src={c.video} title="El riff" allow="encrypted-media; picture-in-picture" allowFullScreen loading="lazy" />
           </div>
+        )}
+        {c.video_url && (
+          <a className="link-button riff-link" href={c.video_url} target="_blank" rel="noopener noreferrer">
+            {c.video_note ?? 'Si el video no carga, abrilo en YouTube'}
+          </a>
         )}
         {c.audio && (
           <div className="riff-audio">
