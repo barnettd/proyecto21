@@ -111,7 +111,6 @@ const copy: Record<number, Partial<Day>> = {
         text: 'Hoy sí, miramos para atrás, desde adentro.\n\nMenos poético y más específico: esos lugares, situaciones y personas que merecen su propia retrospectiva.\n\nTres y tres.',
         cta: 'EMPEZAR',
       },
-      // PROVISORIAS: las tres canciones de P21 y sus notas, a definir.
       fragments: [
         {
           key: 'place',
@@ -119,8 +118,8 @@ const copy: Record<number, Partial<Day>> = {
           title: 'LUGAR',
           lead: 'Hay lugares que una canción puede traer de vuelta con una precisión bastante injusta.\n\nPrimero yo.',
           p21: {
-            track: { title: 'Mariposa tecknicolor', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/2RognU2ViRdA6HxnpAITJl' },
-            note: 'Esta me devuelve una ruta y una ventanilla baja.',
+            track: { title: 'Crazy', artist: 'Aerosmith', spotify_url: 'https://open.spotify.com/track/3QxKpdTB8ZSFn8MGeCCpsQ' },
+            note: 'Esto me recuerda cuando tuve oportunidad de conocer Turquía.',
           },
           p21_cta: 'AHORA VOS',
           you: {
@@ -136,8 +135,8 @@ const copy: Record<number, Partial<Day>> = {
           title: 'SITUACIÓN',
           lead: 'A veces no vuelve a un lugar.\n\nVuelve una escena completa: algo que pasaba, una rutina, una noche, un viaje, una etapa.',
           p21: {
-            track: { title: 'Un vestido y un amor', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/2fuN5UVkZFtak2aOpXJSln' },
-            note: 'Toda una época entra acá adentro.',
+            track: { title: 'La Isla del Sol', artist: 'El Símbolo', spotify_url: 'https://open.spotify.com/track/1sZFIMGmKUYycerZSZb99O' },
+            note: 'Majané 1998 y con él, una época y un ciclo.',
           },
           p21_cta: 'AHORA VOS',
           you: {
@@ -154,8 +153,8 @@ const copy: Record<number, Partial<Day>> = {
           p21_first: false,
           lead: 'Hay personas que terminan viviendo dentro de una canción sin haberlo decidido.',
           p21: {
-            track: { title: 'Yo Vengo A Ofrecer Mi Corazon', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/0Qjrw4gXtqkfwfmp3GMMlW' },
-            note: 'Esta es la mía. No hace falta que explique de quién.',
+            track: { title: 'Contamíname', artist: 'Pedro Guerra', spotify_url: 'https://open.spotify.com/track/7Cd7umUyXCf7xWCVzgKlnZ' },
+            note: 'A mi tía.',
           },
           p21_cta: 'AHORA VOS',
           you: {
@@ -167,6 +166,11 @@ const copy: Record<number, Partial<Day>> = {
             label: 'P.21',
             text: 'Ahora la mía.',
             cta: 'CERRAR RECUPERACIÓN',
+            // PROVISORIA: falta la canción del bonus.
+            bonus: {
+              label: 'Bonus Track',
+              text: 'Y esta, muchas veces, me recuerda a vos.\n\nGracias.',
+            },
           },
         },
       ],

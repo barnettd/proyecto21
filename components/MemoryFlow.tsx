@@ -21,7 +21,13 @@ export type Fragment = {
   /** Cuando es false, ella elige antes de ver la mía (el fragmento PERSONA). */
   p21_first?: boolean
   you: { title?: string; text: string; prompt: string; cta: string }
-  reveal?: { label?: string; text?: string; cta: string }
+  reveal?: {
+    label?: string
+    text?: string
+    cta: string
+    /** Una canción más, después de la revelación. */
+    bonus?: { label?: string; text?: string; track?: SubmittedTrack }
+  }
 }
 
 export type MemoryConfig = {
@@ -167,7 +173,6 @@ export function MemoryFlow({
             label="Link de Spotify de esa canción"
             error={errorFor(0)}
           />
-          <Deadline note={config.deadline_note} />
           <button
             type="button"
             className="submit"
@@ -176,6 +181,7 @@ export function MemoryFlow({
           >
             {config.opening.cta}
           </button>
+          <Deadline note={config.deadline_note} />
         </section>
         {bar}
       </>
@@ -188,7 +194,6 @@ export function MemoryFlow({
         <section className="step step-entry">
           <h2 className="bracket-title">{config.intro.title}</h2>
           <p className="prose">{config.intro.text}</p>
-          <Deadline note={config.deadline_note} />
           <button
             type="button"
             className="submit"
@@ -196,6 +201,7 @@ export function MemoryFlow({
           >
             {config.intro.cta}
           </button>
+          <Deadline note={config.deadline_note} />
         </section>
         {bar}
       </>
@@ -218,10 +224,10 @@ export function MemoryFlow({
               ESCUCHAR EN SPOTIFY
             </a>
           )}
-          <Deadline note={config.deadline_note} />
           <button type="button" className="submit submit-secondary" onClick={() => setStep({ kind: 'you', i: step.i })}>
             {f.p21_cta}
           </button>
+          <Deadline note={config.deadline_note} />
         </section>
         {bar}
       </>
@@ -241,9 +247,31 @@ export function MemoryFlow({
               ESCUCHAR EN SPOTIFY
             </a>
           )}
+          {f.reveal?.bonus && (
+            <div className="memory-bonus">
+              {f.reveal.bonus.label && <p className="round-label">{f.reveal.bonus.label}</p>}
+              {f.reveal.bonus.text && <p className="prose">{f.reveal.bonus.text}</p>}
+              {f.reveal.bonus.track && (
+                <>
+                  <TrackCard track={f.reveal.bonus.track} showLink={false} />
+                  {f.reveal.bonus.track.spotify_url && (
+                    <a
+                      className="submit submit-link"
+                      href={f.reveal.bonus.track.spotify_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      ESCUCHAR EN SPOTIFY
+                    </a>
+                  )}
+                </>
+              )}
+            </div>
+          )}
           <button type="button" className="submit submit-secondary" onClick={() => router.refresh()}>
             {f.reveal?.cta ?? 'CERRAR'}
           </button>
+          <Deadline note={config.deadline_note} />
         </section>
         {bar}
       </>
@@ -308,7 +336,6 @@ export function MemoryFlow({
           </span>
         </label>
 
-        <Deadline note={config.deadline_note} />
         {missing >= 0 && missing !== i && (
           <p className="form-error">
             Falta completar {config.fragments[missing].title}.{' '}
@@ -329,6 +356,7 @@ export function MemoryFlow({
         <button type="submit" className="submit" disabled={!ready || pending || state.ok}>
           {pending || state.ok ? 'Guardando…' : f.you.cta}
         </button>
+        <Deadline note={config.deadline_note} />
       </form>
       {bar}
     </>

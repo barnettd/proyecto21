@@ -30,11 +30,11 @@ update days set
         "lead": "Hay lugares que una canción puede traer de vuelta con una precisión bastante injusta.\n\nPrimero yo.",
         "p21": {
           "track": {
-            "title": "Mariposa tecknicolor",
-            "artist": "Fito Paez",
-            "spotify_url": "https://open.spotify.com/track/2RognU2ViRdA6HxnpAITJl"
+            "title": "Crazy",
+            "artist": "Aerosmith",
+            "spotify_url": "https://open.spotify.com/track/3QxKpdTB8ZSFn8MGeCCpsQ"
           },
-          "note": "Esta me devuelve una ruta y una ventanilla baja."
+          "note": "Esto me recuerda cuando tuve oportunidad de conocer Turquía."
         },
         "p21_cta": "AHORA VOS",
         "you": {
@@ -51,11 +51,11 @@ update days set
         "lead": "A veces no vuelve a un lugar.\n\nVuelve una escena completa: algo que pasaba, una rutina, una noche, un viaje, una etapa.",
         "p21": {
           "track": {
-            "title": "Un vestido y un amor",
-            "artist": "Fito Paez",
-            "spotify_url": "https://open.spotify.com/track/2fuN5UVkZFtak2aOpXJSln"
+            "title": "La Isla del Sol",
+            "artist": "El Símbolo",
+            "spotify_url": "https://open.spotify.com/track/1sZFIMGmKUYycerZSZb99O"
           },
-          "note": "Toda una época entra acá adentro."
+          "note": "Majané 1998 y con él, una época y un ciclo."
         },
         "p21_cta": "AHORA VOS",
         "you": {
@@ -73,11 +73,11 @@ update days set
         "lead": "Hay personas que terminan viviendo dentro de una canción sin haberlo decidido.",
         "p21": {
           "track": {
-            "title": "Yo Vengo A Ofrecer Mi Corazon",
-            "artist": "Fito Paez",
-            "spotify_url": "https://open.spotify.com/track/0Qjrw4gXtqkfwfmp3GMMlW"
+            "title": "Contamíname",
+            "artist": "Pedro Guerra",
+            "spotify_url": "https://open.spotify.com/track/7Cd7umUyXCf7xWCVzgKlnZ"
           },
-          "note": "Esta es la mía. No hace falta que explique de quién."
+          "note": "A mi tía."
         },
         "p21_cta": "AHORA VOS",
         "you": {
@@ -88,7 +88,11 @@ update days set
         "reveal": {
           "label": "P.21",
           "text": "Ahora la mía.",
-          "cta": "CERRAR RECUPERACIÓN"
+          "cta": "CERRAR RECUPERACIÓN",
+          "bonus": {
+            "label": "Bonus Track",
+            "text": "Y esta, muchas veces, me recuerda a vos.\n\nGracias."
+          }
         }
       }
     ],
