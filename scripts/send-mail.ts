@@ -21,7 +21,6 @@ const mails: Record<number, DayEmail> = {
     lead: 'La mesa de luz guarda cosas personales.\nHoy guarda tu siguiente paso.',
     estimate: 'Tiempo estimado: N/A',
     url: SITE,
-    note: 'Si el sobre no aparece: proyecto21.space',
   },
   5: {
     subject: 'Proyecto 21: disponible',
