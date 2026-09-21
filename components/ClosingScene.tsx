@@ -12,7 +12,11 @@ export type ClosingScene = {
   /** Archivo de audio propio: Spotify no sirve de música de fondo. */
   audio?: string
   audio_label?: string
+  /** Título grande sobre el texto. */
+  title?: string
   text: string
+  /** Renglón al pie, más apagado. */
+  footer?: string
   /** Una canción para quedarse, con su invitación. */
   track?: SubmittedTrack
   track_note?: string
@@ -65,7 +69,9 @@ export function ClosingScene({ scene }: { scene: ClosingScene }) {
       <div className="scene-body">
         <div className="scene-words">
           <Wordmark size="sm" live />
+          {scene.title && <h2 className="scene-title">{scene.title}</h2>}
           <p className="scene-text">{scene.text}</p>
+          {scene.footer && <p className="scene-footer">{scene.footer}</p>}
         </div>
         {scene.track && (
           <div className="scene-track">

@@ -1427,6 +1427,21 @@ body:has(.preview-days) .bracket-hud {
   animation: scene-in 2s 0.6s ease-out both;
 }
 
+.scene-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--ambar);
+}
+
+.scene-footer {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--blanco);
+  opacity: 0.6;
+}
+
 .scene-text {
   margin: 0;
   font-size: 1.0625rem;
@@ -1499,6 +1514,43 @@ body:has(.preview-days) .bracket-hud {
     radial-gradient(78% 70% at 50% 50%, rgba(17, 17, 17, 0) 40%, var(--carbon) 100%),
     linear-gradient(90deg, var(--carbon) 0%, rgba(17, 17, 17, 0) 18%, rgba(17, 17, 17, 0) 82%, var(--carbon) 100%);
   pointer-events: none;
+}
+
+/* D6: recuerdos escritos */
+.banner-tall {
+  aspect-ratio: 3 / 4;
+}
+
+.memory-note {
+  margin-top: 0.9rem;
+  color: var(--gris);
+  font-size: 0.9375rem;
+}
+
+.memory-field {
+  align-self: stretch;
+  gap: 0.6rem;
+}
+
+.memory-field textarea {
+  font: inherit;
+  font-size: 1rem;
+  color: var(--blanco);
+  background: #101010;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.memory-field textarea:focus {
+  border-color: var(--ambar);
+}
+
+.memory-count {
+  align-self: flex-end;
 }
 
 /* Los campos de más del kit */

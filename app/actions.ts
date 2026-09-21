@@ -107,6 +107,52 @@ export async function submitMultiTrack(_prev: SubmitState, form: FormData): Prom
   return persist(day, 'multi_track', tracks)
 }
 
+type FragmentConfig = { key?: string; title?: string; p21?: { track?: { spotify_url?: string } } }
+
+/** D6: la canción de siempre, más tres canciones con su recuerdo escrito. */
+export async function submitMemory(_prev: SubmitState, form: FormData): Promise<SubmitState> {
+  const day = await activeDayOfType('memory', form)
+  if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
+  if (await getResponse(day.id)) return { ok: true }
+
+  const fragments = (Array.isArray(day.config_json.fragments) ? day.config_json.fragments : []) as FragmentConfig[]
+  if (!fragments.length) return { ok: false, error: 'No se pudo guardar. Probá de nuevo en un rato.' }
+
+  const limit = typeof day.config_json.text_limit === 'number' ? day.config_json.text_limit : 300
+  const slots = ['childhood', ...fragments.map((f) => f.key ?? '')]
+  const links = slots.map((key) => clip(form.get(`track_${key}`)))
+  if (links.some((l) => !l)) return { ok: false, error: 'Falta alguna canción.' }
+
+  const ids = await Promise.all(links.map(resolveSpotifyInput))
+  if (ids.some((id) => !id)) {
+    return { ok: false, error: 'Uno de los links no parece de una canción. En Spotify: Compartir → Copiar enlace.' }
+  }
+  if (new Set(ids).size !== ids.length) return { ok: false, error: 'Hay una canción repetida.' }
+
+  // Tampoco puede mandar una de las mías.
+  const mine = fragments
+    .map((f) => (f.p21?.track?.spotify_url ? parseSpotifyTrackId(f.p21.track.spotify_url) : null))
+    .filter(Boolean)
+  if (ids.some((id) => mine.includes(id))) return { ok: false, error: 'Esa es una de las mías. Elegí otra.' }
+
+  const texts = fragments.map((f) => String(form.get(`text_${f.key ?? ''}`) ?? '').trim().slice(0, limit))
+  if (texts.some((t) => !t)) return { ok: false, error: 'Falta escribir alguno de los recuerdos.' }
+
+  const metas = await Promise.all(ids.map((id) => fetchTrackMeta(id as string)))
+  const tags = ['D6_CHILDHOOD_USER_TRACK', ...fragments.map((f) => `D6_${String(f.key ?? '').toUpperCase()}_USER_TRACK`)]
+  const tracks: TaggedTrack[] = ids.map((id, i) => ({
+    spotify_url: spotifyTrackUrl(id as string),
+    ...metas[i],
+    tag: tags[i],
+  }))
+
+  const notes = Object.fromEntries(
+    fragments.map((f, i) => [`D6_${String(f.key ?? '').toUpperCase()}_USER_TEXT`, texts[i]]),
+  )
+
+  return persist(day, 'memory', tracks, { notes })
+}
+
 /** Dev-only: clears the local preview response. In production it does nothing. */
 export async function resetPreview(dayId: string): Promise<void> {
   if (process.env.NODE_ENV === 'production') return

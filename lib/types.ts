@@ -9,6 +9,7 @@ export type ExperienceType =
   | 'printable'
   | 'choice'
   | 'bracket'
+  | 'memory'
   | 'media_exchange'
   | 'archive'
   | 'reveal'

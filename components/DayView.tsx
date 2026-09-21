@@ -4,6 +4,7 @@ import { LineDot, Seal, Wordmark } from '@/components/Brand'
 import { PrintableFlow, type PrintableConfig } from '@/components/PrintableFlow'
 import { ClosingScene, type ClosingScene as Scene } from '@/components/ClosingScene'
 import { Countdown } from '@/components/Countdown'
+import { MemoryFlow, type MemoryConfig } from '@/components/MemoryFlow'
 import { MultiTrackFlow, type FlowConfig } from '@/components/MultiTrackFlow'
 import { PreviewReset } from '@/components/PreviewReset'
 import { SingleTrackForm } from '@/components/SingleTrackForm'
@@ -106,6 +107,10 @@ export async function DayView({
       ? { ...printable, phrase: { ...printable.phrase, answer: undefined } }
       : printable
     return <PrintableFlow dayId={day.id} config={config} preview={preview} />
+  }
+
+  if (day.experience_type === 'memory') {
+    return <MemoryFlow dayId={day.id} config={cfg as unknown as MemoryConfig} preview={preview} />
   }
 
   if (day.experience_type === 'track_list') {
