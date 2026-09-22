@@ -92,7 +92,7 @@ update days set
       "footer": "Seguí el próximo paso cuando aparezca."
     }
   }$json$::jsonb,
-  status = 'disabled'
+  status = 'ready'
 where id = 'd7';
 
 select day_number, title, status, experience_type,
