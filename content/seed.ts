@@ -14,7 +14,7 @@ const plan: Array<[number, string, ExperienceType, string?]> = [
   [5, 'Recovery Kit', 'track_list'],
   [6, 'Memory Recovery', 'memory'],
   [7, 'Soundtrack of Nothing', 'scenarios'],
-  [8, 'Soundtrack of Nothing', 'track_plus_text'],
+  [8, 'Por definir', 'custom'],
   [9, 'Guest Track #1', 'media_exchange'],
   [10, 'Guilty Pleasure', 'single_track'],
   [11, 'Hands', 'single_track'],
@@ -270,7 +270,7 @@ const copy: Record<number, Partial<Day>> = {
           },
         },
       ],
-      deadline_note: 'Tenés hasta las 23:59 de hoy.\nHay prórroga de ser necesario.',
+      deadline_note: 'Tenés hasta las 23:59 de hoy.',
       closing_scene: {
         image: '/d6-cierre.jpg',
         title: 'RECUPERADO.',
@@ -519,8 +519,11 @@ const copy: Record<number, Partial<Day>> = {
   },
 }
 
+/** D6 se extendió un día (21 y 22 de septiembre), así que de D7 en adelante todo corre uno. */
+const SHIFTED_FROM = 7
+
 export const seedDays: Day[] = plan.map(([n, title, type, time = '08:00']) => {
-  const date = new Date(Date.UTC(2026, 8, 15 + n)).toISOString().slice(0, 10)
+  const date = new Date(Date.UTC(2026, 8, 15 + n + (n >= SHIFTED_FROM ? 1 : 0))).toISOString().slice(0, 10)
   return {
     id: `d${n}`,
     day_number: n,
