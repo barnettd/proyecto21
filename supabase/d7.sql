@@ -77,12 +77,12 @@ update days set
         "artist": "The White Stripes",
         "spotify_url": "https://open.spotify.com/track/3dPQuX8Gs42Y7b454ybpMR"
       },
-      "video": "https://www.youtube.com/embed/1x6W7UNtMqk",
-      "video_url": "https://www.youtube.com/watch?v=1x6W7UNtMqk",
-      "reference": "https://www.songsterr.com/a/wsa/white-stripes-seven-nation-army-tab-s605233",
-      "reference_label": "Ver la tablatura",
-      "help_url": "https://www.justinguitar.com/guitar-lessons/seven-nation-army-b1-309",
-      "help_label": "Otra clase, por si esa no te cierra",
+      "video": "https://www.youtube.com/embed/2LEO5xc9rEA",
+      "video_url": "https://www.youtube.com/watch?v=2LEO5xc9rEA",
+      "reference": "https://www.songsterr.com/a/wsa/white-stripes-sd-music-seven-nation-army-riff-tab-s4969002",
+      "reference_label": "La tablatura del loop",
+      "extra": "https://www.songsterr.com/a/wsa/white-stripes-seven-nation-army-tab-s265",
+      "extra_label": "Y si te quedás con ganas, el riff completo",
       "cta": "ACEPTAR DESAFÍO"
     },
     "deadline_note": "Tenés hasta las 23:59 de hoy.",

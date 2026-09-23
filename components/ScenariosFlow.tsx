@@ -31,6 +31,9 @@ export type ScenariosConfig = {
     audio_label?: string
     reference?: string
     reference_label?: string
+    /** Material opcional, para quien quiera seguir más allá del loop. */
+    extra?: string
+    extra_label?: string
     help_url?: string
     help_label?: string
     cta: string
@@ -255,6 +258,11 @@ export function ScenariosFlow({
         {c.reference && (
           <a className="link-button riff-link" href={c.reference} target="_blank" rel="noopener noreferrer">
             {c.reference_label ?? 'Ver la digitación'}
+          </a>
+        )}
+        {c.extra && (
+          <a className="link-button riff-link" href={c.extra} target="_blank" rel="noopener noreferrer">
+            {c.extra_label ?? 'El riff completo'}
           </a>
         )}
         {c.help_url && (
