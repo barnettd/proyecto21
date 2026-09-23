@@ -22,9 +22,11 @@ export type ScenariosConfig = {
     /** La canción original, para tenerla presente. */
     track?: SubmittedTrack
     track_label?: string
+    /** El loop de la misión, enlazado dentro del texto. */
+    loop_note?: { before: string; link_label: string; url: string }
     /** Materiales para aprender el loop; cualquiera puede faltar. */
+    /** Reproductor incrustado. Sin esto, la miniatura abre YouTube. */
     video?: string
-    /** El mismo video en YouTube, por si el reproductor incrustado falla. */
     video_url?: string
     video_note?: string
     audio?: string
@@ -226,6 +228,7 @@ export function ScenariosFlow({
 
   // step.kind === 'challenge': acá se guarda todo.
   const c = config.challenge
+  const videoId = c.video_url?.match(/[?&]v=([\w-]{6,})/)?.[1] ?? null
   return (
     <>
       <form action={action} className="step">
@@ -237,16 +240,35 @@ export function ScenariosFlow({
         <h2 className="bracket-title">{c.title}</h2>
         <p className="prose">{c.text}</p>
 
+        {c.loop_note && (
+          <p className="prose">
+            {c.loop_note.before}
+            <a className="text-link" href={c.loop_note.url} target="_blank" rel="noopener noreferrer">
+              {c.loop_note.link_label}
+            </a>
+          </p>
+        )}
+
         {c.track && <TrackCard track={c.track} label={c.track_label} showLink={false} />}
 
-        {c.video && (
+        {c.video ? (
           <div className="riff-video">
             <iframe src={c.video} title="El riff" allow="encrypted-media; picture-in-picture" allowFullScreen loading="lazy" />
           </div>
+        ) : (
+          videoId && (
+            <a className="riff-thumb" href={c.video_url} target="_blank" rel="noopener noreferrer">
+              {/* La miniatura de YouTube: un toque y se abre allá, sin reproductores que fallen. */}
+              <img src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`} alt="" />
+              <span className="riff-play" aria-hidden="true">
+                <span>▶</span>
+              </span>
+            </a>
+          )
         )}
         {c.video_url && (
-          <a className="link-button riff-link" href={c.video_url} target="_blank" rel="noopener noreferrer">
-            {c.video_note ?? 'Si el video no carga, abrilo en YouTube'}
+          <a className="submit submit-link riff-open" href={c.video_url} target="_blank" rel="noopener noreferrer">
+            {c.video_note ?? 'VER EL VIDEO'}
           </a>
         )}
         {c.audio && (
@@ -255,20 +277,21 @@ export function ScenariosFlow({
             <audio src={c.audio} controls loop preload="none" />
           </div>
         )}
-        {c.reference && (
-          <a className="link-button riff-link" href={c.reference} target="_blank" rel="noopener noreferrer">
-            {c.reference_label ?? 'Ver la digitación'}
-          </a>
-        )}
-        {c.extra && (
-          <a className="link-button riff-link" href={c.extra} target="_blank" rel="noopener noreferrer">
-            {c.extra_label ?? 'El riff completo'}
-          </a>
-        )}
-        {c.help_url && (
-          <a className="link-button riff-link" href={c.help_url} target="_blank" rel="noopener noreferrer">
-            {c.help_label ?? 'Si necesitás ayuda'}
-          </a>
+
+        {(c.reference || c.extra) && (
+          <p className="riff-tabs">
+            {c.reference && (
+              <a className="text-link" href={c.reference} target="_blank" rel="noopener noreferrer">
+                {c.reference_label ?? 'Tablatura del loop'}
+              </a>
+            )}
+            {c.reference && c.extra && <span aria-hidden="true"> | </span>}
+            {c.extra && (
+              <a className="text-link" href={c.extra} target="_blank" rel="noopener noreferrer">
+                {c.extra_label ?? 'Tablatura completa'}
+              </a>
+            )}
+          </p>
         )}
 
         {missing >= 0 && (

@@ -1609,6 +1609,71 @@ body:has(.preview-days) .bracket-hud {
   border: 0;
 }
 
+/* La miniatura: se toca y el video abre en YouTube. */
+.riff-thumb {
+  align-self: stretch;
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #101010;
+}
+
+.riff-thumb img {
+  width: 100%;
+  height: 100%;
+  /* La miniatura viene en 4:3 con bandas negras; el recorte 16:9 las saca. */
+  object-fit: cover;
+}
+
+.riff-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--carbon);
+  padding-left: 0.2rem;
+}
+
+.riff-play::before {
+  content: '';
+  position: absolute;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: var(--ambar);
+}
+
+.riff-play {
+  text-shadow: none;
+}
+
+.riff-play > * {
+  position: relative;
+}
+
+.riff-open {
+  align-self: stretch;
+  text-align: center;
+}
+
+.riff-tabs {
+  margin: 0.25rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--gris);
+  text-align: center;
+  align-self: stretch;
+}
+
+.text-link {
+  color: var(--ambar);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .riff-audio {
   align-self: stretch;
   display: flex;
@@ -1618,8 +1683,4 @@ body:has(.preview-days) .bracket-hud {
 
 .riff-audio audio {
   width: 100%;
-}
-
-.riff-link {
-  align-self: flex-start;
 }

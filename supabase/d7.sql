@@ -70,19 +70,24 @@ update days set
     },
     "challenge": {
       "title": "DESAFÍO",
-      "text": "Aprendé en la guitarra un loop del riff principal de «Seven Nation Army», de The White Stripes.\n\nSolo un loop.\n\nNo tiene que sonar perfecto: el objetivo es que pueda reconocerse.",
+      "text": "Aprendé en la guitarra un loop del riff principal de «Seven Nation Army», de The White Stripes.\n\nNo tiene que sonar perfecto: el objetivo es que pueda reconocerse.",
+      "loop_note": {
+        "before": "Solo un loop: ",
+        "link_label": "este.",
+        "url": "https://www.songsterr.com/a/wsa/white-stripes-sd-music-seven-nation-army-riff-tab-s4969002"
+      },
       "track_label": "El original",
       "track": {
         "title": "Seven Nation Army",
         "artist": "The White Stripes",
         "spotify_url": "https://open.spotify.com/track/3dPQuX8Gs42Y7b454ybpMR"
       },
-      "video": "https://www.youtube.com/embed/2LEO5xc9rEA",
       "video_url": "https://www.youtube.com/watch?v=2LEO5xc9rEA",
+      "video_note": "VER EL VIDEO",
       "reference": "https://www.songsterr.com/a/wsa/white-stripes-sd-music-seven-nation-army-riff-tab-s4969002",
-      "reference_label": "La tablatura del loop",
+      "reference_label": "Tablatura del loop",
       "extra": "https://www.songsterr.com/a/wsa/white-stripes-seven-nation-army-tab-s265",
-      "extra_label": "Y si te quedás con ganas, el riff completo",
+      "extra_label": "Tablatura completa",
       "cta": "ACEPTAR DESAFÍO"
     },
     "deadline_note": "Tenés hasta las 23:59 de hoy.",
