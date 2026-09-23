@@ -4,6 +4,7 @@ import { LineDot, Seal, Wordmark } from '@/components/Brand'
 import { PrintableFlow, type PrintableConfig } from '@/components/PrintableFlow'
 import { ClosingScene, type ClosingScene as Scene } from '@/components/ClosingScene'
 import { Countdown } from '@/components/Countdown'
+import { LyricsFlow, type LyricsConfig } from '@/components/LyricsFlow'
 import { MemoryFlow, type MemoryConfig } from '@/components/MemoryFlow'
 import { MultiTrackFlow, type FlowConfig } from '@/components/MultiTrackFlow'
 import { PreviewReset } from '@/components/PreviewReset'
@@ -36,9 +37,13 @@ export async function DayView({
   if (response) {
     const scene = cfg.closing_scene as Scene | undefined
     if (scene?.text) {
+      // D8 termina con dos frases: si están, la escena las muestra.
+      const creations = (['favorite', 'accident'] as const)
+        .map((k) => response.payload_json[k] as { text?: string; title?: string | null } | undefined)
+        .filter((c): c is { text: string; title?: string | null } => Boolean(c?.text))
       return (
         <>
-          <ClosingScene scene={scene} />
+          <ClosingScene scene={scene} creations={creations} />
           {preview && <PreviewReset dayId={day.id} />}
         </>
       )
@@ -108,6 +113,10 @@ export async function DayView({
       ? { ...printable, phrase: { ...printable.phrase, answer: undefined } }
       : printable
     return <PrintableFlow dayId={day.id} config={config} preview={preview} />
+  }
+
+  if (day.experience_type === 'lyrics') {
+    return <LyricsFlow dayId={day.id} config={cfg as unknown as LyricsConfig} preview={preview} />
   }
 
   if (day.experience_type === 'scenarios') {

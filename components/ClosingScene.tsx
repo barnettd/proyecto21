@@ -29,7 +29,14 @@ export type ClosingScene = {
  * El cierre de D5: una imagen, música, y una sola línea. Sin número de día,
  * sin contador, sin resumen de lo que mandó.
  */
-export function ClosingScene({ scene }: { scene: ClosingScene }) {
+export function ClosingScene({
+  scene,
+  creations = [],
+}: {
+  scene: ClosingScene
+  /** D8: las dos frases que quedaron vivas. */
+  creations?: Array<{ text: string; title?: string | null }>
+}) {
   const audioRef = useRef<HTMLAudioElement>(null)
   // Los navegadores bloquean el audio con sonido hasta que alguien toca algo.
   const [playing, setPlaying] = useState(false)
@@ -71,6 +78,16 @@ export function ClosingScene({ scene }: { scene: ClosingScene }) {
           <Wordmark size="sm" live />
           {scene.title && <h2 className="scene-title">{scene.title}</h2>}
           <p className="scene-text">{scene.text}</p>
+          {creations.length > 0 && (
+            <ul className="scene-creations">
+              {creations.map((c, i) => (
+                <li key={i}>
+                  {c.title && <span className="scene-creation-title">{c.title}</span>}
+                  <span className="scene-creation-text">{c.text}</span>
+                </li>
+              ))}
+            </ul>
+          )}
           {scene.footer && <p className="scene-footer">{scene.footer}</p>}
         </div>
         {scene.track && (

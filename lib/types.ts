@@ -11,6 +11,7 @@ export type ExperienceType =
   | 'bracket'
   | 'memory'
   | 'scenarios'
+  | 'lyrics'
   | 'media_exchange'
   | 'archive'
   | 'reveal'

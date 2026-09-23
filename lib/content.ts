@@ -171,3 +171,28 @@ async function writeLocal(store: LocalStore) {
   await mkdir(path.dirname(LOCAL_PATH), { recursive: true })
   await writeFile(LOCAL_PATH, JSON.stringify(store, null, 2))
 }
+
+/**
+ * Tope de llamadas al modelo por día. El sitio es público: sin esto, cualquiera
+ * que encuentre la URL podría quemar la cuota. Sin Supabase (desarrollo) no limita.
+ */
+export async function allowAiCall(max: number): Promise<boolean> {
+  const db = supabase()
+  if (!db) return true
+  const id = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date())
+  try {
+    const { data } = await db.from('ai_usage').select('calls').eq('id', id).maybeSingle()
+    const calls = data?.calls ?? 0
+    if (calls >= max) return false
+    await db.from('ai_usage').upsert({ id, calls: calls + 1, updated_at: new Date().toISOString() })
+    return true
+  } catch (err) {
+    console.error('[p21] ai_usage', err)
+    return true
+  }
+}

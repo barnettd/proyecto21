@@ -1,7 +1,9 @@
 'use server'
 
 import { after } from 'next/server'
-import { deleteLocalResponse, getResponse, loadContent, saveResponse } from '@/lib/content'
+import { allowAiCall, deleteLocalResponse, getResponse, loadContent, saveResponse } from '@/lib/content'
+import { buildSets, type Line } from '@/lib/ai'
+import { checkLine, type Fragment } from '@/lib/mixer'
 import { notifyResponse } from '@/lib/notify'
 import { decisionLog, validatePicks } from '@/lib/bracket'
 import { resolveActiveDay } from '@/lib/schedule'
@@ -188,6 +190,112 @@ export async function submitScenarios(_prev: SubmitState, form: FormData): Promi
 
   // Llegar hasta acá es aceptar el desafío: la misión queda abierta.
   return persist(day, 'scenarios', tracks, { guitar_mission_accepted: true })
+}
+
+type D8Fragment = { id: string; owner: 'her' | 'p21'; excerpt: string }
+
+/** Las siete frases: las cuatro de ella vienen del navegador, las tres mías del día. */
+async function d8Sources(day: Day, hers: unknown): Promise<Fragment[]> {
+  const mine = (Array.isArray(day.config_json.reveal_fragments) ? day.config_json.reveal_fragments : []) as Array<{
+    excerpt?: string
+  }>
+  const her = (Array.isArray(hers) ? hers : []) as Array<{ excerpt?: string }>
+  return [
+    ...her.map((f, i) => ({ id: `u${i + 1}`, owner: 'her' as const, excerpt: String(f?.excerpt ?? '').trim() })),
+    ...mine.map((f, i) => ({ id: `p${i + 1}`, owner: 'p21' as const, excerpt: String(f?.excerpt ?? '').trim() })),
+  ].filter((f) => f.excerpt.length > 0)
+}
+
+export type MixState = { sets?: Line[][]; error?: string }
+
+/** D8: una tanda de mezclas. El modelo propone y el servidor verifica. */
+export async function mixLines(
+  hers: D8Fragment[],
+  avoid: string[],
+  previewDayId?: string,
+): Promise<MixState> {
+  const { days, settings } = await loadContent()
+  let day: Day | undefined
+  if (previewDayId && process.env.NODE_ENV !== 'production') {
+    day = days.find((d) => d.id === previewDayId)
+  } else {
+    const active = resolveActiveDay(days, new Date(), settings.force_active_day)
+    day = active.kind === 'day' ? active.day : undefined
+  }
+  if (!day || day.experience_type !== 'lyrics') return { error: 'Esto ya no está disponible.' }
+
+  const sources = await d8Sources(day, hers)
+  if (sources.length < 5) return { error: 'Faltan frases para mezclar.' }
+
+  const max = Number(process.env.D8_MAX_AI_CALLS ?? 40) || 40
+  if (!(await allowAiCall(max))) {
+    // Sin cuota: el combinador propio igual devuelve algo válido.
+    const { sets } = await buildSets(sources, avoid.slice(-60), 0)
+    return { sets, error: sets.length ? undefined : 'El laboratorio está descansando. Probá de nuevo más tarde.' }
+  }
+
+  const { sets, error } = await buildSets(sources, avoid.slice(-60), 5)
+  if (!sets.length) return { error: error ? 'No salió ninguna combinación. Probá de nuevo.' : 'Probá de nuevo.' }
+  return { sets }
+}
+
+type Finalist = { text?: string; title?: string }
+
+/** D8: cuatro frases de ella, y las dos criaturas finales. */
+export async function submitLyrics(_prev: SubmitState, form: FormData): Promise<SubmitState> {
+  const day = await activeDayOfType('lyrics', form)
+  if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
+  if (await getResponse(day.id)) return { ok: true }
+
+  const categories = (Array.isArray(day.config_json.categories) ? day.config_json.categories : []) as Array<{
+    key?: string
+    title?: string
+  }>
+
+  let hers: Array<{ link?: string; excerpt?: string }>
+  let finalists: { favorite?: Finalist; accident?: Finalist }
+  try {
+    hers = JSON.parse(String(form.get('fragments') ?? '[]'))
+    finalists = JSON.parse(String(form.get('finalists') ?? '{}'))
+  } catch {
+    return { ok: false, error: 'No se pudo guardar. Probá de nuevo.' }
+  }
+
+  if (hers.length !== categories.length) return { ok: false, error: 'Faltan frases.' }
+
+  const ids = await Promise.all(hers.map((f) => resolveSpotifyInput(clip(f.link ?? null))))
+  const sinLink = ids.findIndex((id) => !id)
+  if (sinLink >= 0) return { ok: false, error: `Falta la canción de ${categories[sinLink]?.title ?? sinLink + 1}.` }
+
+  const metas = await Promise.all(ids.map((id) => fetchTrackMeta(id as string)))
+  const tracks: TaggedTrack[] = ids.map((id, i) => ({
+    spotify_url: spotifyTrackUrl(id as string),
+    ...metas[i],
+    tag: `D8_${String(categories[i]?.key ?? i + 1).toUpperCase()}_USER_TRACK`,
+  }))
+
+  const favorite = String(finalists.favorite?.text ?? '').trim()
+  const accident = String(finalists.accident?.text ?? '').trim()
+  if (!favorite || !accident) return { ok: false, error: 'Faltan las dos criaturas.' }
+  if (favorite.toLowerCase() === accident.toLowerCase()) {
+    return { ok: false, error: 'Las dos criaturas tienen que ser distintas.' }
+  }
+
+  // La procedencia se recalcula acá: lo que ella escribió a mano queda marcado como suyo.
+  const sources = await d8Sources(day, hers)
+  const provenance = (text: string) => {
+    const check = checkLine(text, sources, { allowAdded: true, limits: { minSources: 1, maxFromOne: 1 } })
+    return check.ok ? { contributions: check.contributions, added: check.added } : { contributions: [], added: [] }
+  }
+
+  return persist(day, 'lyrics', tracks, {
+    fragments: hers.map((f, i) => ({
+      key: categories[i]?.key ?? String(i + 1),
+      excerpt: String(f.excerpt ?? '').trim(),
+    })),
+    favorite: { text: favorite, title: finalists.favorite?.title ?? null, ...provenance(favorite) },
+    accident: { text: accident, title: finalists.accident?.title ?? null, ...provenance(accident) },
+  })
 }
 
 /** Dev-only: clears the local preview response. In production it does nothing. */
