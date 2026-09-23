@@ -6,9 +6,12 @@ import { checkLine, normalizeLine, type Contribution, type Fragment, type Mode }
 
 export type Line = { mode: Mode; text: string; contributions: Contribution[]; source: 'gemini' | 'local' }
 
+/** Para el diagnóstico: cuántas propuso, cuántas quedaron y por qué se cayeron. */
+export type Stats = { raw: number; kept: number; rejected: Record<string, number>; samples: string[] }
+
 const MODES: Mode[] = ['coherent', 'unexpected', 'absurd']
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models'
-const DEFAULT_MODEL = 'gemini-flash-latest'
+const DEFAULT_MODEL = 'gemini-3.6-flash'
 
 export const aiModel = () => process.env.GEMINI_MODEL?.trim() || DEFAULT_MODEL
 const aiKey = () => process.env.GEMINI_API_KEY?.trim()
@@ -69,7 +72,7 @@ export async function generate(
   sets = 5,
   timeoutMs = 12000,
   model = aiModel(),
-): Promise<{ lines: Line[]; error?: string }> {
+): Promise<{ lines: Line[]; error?: string; stats?: Stats }> {
   const key = aiKey()
   if (!key) return { lines: [], error: 'sin GEMINI_API_KEY' }
 
@@ -104,15 +107,22 @@ export async function generate(
 
   const seen = [...avoid]
   const lines: Line[] = []
+  const stats: Stats = { raw: (parsed.lines ?? []).length, kept: 0, rejected: {}, samples: [] }
   for (const item of parsed.lines ?? []) {
     const mode = MODES.includes(item.mode as Mode) ? (item.mode as Mode) : 'unexpected'
     const text = String(item.text ?? '').trim()
     const check = checkLine(text, sources, { seen })
-    if (!check.ok) continue
+    if (!check.ok) {
+      const key = check.reason.replace(/:.*/, '')
+      stats.rejected[key] = (stats.rejected[key] ?? 0) + 1
+      if (stats.samples.length < 5) stats.samples.push(`${check.reason} → ${text}`)
+      continue
+    }
     seen.push(normalizeLine(text))
     lines.push({ mode, text, contributions: check.contributions, source: 'gemini' })
   }
-  return { lines }
+  stats.kept = lines.length
+  return { lines, stats }
 }
 
 /** Tercias completas: una de cada modo. Lo que consume la pantalla. */

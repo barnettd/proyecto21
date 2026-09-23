@@ -44,7 +44,7 @@ export async function GET(request: Request) {
   const started = Date.now()
   const sets = Number(url.searchParams.get('sets') ?? 3)
   const model = url.searchParams.get('model')?.trim() || aiModel()
-  const { lines, error } = await generate(FIXTURE, [], sets, 20000, model)
+  const { lines, error, stats } = await generate(FIXTURE, [], sets, 20000, model)
   const complete = intoSets(lines)
 
   return Response.json(
@@ -54,6 +54,7 @@ export async function GET(request: Request) {
       ms: Date.now() - started,
       error,
       validas: lines.length,
+      stats,
       tercias: complete.length,
       ejemplos: complete[0]?.map((l) => `${l.mode}: ${l.text}`) ?? [],
       respaldo: localMix(FIXTURE, [], 3),
