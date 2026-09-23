@@ -11,9 +11,18 @@ export type Stats = { raw: number; kept: number; rejected: Record<string, number
 
 const MODES: Mode[] = ['coherent', 'unexpected', 'absurd']
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models'
-const DEFAULT_MODEL = 'gemini-3.6-flash'
+/**
+ * En orden de preferencia. Los modelos gratuitos devuelven 503 cuando están
+ * cargados, así que se prueba el siguiente antes de caer al combinador local.
+ */
+const DEFAULT_MODELS = ['gemini-flash-lite-latest', 'gemini-3.1-flash-lite', 'gemini-3.6-flash']
 
-export const aiModel = () => process.env.GEMINI_MODEL?.trim() || DEFAULT_MODEL
+export const aiModels = (): string[] => {
+  const configured = process.env.GEMINI_MODEL?.trim()
+  return configured ? configured.split(',').map((m) => m.trim()).filter(Boolean) : DEFAULT_MODELS
+}
+
+export const aiModel = () => aiModels()[0]
 const aiKey = () => process.env.GEMINI_API_KEY?.trim()
 
 const SCHEMA = {
@@ -71,11 +80,30 @@ export async function generate(
   avoid: string[],
   sets = 5,
   timeoutMs = 12000,
-  model = aiModel(),
-): Promise<{ lines: Line[]; error?: string; stats?: Stats }> {
+  models = aiModels(),
+): Promise<{ lines: Line[]; error?: string; stats?: Stats; model?: string }> {
   const key = aiKey()
   if (!key) return { lines: [], error: 'sin GEMINI_API_KEY' }
 
+  let lastError = 'sin respuesta'
+  for (const model of models) {
+    const attempt = await askOnce(key, model, sources, avoid, sets, timeoutMs)
+    if (attempt.lines.length) return { ...attempt, model }
+    lastError = attempt.error ?? 'sin líneas válidas'
+    // Un modelo saturado o inexistente: probamos el siguiente. Si respondió
+    // bien pero nada pasó la verificación, tampoco insistimos con ese.
+  }
+  return { lines: [], error: lastError }
+}
+
+async function askOnce(
+  key: string,
+  model: string,
+  sources: Fragment[],
+  avoid: string[],
+  sets: number,
+  timeoutMs: number,
+): Promise<{ lines: Line[]; error?: string; stats?: Stats }> {
   let payload: { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> }
   try {
     const res = await fetch(`${ENDPOINT}/${model}:generateContent?key=${key}`, {
@@ -91,10 +119,10 @@ export async function generate(
       }),
       signal: AbortSignal.timeout(timeoutMs),
     })
-    if (!res.ok) return { lines: [], error: `Gemini ${res.status}: ${(await res.text()).slice(0, 200)}` }
+    if (!res.ok) return { lines: [], error: `${model} → ${res.status}` }
     payload = await res.json()
   } catch (err) {
-    return { lines: [], error: String(err).slice(0, 200) }
+    return { lines: [], error: `${model} → ${String(err).slice(0, 120)}` }
   }
 
   const raw = payload.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('') ?? ''
@@ -102,7 +130,7 @@ export async function generate(
   try {
     parsed = JSON.parse(raw)
   } catch {
-    return { lines: [], error: 'el modelo no devolvió JSON' }
+    return { lines: [], error: `${model} → no devolvió JSON` }
   }
 
   const seen = [...avoid]
@@ -113,8 +141,8 @@ export async function generate(
     const text = String(item.text ?? '').trim()
     const check = checkLine(text, sources, { seen })
     if (!check.ok) {
-      const key = check.reason.replace(/:.*/, '')
-      stats.rejected[key] = (stats.rejected[key] ?? 0) + 1
+      const reason = check.reason.replace(/:.*/, '')
+      stats.rejected[reason] = (stats.rejected[reason] ?? 0) + 1
       if (stats.samples.length < 5) stats.samples.push(`${check.reason} → ${text}`)
       continue
     }
