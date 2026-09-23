@@ -105,5 +105,5 @@ select day_number, title, status, experience_type,
   (select string_agg(f->>'title', ' · ' order by ord)
      from jsonb_array_elements(config_json->'scenarios') with ordinality as x(f, ord)) as cuales,
   config_json->'example'->'track'->>'title' as ejemplo,
-  config_json->'challenge'->>'video' as video
+  config_json->'challenge'->>'video_url' as video
 from days where id = 'd7';
