@@ -43,12 +43,13 @@ export async function GET(request: Request) {
 
   const started = Date.now()
   const sets = Number(url.searchParams.get('sets') ?? 3)
-  const { lines, error } = await generate(FIXTURE, [], sets)
+  const model = url.searchParams.get('model')?.trim() || aiModel()
+  const { lines, error } = await generate(FIXTURE, [], sets, 20000, model)
   const complete = intoSets(lines)
 
   return Response.json(
     {
-      model: aiModel(),
+      model,
       key: Boolean(key),
       ms: Date.now() - started,
       error,

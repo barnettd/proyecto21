@@ -8,7 +8,7 @@ export type Line = { mode: Mode; text: string; contributions: Contribution[]; so
 
 const MODES: Mode[] = ['coherent', 'unexpected', 'absurd']
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models'
-const DEFAULT_MODEL = 'gemini-2.5-flash'
+const DEFAULT_MODEL = 'gemini-flash-latest'
 
 export const aiModel = () => process.env.GEMINI_MODEL?.trim() || DEFAULT_MODEL
 const aiKey = () => process.env.GEMINI_API_KEY?.trim()
@@ -68,13 +68,14 @@ export async function generate(
   avoid: string[],
   sets = 5,
   timeoutMs = 12000,
+  model = aiModel(),
 ): Promise<{ lines: Line[]; error?: string }> {
   const key = aiKey()
   if (!key) return { lines: [], error: 'sin GEMINI_API_KEY' }
 
   let payload: { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> }
   try {
-    const res = await fetch(`${ENDPOINT}/${aiModel()}:generateContent?key=${key}`, {
+    const res = await fetch(`${ENDPOINT}/${model}:generateContent?key=${key}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
