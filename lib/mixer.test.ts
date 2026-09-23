@@ -75,6 +75,17 @@ test('tolera plural y género al buscar el origen', () => {
   assert.ok(r.ok, r.ok ? '' : r.reason)
 })
 
+test('los conectores con tilde también cuentan como conectores', () => {
+  const r = checkLine('la casa está sobre un astronauta de vidrio', sources)
+  assert.ok(r.ok, r.ok ? '' : r.reason)
+})
+
+test('el género en plural no rompe el origen', () => {
+  // "rotas" sale de "rotos"; "frías" de "frías".
+  const r = checkLine('las llaves rotas guardan respuestas frías del mundo', sources)
+  assert.ok(r.ok, r.ok ? '' : r.reason)
+})
+
 test('el combinador local devuelve líneas que pasan la verificación', () => {
   const lines = localMix(sources, [], 3)
   assert.ok(lines.length >= 1)

@@ -27,7 +27,9 @@ const CONNECTORS = new Set(
     'se su sus mi mis tu tus me te le les nos les ya muy mas más pero aunque porque como ' +
     'cuando donde sin sobre entre hasta desde cada todo toda todos todas es son era eran ' +
     'fue ser estar está están hay tan también tampoco aquí allá ahí'
-  ).split(' '),
+  )
+    .split(' ')
+    .map(fold),
 )
 
 /** Sin tildes y en minúscula: solo para comparar, nunca para mostrar. */
@@ -57,12 +59,20 @@ export function related(a: string, b: string): boolean {
   if (short.length < 4) return false
   if (long.length - short.length <= 2 && long.startsWith(short)) return true
   if (long.length === short.length && long.slice(0, -1) === short.slice(0, -1)) return true
+  // Mismo plural, distinto género: rotos/rotas, frías/fríos.
+  if (short.length >= 4 && stem(short) === stem(long)) return true
   // Raíz común con final distinto: necesita/necesitan ya entra arriba; esto
   // cubre esconde/escondieron sin abrir la puerta a cualquier parecido.
   if (long.length - short.length <= 3 && long.startsWith(short.slice(0, -1)) && short.length >= 5) {
     return true
   }
   return false
+}
+
+/** Raíz tosca: sin plural y sin la vocal de género. */
+function stem(word: string): string {
+  const w = word.endsWith('es') && word.length > 5 ? word.slice(0, -2) : word.endsWith('s') ? word.slice(0, -1) : word
+  return /[oae]$/.test(w) && w.length > 3 ? w.slice(0, -1) : w
 }
 
 /** Qué fuentes contienen cada palabra, tal como aparecen. */
