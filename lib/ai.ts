@@ -2,7 +2,7 @@
  * El laboratorio de D8 contra Gemini. El modelo propone; lib/mixer.ts verifica.
  * La clave vive solo en el servidor y nunca se manda al navegador.
  */
-import { checkLine, normalizeLine, type Contribution, type Fragment, type Mode } from './mixer.ts'
+import { checkLine, localMix, normalizeLine, type Contribution, type Fragment, type Mode } from './mixer.ts'
 
 export type Line = { mode: Mode; text: string; contributions: Contribution[]; source: 'gemini' | 'local' }
 
@@ -161,4 +161,43 @@ export function intoSets(lines: Line[]): Line[][] {
     sets.push(MODES.map((m) => pools.get(m)!.shift()!))
   }
   return sets
+}
+
+/**
+ * Tercias listas para la pantalla. Si a un modo no le quedaron líneas del
+ * modelo, ese lugar lo llena el combinador local: la mezcla nunca sale vacía.
+ */
+export async function buildSets(
+  sources: Fragment[],
+  avoid: string[],
+  wanted = 5,
+): Promise<{ sets: Line[][]; model?: string; error?: string }> {
+  const { lines, model, error } = await generate(sources, avoid, wanted)
+  const pools = new Map<Mode, Line[]>(MODES.map((m) => [m, lines.filter((l) => l.mode === m)]))
+
+  const seen = [...avoid, ...lines.map((l) => normalizeLine(l.text))]
+  const sets: Line[][] = []
+  for (let i = 0; i < wanted; i++) {
+    const set: Line[] = []
+    for (const mode of MODES) {
+      const next = pools.get(mode)!.shift()
+      if (next) {
+        set.push(next)
+        continue
+      }
+      const [local] = localMix(sources, seen, 1)
+      if (!local) break
+      seen.push(normalizeLine(local))
+      const check = checkLine(local, sources, {})
+      set.push({
+        mode,
+        text: local,
+        contributions: check.ok ? check.contributions : [],
+        source: 'local',
+      })
+    }
+    if (set.length === MODES.length) sets.push(set)
+    else break
+  }
+  return { sets, model, error }
 }

@@ -1,5 +1,5 @@
 import { connection } from 'next/server'
-import { aiModel, generate, intoSets } from '@/lib/ai'
+import { aiModel, buildSets, generate, intoSets } from '@/lib/ai'
 import { localMix, type Fragment } from '@/lib/mixer'
 
 /**
@@ -64,6 +64,10 @@ export async function GET(request: Request) {
       tercias: complete.length,
       ejemplos: complete[0]?.map((l) => `${l.mode}: ${l.text}`) ?? [],
       respaldo: localMix(FIXTURE, [], 3),
+      // Lo que realmente vería ella: tercias completas, con relleno local si hace falta.
+      tercias_servidas: (await buildSets(FIXTURE, [], 3)).sets.map((set) =>
+        set.map((l) => `${l.mode}${l.source === 'local' ? ' (local)' : ''}: ${l.text}`),
+      ),
     },
     { headers: { 'Cache-Control': 'no-store' } },
   )

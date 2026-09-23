@@ -108,7 +108,7 @@ export type Limits = {
   maxFromOne: number
 }
 
-export const DEFAULT_LIMITS: Limits = { minWords: 5, maxWords: 16, minSources: 3, maxFromOne: 0.7 }
+export const DEFAULT_LIMITS: Limits = { minWords: 4, maxWords: 16, minSources: 3, maxFromOne: 0.7 }
 
 /**
  * Verifica una línea contra el banco. Devuelve la procedencia recalculada, o
