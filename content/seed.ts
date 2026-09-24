@@ -100,15 +100,13 @@ const copy: Record<number, Partial<Day>> = {
       opening: {
         eyebrow: 'D8',
         title: 'UNA LÍNEA',
-        text: 'Hay canciones que te gustan enteras. Y otras de las que alcanza con rescatar una sola frase.\n\nHoy vamos a quedarnos con esas frases. Después, probablemente, vamos a hacer algo bastante cuestionable con ellas.',
+        text: 'Hay canciones que te gustan enteras. Y otras de las que alcanza con rescatar una sola frase.\n\nHoy vamos a quedarnos con esas frases. No importa si la canción te gusta entera ni quién la canta: lo único que cuenta es la frase, y que esté en castellano.',
         cta: 'EMPEZAR',
       },
       excerpt: {
         prompt: 'LA FRASE',
         placeholder: 'Copiala tal cual suena.',
-        min_words: 3,
-        max_words: 20,
-        max_chars: 160,
+        max_chars: 200,
       },
       categories: [
         {

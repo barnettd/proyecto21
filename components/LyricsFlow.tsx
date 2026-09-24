@@ -15,7 +15,7 @@ export type Category = { key: string; progress: string; title: string; text: str
 export type LyricsConfig = {
   opening: { eyebrow?: string; title: string; text: string; cta: string }
   categories: Category[]
-  excerpt: { prompt: string; placeholder?: string; min_words?: number; max_words?: number; max_chars?: number }
+  excerpt: { prompt: string; placeholder?: string; max_chars?: number }
   reveal: { title: string; text: string; cta: string }
   reveal_fragments: Array<{ track: SubmittedTrack; excerpt: string }>
   lab: { title: string; text: string; note?: string; cta: string; loading?: string }
@@ -55,7 +55,6 @@ type Draft = { link: string; excerpt: string }
 type Saved = Line & { id: string; edited?: boolean }
 
 const same = (a: Step, b: Step) => a.kind === b.kind && ('i' in a ? a.i : -1) === ('i' in b ? (b as { i: number }).i : -1)
-const words = (text: string) => text.trim().split(/\s+/).filter(Boolean).length
 
 export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; config: LyricsConfig; preview?: boolean }) {
   const router = useRouter()
@@ -76,11 +75,7 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
   const [restored, setRestored] = useState(false)
   const draftKey = `p21-draft-${dayId}`
 
-  const limits = {
-    min: config.excerpt.min_words ?? 3,
-    max: config.excerpt.max_words ?? 20,
-    chars: config.excerpt.max_chars ?? 160,
-  }
+  const maxChars = config.excerpt.max_chars ?? 200
 
   useEffect(() => {
     try {
@@ -140,8 +135,7 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
 
   const ready = (i: number) => {
     const d = drafts[i]
-    const n = words(d.excerpt)
-    return Boolean(parseSpotifyTrackId(d.link)) && n >= limits.min && n <= limits.max && d.excerpt.length <= limits.chars
+    return Boolean(parseSpotifyTrackId(d.link)) && d.excerpt.trim().length > 0 && d.excerpt.length <= maxChars
   }
   const missing = config.categories.findIndex((_, i) => !ready(i))
 
@@ -226,7 +220,6 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
     const i = step.i
     const c = config.categories[i]
     const d = drafts[i]
-    const n = words(d.excerpt)
     const last = i === config.categories.length - 1
     const set = (patch: Partial<Draft>) => setDrafts((old) => old.map((x, j) => (j === i ? { ...x, ...patch } : x)))
     return (
@@ -245,12 +238,12 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
             <span className="module-question">{config.excerpt.prompt}</span>
             <textarea
               value={d.excerpt}
-              onChange={(e) => set({ excerpt: e.target.value.slice(0, limits.chars) })}
+              onChange={(e) => set({ excerpt: e.target.value.slice(0, maxChars) })}
               rows={3}
               placeholder={config.excerpt.placeholder ?? 'Escribí la frase, tal cual suena.'}
             />
             <span className="field-hint memory-count">
-              {n} {n === 1 ? 'palabra' : 'palabras'} · {d.excerpt.length}/{limits.chars}
+              {d.excerpt.length}/{maxChars}
             </span>
           </label>
           <button
