@@ -239,9 +239,7 @@ export async function mixLines(
   return { sets }
 }
 
-type Finalist = { text?: string; title?: string }
-
-/** D8: cuatro frases de ella, y las dos criaturas finales. */
+/** D8: tres frases de ella, su Kraken, la que eligió y el nombre de la canción. */
 export async function submitLyrics(_prev: SubmitState, form: FormData): Promise<SubmitState> {
   const day = await activeDayOfType('lyrics', form)
   if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
@@ -253,14 +251,11 @@ export async function submitLyrics(_prev: SubmitState, form: FormData): Promise<
   }>
 
   let hers: Array<{ link?: string; excerpt?: string }>
-  let finalists: { favorite?: Finalist; accident?: Finalist }
   try {
     hers = JSON.parse(String(form.get('fragments') ?? '[]'))
-    finalists = JSON.parse(String(form.get('finalists') ?? '{}'))
   } catch {
     return { ok: false, error: 'No se pudo guardar. Probá de nuevo.' }
   }
-
   if (hers.length !== categories.length) return { ok: false, error: 'Faltan frases.' }
 
   const ids = await Promise.all(hers.map((f) => resolveSpotifyInput(clip(f.link ?? null))))
@@ -274,17 +269,16 @@ export async function submitLyrics(_prev: SubmitState, form: FormData): Promise<
     tag: `D8_${String(categories[i]?.key ?? i + 1).toUpperCase()}_USER_TRACK`,
   }))
 
-  const favorite = String(finalists.favorite?.text ?? '').trim()
-  const accident = String(finalists.accident?.text ?? '').trim()
-  if (!favorite || !accident) return { ok: false, error: 'Faltan las dos criaturas.' }
-  if (favorite.toLowerCase() === accident.toLowerCase()) {
-    return { ok: false, error: 'Las dos criaturas tienen que ser distintas.' }
-  }
+  const kraken = String(form.get('kraken') ?? '').trim().slice(0, 300)
+  const chosen = String(form.get('chosen') ?? '').trim().slice(0, 300)
+  const songTitle = String(form.get('song_title') ?? '').trim().slice(0, 80)
+  if (!kraken) return { ok: false, error: 'Falta tu frase.' }
+  if (!chosen) return { ok: false, error: 'Falta elegir una de las tres.' }
 
-  // La procedencia se recalcula acá: lo que ella escribió a mano queda marcado como suyo.
+  // La procedencia se recalcula acá: lo que escribió a mano queda como suyo.
   const sources = await d8Sources(day, hers)
   const provenance = (text: string) => {
-    const check = checkLine(text, sources, { allowAdded: true, limits: { minSources: 1, maxFromOne: 1 } })
+    const check = checkLine(text, sources, { allowAdded: true, limits: { minSources: 1, maxFromOne: 1, minWords: 1, maxWords: 80 } })
     return check.ok ? { contributions: check.contributions, added: check.added } : { contributions: [], added: [] }
   }
 
@@ -293,8 +287,9 @@ export async function submitLyrics(_prev: SubmitState, form: FormData): Promise<
       key: categories[i]?.key ?? String(i + 1),
       excerpt: String(f.excerpt ?? '').trim(),
     })),
-    favorite: { text: favorite, title: finalists.favorite?.title ?? null, ...provenance(favorite) },
-    accident: { text: accident, title: finalists.accident?.title ?? null, ...provenance(accident) },
+    kraken: { text: kraken, ...provenance(kraken) },
+    chosen: { text: chosen, ...provenance(chosen) },
+    song_title: songTitle || null,
   })
 }
 

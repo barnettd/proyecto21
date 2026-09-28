@@ -6,7 +6,6 @@ import { mixLines, submitLyrics, type SubmitState } from '@/app/actions'
 import { TrackCard } from '@/components/TrackCard'
 import { TrackPicker } from '@/components/TrackPicker'
 import type { Line } from '@/lib/ai'
-import { normalizeLine } from '@/lib/mixer'
 import { parseSpotifyTrackId } from '@/lib/spotify'
 import type { SubmittedTrack } from '@/lib/types'
 
@@ -16,29 +15,29 @@ export type LyricsConfig = {
   opening: { eyebrow?: string; title: string; text: string; cta: string }
   categories: Category[]
   excerpt: { prompt: string; placeholder?: string; max_chars?: number }
-  reveal: { title: string; text: string; cta: string }
+  reveal: { title: string; text: string; task: string; cta: string }
+  /** Las tres mías, una por categoría, en el mismo orden. */
   reveal_fragments: Array<{ track: SubmittedTrack; excerpt: string }>
-  lab: { title: string; text: string; note?: string; cta: string; loading?: string }
-  mix: {
-    labels: { coherent: string; unexpected: string; absurd: string }
-    again: string
-    save: string
-    saved: string
-    unsave: string
-    edit: string
-    provenance: string
-    added_note: string
-    go_finalists: string
-    need_more: string
+  lab: { title: string; text: string; note?: string; cta: string }
+  kraken: {
+    title: string
+    rules: string
+    placeholder?: string
+    max_chars?: number
+    reference_label: string
+    generate: string
+    generating: string
+    cta: string
   }
-  finalists: {
+  choose: {
     title: string
     text: string
-    favorite: string
-    accident: string
-    title_label?: string
+    labels: { coherent: string; unexpected: string; absurd: string }
+    again: string
+    title_prompt: string
+    title_placeholder?: string
     cta: string
-    pick: string
+    loading: string
   }
   deadline_note?: string
 }
@@ -48,34 +47,38 @@ type Step =
   | { kind: 'category'; i: number }
   | { kind: 'reveal' }
   | { kind: 'lab' }
-  | { kind: 'mix' }
-  | { kind: 'finalists' }
+  | { kind: 'kraken' }
+  | { kind: 'choose' }
 
 type Draft = { link: string; excerpt: string }
-type Saved = Line & { id: string; edited?: boolean }
 
-const same = (a: Step, b: Step) => a.kind === b.kind && ('i' in a ? a.i : -1) === ('i' in b ? (b as { i: number }).i : -1)
+const same = (a: Step, b: Step) =>
+  a.kind === b.kind && ('i' in a ? a.i : -1) === ('i' in b ? (b as { i: number }).i : -1)
 
-export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; config: LyricsConfig; preview?: boolean }) {
+export function LyricsFlow({
+  dayId,
+  config,
+  preview = false,
+}: {
+  dayId: string
+  config: LyricsConfig
+  preview?: boolean
+}) {
   const router = useRouter()
   const [state, action, pending] = useActionState<SubmitState, FormData>(submitLyrics, { ok: false })
   const [step, setStep] = useState<Step>({ kind: 'opening' })
   const [drafts, setDrafts] = useState<Draft[]>(() => config.categories.map(() => ({ link: '', excerpt: '' })))
-  const [sets, setSets] = useState<Line[][]>([])
-  const [shown, setShown] = useState(0)
-  const [saved, setSaved] = useState<Saved[]>([])
-  const [favorite, setFavorite] = useState<Saved | null>(null)
-  const [accident, setAccident] = useState<Saved | null>(null)
-  const [titles, setTitles] = useState<{ favorite: string; accident: string }>({ favorite: '', accident: '' })
-  const [editing, setEditing] = useState<string | null>(null)
-  const [openProvenance, setOpenProvenance] = useState<string | null>(null)
-  const [showSaved, setShowSaved] = useState(false)
-  const [mixError, setMixError] = useState<string | null>(null)
-  const [mixing, startMix] = useTransition()
+  const [kraken, setKraken] = useState('')
+  const [options, setOptions] = useState<Line[]>([])
+  const [chosen, setChosen] = useState<string | null>(null)
+  const [songTitle, setSongTitle] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [busy, startWork] = useTransition()
   const [restored, setRestored] = useState(false)
   const draftKey = `p21-draft-${dayId}`
 
   const maxChars = config.excerpt.max_chars ?? 200
+  const krakenMax = config.kraken.max_chars ?? 300
 
   useEffect(() => {
     try {
@@ -84,20 +87,16 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
         const p = JSON.parse(raw) as Partial<{
           step: Step
           drafts: Draft[]
-          sets: Line[][]
-          shown: number
-          saved: Saved[]
-          favorite: Saved | null
-          accident: Saved | null
-          titles: { favorite: string; accident: string }
+          kraken: string
+          options: Line[]
+          chosen: string
+          songTitle: string
         }>
         if (Array.isArray(p.drafts) && p.drafts.length === config.categories.length) setDrafts(p.drafts)
-        if (Array.isArray(p.sets)) setSets(p.sets)
-        if (typeof p.shown === 'number') setShown(p.shown)
-        if (Array.isArray(p.saved)) setSaved(p.saved)
-        if (p.favorite) setFavorite(p.favorite)
-        if (p.accident) setAccident(p.accident)
-        if (p.titles) setTitles(p.titles)
+        if (typeof p.kraken === 'string') setKraken(p.kraken)
+        if (Array.isArray(p.options)) setOptions(p.options)
+        if (typeof p.chosen === 'string') setChosen(p.chosen)
+        if (typeof p.songTitle === 'string') setSongTitle(p.songTitle)
         if (p.step?.kind) setStep(p.step)
       }
     } catch {
@@ -110,14 +109,11 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
   useEffect(() => {
     if (!restored) return
     try {
-      localStorage.setItem(
-        draftKey,
-        JSON.stringify({ step, drafts, sets, shown, saved, favorite, accident, titles }),
-      )
+      localStorage.setItem(draftKey, JSON.stringify({ step, drafts, kraken, options, chosen, songTitle }))
     } catch {
       /* sin guardado */
     }
-  }, [restored, draftKey, step, drafts, sets, shown, saved, favorite, accident, titles])
+  }, [restored, draftKey, step, drafts, kraken, options, chosen, songTitle])
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
@@ -133,10 +129,8 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
     router.refresh()
   }, [state.ok, draftKey, router])
 
-  const ready = (i: number) => {
-    const d = drafts[i]
-    return Boolean(parseSpotifyTrackId(d.link)) && d.excerpt.trim().length > 0 && d.excerpt.length <= maxChars
-  }
+  const ready = (i: number) =>
+    Boolean(parseSpotifyTrackId(drafts[i].link)) && drafts[i].excerpt.trim().length > 0
   const missing = config.categories.findIndex((_, i) => !ready(i))
 
   const hers = drafts.map((d, i) => ({
@@ -145,46 +139,44 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
     link: d.link,
     excerpt: d.excerpt.trim(),
   }))
-  const current = sets[shown] ?? []
-  const avoid = [...sets.flat().map((l) => normalizeLine(l.text)), ...saved.map((l) => normalizeLine(l.text))]
 
-  function mix(next: boolean) {
-    setMixError(null)
-    if (next && shown + 1 < sets.length) {
-      setShown(shown + 1)
-      return
-    }
-    startMix(async () => {
+  /** Las seis frases, con el nombre de su categoría, para mostrar como referencia. */
+  const six = [
+    ...config.categories.map((c, i) => ({ label: c.title, excerpt: drafts[i].excerpt.trim(), mine: false })),
+    ...config.reveal_fragments.map((f, i) => ({
+      label: config.categories[i]?.title ?? 'P.21',
+      excerpt: f.excerpt,
+      mine: true,
+    })),
+  ].filter((f) => f.excerpt)
+
+  /** Le pide una línea al laboratorio: para asistir, o para las tres finales. */
+  function ask(what: 'assist' | 'options') {
+    setError(null)
+    startWork(async () => {
+      // Que no repita ni lo que ella tiene escrito ni lo ya mostrado.
+      const avoid = [kraken, ...options.map((o) => o.text)].filter(Boolean)
       const result = await mixLines(hers, avoid, preview ? dayId : undefined)
-      if (result.error || !result.sets?.length) {
-        setMixError(result.error ?? 'No salió nada. Probá de nuevo.')
+      const set = result.sets?.[0]
+      if (result.error || !set?.length) {
+        setError(result.error ?? 'No salió nada. Probá de nuevo.')
         return
       }
-      setSets((old) => [...old, ...result.sets!])
-      setShown(next ? sets.length : 0)
-      if (!next) setStep({ kind: 'mix' })
+      if (what === 'assist') setKraken(set[0].text.slice(0, krakenMax))
+      else {
+        setOptions(set)
+        setChosen(null)
+      }
     })
   }
-
-  const keyOf = (line: Line) => normalizeLine(line.text)
-  const isSaved = (line: Line) => saved.some((s) => keyOf(s) === keyOf(line))
-  const toggleSave = (line: Line) =>
-    setSaved((old) =>
-      old.some((s) => keyOf(s) === keyOf(line))
-        ? old.filter((s) => keyOf(s) !== keyOf(line))
-        : [...old, { ...line, id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}` }],
-    )
-
-  const editSaved = (id: string, text: string) =>
-    setSaved((old) => old.map((s) => (s.id === id ? { ...s, text, edited: true } : s)))
 
   const screens: Step[] = [
     { kind: 'opening' },
     ...config.categories.map((_, i): Step => ({ kind: 'category', i })),
     { kind: 'reveal' },
     { kind: 'lab' },
-    { kind: 'mix' },
-    { kind: 'finalists' },
+    { kind: 'kraken' },
+    { kind: 'choose' },
   ]
 
   const bar = preview ? (
@@ -240,7 +232,7 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
               value={d.excerpt}
               onChange={(e) => set({ excerpt: e.target.value.slice(0, maxChars) })}
               rows={3}
-              placeholder={config.excerpt.placeholder ?? 'Escribí la frase, tal cual suena.'}
+              placeholder={config.excerpt.placeholder ?? 'Copiala tal cual suena.'}
             />
             <span className="field-hint memory-count">
               {d.excerpt.length}/{maxChars}
@@ -255,7 +247,11 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
             {c.cta}
           </button>
           {i > 0 && (
-            <button type="button" className="link-button step-back" onClick={() => setStep({ kind: 'category', i: i - 1 })}>
+            <button
+              type="button"
+              className="link-button step-back"
+              onClick={() => setStep({ kind: 'category', i: i - 1 })}
+            >
               Volver
             </button>
           )}
@@ -274,10 +270,12 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
           <p className="prose">{config.reveal.text}</p>
           {config.reveal_fragments.map((f, i) => (
             <div className="lyric-card" key={i}>
+              <p className="round-label">{config.categories[i]?.title ?? 'P.21'}</p>
               <p className="lyric-text">«{f.excerpt}»</p>
               <TrackCard track={f.track} showLink={false} />
             </div>
           ))}
+          <p className="prose lyric-task">{config.reveal.task}</p>
           <button type="button" className="submit" onClick={() => setStep({ kind: 'lab' })}>
             {config.reveal.cta}
           </button>
@@ -295,13 +293,8 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
           <h2 className="bracket-title">{config.lab.title}</h2>
           <p className="prose">{config.lab.text}</p>
           {config.lab.note && <p className="field-hint">{config.lab.note}</p>}
-          {mixError && (
-            <p className="form-error" role="alert">
-              {mixError}
-            </p>
-          )}
-          <button type="button" className="submit" disabled={mixing || missing >= 0} onClick={() => mix(false)}>
-            {mixing ? (config.lab.loading ?? 'Buscando combinaciones improbables…') : config.lab.cta}
+          <button type="button" className="submit" disabled={missing >= 0} onClick={() => setStep({ kind: 'kraken' })}>
+            {config.lab.cta}
           </button>
           {missing >= 0 && (
             <p className="form-error">
@@ -318,96 +311,58 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
     )
   }
 
-  if (step.kind === 'mix') {
+  if (step.kind === 'kraken') {
     return (
       <>
         <section className="step">
-          {current.map((line) => {
-            const key = keyOf(line)
-            const savedLine = saved.find((s) => keyOf(s) === key)
-            return (
-              <div className="lyric-card" key={key}>
-                <p className="round-label">{config.mix.labels[line.mode]}</p>
-                <p className="lyric-text">{line.text}</p>
-                <div className="lyric-actions">
-                  <button type="button" className="link-button" onClick={() => toggleSave(line)}>
-                    {isSaved(line) ? config.mix.unsave : config.mix.save}
-                  </button>
-                  <button
-                    type="button"
-                    className="link-button"
-                    onClick={() => setOpenProvenance(openProvenance === key ? null : key)}
-                  >
-                    {config.mix.provenance}
-                  </button>
-                </div>
-                {openProvenance === key && (
-                  <ul className="lyric-origin">
-                    {line.contributions.map((c) => (
-                      <li key={c.sourceId}>
-                        <span className="lyric-origin-id">{sourceName(c.sourceId, config)}</span> {c.words.join(', ')}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {savedLine && editing === savedLine.id && (
-                  <textarea
-                    className="lyric-edit"
-                    value={savedLine.text}
-                    rows={2}
-                    onChange={(e) => editSaved(savedLine.id, e.target.value)}
-                  />
-                )}
-                {savedLine && (
-                  <button
-                    type="button"
-                    className="link-button"
-                    onClick={() => setEditing(editing === savedLine.id ? null : savedLine.id)}
-                  >
-                    {editing === savedLine.id ? 'Listo' : config.mix.edit}
-                  </button>
-                )}
-              </div>
-            )
-          })}
+          <h2 className="bracket-title">{config.kraken.title}</h2>
+          <p className="prose">{config.kraken.rules}</p>
 
-          {mixError && (
+          <label className="field memory-field kraken-field">
+            <span className="visually-hidden">{config.kraken.title}</span>
+            <textarea
+              value={kraken}
+              onChange={(e) => setKraken(e.target.value.slice(0, krakenMax))}
+              rows={4}
+              placeholder={config.kraken.placeholder ?? 'Escribí la tuya.'}
+            />
+            <span className="kraken-tools">
+              <button type="button" className="kraken-generate" disabled={busy} onClick={() => ask('assist')}>
+                <span aria-hidden="true">✦</span> {busy ? config.kraken.generating : config.kraken.generate}
+              </button>
+              <span className="field-hint">
+                {kraken.length}/{krakenMax}
+              </span>
+            </span>
+          </label>
+
+          {error && (
             <p className="form-error" role="alert">
-              {mixError}
+              {error}
             </p>
           )}
 
-          <button type="button" className="submit submit-secondary" disabled={mixing} onClick={() => mix(true)}>
-            {mixing ? (config.lab.loading ?? 'Mezclando…') : config.mix.again}
-          </button>
-
-          <button type="button" className="link-button" onClick={() => setShowSaved(!showSaved)}>
-            {config.mix.saved.replace('{n}', String(saved.length))}
-          </button>
-
-          {showSaved && (
-            <ul className="lyric-saved">
-              {saved.length === 0 && <li className="field-hint">Todavía no guardaste ninguna.</li>}
-              {saved.map((s) => (
-                <li key={s.id}>
-                  <span>{s.text}</span>
-                  <button type="button" className="link-button" onClick={() => toggleSave(s)}>
-                    {config.mix.unsave}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+          <p className="round-label">{config.kraken.reference_label}</p>
+          <ul className="lyric-reference">
+            {six.map((f, i) => (
+              <li key={i} className={f.mine ? 'is-mine' : ''}>
+                <span className="lyric-reference-label">{f.label}</span>
+                <span>«{f.excerpt}»</span>
+              </li>
+            ))}
+          </ul>
 
           <button
             type="button"
             className="submit"
-            disabled={saved.length < 2}
-            onClick={() => setStep({ kind: 'finalists' })}
+            disabled={!kraken.trim() || busy}
+            onClick={() => {
+              setStep({ kind: 'choose' })
+              if (!options.length) ask('options')
+            }}
           >
-            {config.mix.go_finalists}
+            {config.kraken.cta}
           </button>
-          {saved.length < 2 && <p className="field-hint">{config.mix.need_more}</p>}
           {deadline}
         </section>
         {bar}
@@ -415,93 +370,70 @@ export function LyricsFlow({ dayId, config, preview = false }: { dayId: string; 
     )
   }
 
-  // step.kind === 'finalists'
-  const canSubmit = Boolean(favorite && accident && keyOf(favorite) !== keyOf(accident))
+  // step.kind === 'choose'
   return (
     <>
       <form action={action} className="step">
         {preview && <input type="hidden" name="preview_day" value={dayId} />}
-        <input type="hidden" name="fragments" value={JSON.stringify(hers.map((h) => ({ link: h.link, excerpt: h.excerpt })))} />
         <input
           type="hidden"
-          name="finalists"
-          value={JSON.stringify({
-            favorite: favorite ? { text: favorite.text, title: titles.favorite || null } : null,
-            accident: accident ? { text: accident.text, title: titles.accident || null } : null,
-          })}
+          name="fragments"
+          value={JSON.stringify(hers.map((h) => ({ link: h.link, excerpt: h.excerpt })))}
         />
+        <input type="hidden" name="kraken" value={kraken} />
+        <input type="hidden" name="chosen" value={chosen ?? ''} />
+        <input type="hidden" name="song_title" value={songTitle} />
 
-        <h2 className="bracket-title">{config.finalists.title}</h2>
-        <p className="prose">{config.finalists.text}</p>
+        <h2 className="bracket-title">{config.choose.title}</h2>
+        <p className="prose">{config.choose.text}</p>
 
-        {(['favorite', 'accident'] as const).map((slot) => {
-          const chosen = slot === 'favorite' ? favorite : accident
-          const choose = slot === 'favorite' ? setFavorite : setAccident
-          const other = slot === 'favorite' ? accident : favorite
-          return (
-            <div className="finalist" key={slot}>
-              <p className="round-label">{config.finalists[slot]}</p>
-              {chosen ? (
-                <>
-                  <p className="lyric-text">{chosen.text}</p>
-                  <button type="button" className="link-button" onClick={() => choose(null)}>
-                    Cambiar
-                  </button>
-                </>
-              ) : (
-                <ul className="lyric-saved">
-                  {saved
-                    .filter((s) => !other || keyOf(s) !== keyOf(other))
-                    .map((s) => (
-                      <li key={s.id}>
-                        <span>{s.text}</span>
-                        <button type="button" className="link-button" onClick={() => choose(s)}>
-                          {config.finalists.pick}
-                        </button>
-                      </li>
-                    ))}
-                </ul>
-              )}
-              {chosen && config.finalists.title_label && (
-                <label className="field field-boxed">
-                  <span className="visually-hidden">{config.finalists.title_label}</span>
-                  <input
-                    value={titles[slot]}
-                    onChange={(e) => setTitles({ ...titles, [slot]: e.target.value.slice(0, 60) })}
-                    placeholder={config.finalists.title_label}
-                    autoComplete="off"
-                  />
-                </label>
-              )}
-            </div>
-          )
-        })}
+        {busy && !options.length && <p className="field-hint">{config.choose.loading}</p>}
 
-        {state.error && (
+        {options.map((line) => (
+          <button
+            type="button"
+            key={line.text}
+            className={`lyric-card lyric-option${chosen === line.text ? ' is-on' : ''}`}
+            onClick={() => setChosen(line.text)}
+          >
+            <span className="round-label">{config.choose.labels[line.mode]}</span>
+            <span className="lyric-text">{line.text}</span>
+          </button>
+        ))}
+
+        {options.length > 0 && (
+          <button type="button" className="link-button" disabled={busy} onClick={() => ask('options')}>
+            {busy ? config.choose.loading : config.choose.again}
+          </button>
+        )}
+
+        {chosen && (
+          <label className="field field-boxed">
+            <span className="module-question">{config.choose.title_prompt}</span>
+            <input
+              value={songTitle}
+              onChange={(e) => setSongTitle(e.target.value.slice(0, 80))}
+              placeholder={config.choose.title_placeholder ?? 'El título'}
+              autoComplete="off"
+            />
+          </label>
+        )}
+
+        {(error || state.error) && (
           <p className="form-error" role="alert">
-            {state.error}
+            {error ?? state.error}
           </p>
         )}
-        <button type="submit" className="submit" disabled={!canSubmit || pending || state.ok}>
-          {pending || state.ok ? 'Guardando…' : config.finalists.cta}
+
+        <button type="submit" className="submit" disabled={!chosen || pending || state.ok}>
+          {pending || state.ok ? 'Guardando…' : config.choose.cta}
         </button>
-        <button type="button" className="link-button step-back" onClick={() => setStep({ kind: 'mix' })}>
-          Volver a mezclar
+        <button type="button" className="link-button step-back" onClick={() => setStep({ kind: 'kraken' })}>
+          Volver
         </button>
         {deadline}
       </form>
       {bar}
     </>
   )
-}
-
-/** De dónde salió cada palabra, en nombres que ella entienda. */
-function sourceName(id: string, config: LyricsConfig): string {
-  if (id.startsWith('u')) {
-    const i = Number(id.slice(1)) - 1
-    return config.categories[i]?.title ?? 'Tuya'
-  }
-  const i = Number(id.slice(1)) - 1
-  const f = config.reveal_fragments[i]
-  return f?.track.title ? `P.21 · ${f.track.title}` : 'P.21'
 }

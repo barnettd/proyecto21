@@ -37,10 +37,14 @@ export async function DayView({
   if (response) {
     const scene = cfg.closing_scene as Scene | undefined
     if (scene?.text) {
-      // D8 termina con dos frases: si están, la escena las muestra.
-      const creations = (['favorite', 'accident'] as const)
-        .map((k) => response.payload_json[k] as { text?: string; title?: string | null } | undefined)
-        .filter((c): c is { text: string; title?: string | null } => Boolean(c?.text))
+      // D8 termina con una estrofa de dos versos: el suyo y el que eligió.
+      const songTitle = response.payload_json.song_title as string | null | undefined
+      const creations = (['kraken', 'chosen'] as const)
+        .map((k, i) => {
+          const line = response.payload_json[k] as { text?: string } | undefined
+          return line?.text ? { text: line.text, title: i === 0 ? (songTitle ?? null) : null } : null
+        })
+        .filter((c): c is { text: string; title: string | null } => Boolean(c))
       return (
         <>
           <ClosingScene scene={scene} creations={creations} />

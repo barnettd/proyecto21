@@ -1792,3 +1792,78 @@ body:has(.preview-days) .bracket-hud {
   padding-top: 1rem;
   border-top: 1px solid #242424;
 }
+
+/* D8: la frase propia y las seis de referencia */
+.lyric-task {
+  color: var(--ambar);
+}
+
+.kraken-field textarea {
+  min-height: 7rem;
+}
+
+.kraken-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.kraken-generate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--ambar);
+  cursor: pointer;
+}
+
+.kraken-generate:disabled {
+  opacity: 0.5;
+}
+
+.lyric-reference {
+  align-self: stretch;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.lyric-reference li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-left: 0.8rem;
+  border-left: 2px solid #2a2a2a;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.lyric-reference li.is-mine {
+  border-left-color: var(--ambar);
+}
+
+.lyric-reference-label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  color: var(--gris);
+}
+
+/* Las tres propuestas: tarjetas que se eligen. */
+.lyric-option {
+  align-items: flex-start;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.lyric-option.is-on {
+  border-color: var(--ambar);
+}
