@@ -28,14 +28,17 @@ export type LyricsConfig = {
     generate: string
     generating: string
     cta: string
+    /** Paso dos, una vez que dio por buena la suya. */
+    title_prompt: string
+    title_hint?: string
+    title_placeholder?: string
+    title_cta: string
   }
   choose: {
     title: string
     text: string
     labels: { coherent: string; unexpected: string; absurd: string }
     again: string
-    title_prompt: string
-    title_placeholder?: string
     cta: string
     loading: string
   }
@@ -72,6 +75,7 @@ export function LyricsFlow({
   const [options, setOptions] = useState<Line[]>([])
   const [chosen, setChosen] = useState<string | null>(null)
   const [songTitle, setSongTitle] = useState('')
+  const [naming, setNaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [busy, startWork] = useTransition()
   const [restored, setRestored] = useState(false)
@@ -91,12 +95,14 @@ export function LyricsFlow({
           options: Line[]
           chosen: string
           songTitle: string
+          naming: boolean
         }>
         if (Array.isArray(p.drafts) && p.drafts.length === config.categories.length) setDrafts(p.drafts)
         if (typeof p.kraken === 'string') setKraken(p.kraken)
         if (Array.isArray(p.options)) setOptions(p.options)
         if (typeof p.chosen === 'string') setChosen(p.chosen)
         if (typeof p.songTitle === 'string') setSongTitle(p.songTitle)
+        if (p.naming) setNaming(true)
         if (p.step?.kind) setStep(p.step)
       }
     } catch {
@@ -109,11 +115,11 @@ export function LyricsFlow({
   useEffect(() => {
     if (!restored) return
     try {
-      localStorage.setItem(draftKey, JSON.stringify({ step, drafts, kraken, options, chosen, songTitle }))
+      localStorage.setItem(draftKey, JSON.stringify({ step, drafts, kraken, options, chosen, songTitle, naming }))
     } catch {
       /* sin guardado */
     }
-  }, [restored, draftKey, step, drafts, kraken, options, chosen, songTitle])
+  }, [restored, draftKey, step, drafts, kraken, options, chosen, songTitle, naming])
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
@@ -342,6 +348,22 @@ export function LyricsFlow({
             </p>
           )}
 
+          {naming && (
+            <div className="kraken-naming">
+              <label className="field field-boxed">
+                <span className="module-question">{config.kraken.title_prompt}</span>
+                <input
+                  value={songTitle}
+                  onChange={(e) => setSongTitle(e.target.value.slice(0, 80))}
+                  placeholder={config.kraken.title_placeholder ?? 'El título'}
+                  autoComplete="off"
+                  autoFocus
+                />
+              </label>
+              {config.kraken.title_hint && <p className="field-hint">{config.kraken.title_hint}</p>}
+            </div>
+          )}
+
           <p className="round-label">{config.kraken.reference_label}</p>
           <ul className="lyric-reference">
             {six.map((f, i) => (
@@ -357,11 +379,15 @@ export function LyricsFlow({
             className="submit"
             disabled={!kraken.trim() || busy}
             onClick={() => {
+              if (!naming) {
+                setNaming(true)
+                return
+              }
               setStep({ kind: 'choose' })
               if (!options.length) ask('options')
             }}
           >
-            {config.kraken.cta}
+            {naming ? config.kraken.title_cta : config.kraken.cta}
           </button>
           {deadline}
         </section>
@@ -405,18 +431,6 @@ export function LyricsFlow({
           <button type="button" className="link-button" disabled={busy} onClick={() => ask('options')}>
             {busy ? config.choose.loading : config.choose.again}
           </button>
-        )}
-
-        {chosen && (
-          <label className="field field-boxed">
-            <span className="module-question">{config.choose.title_prompt}</span>
-            <input
-              value={songTitle}
-              onChange={(e) => setSongTitle(e.target.value.slice(0, 80))}
-              placeholder={config.choose.title_placeholder ?? 'El título'}
-              autoComplete="off"
-            />
-          </label>
         )}
 
         {(error || state.error) && (

@@ -1812,14 +1812,24 @@ body:has(.preview-days) .bracket-hud {
 .kraken-generate {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0;
-  border: 0;
-  background: none;
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--ambar);
+  border-radius: 999px;
+  background: rgba(201, 151, 69, 0.08);
   font: inherit;
   font-size: 0.8125rem;
+  letter-spacing: 0.06em;
   color: var(--ambar);
   cursor: pointer;
+}
+
+.kraken-naming {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-top: 0.5rem;
 }
 
 .kraken-generate:disabled {
