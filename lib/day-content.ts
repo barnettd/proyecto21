@@ -20,6 +20,8 @@ export function hasContent(day: Day): boolean {
       return list(cfg.scenarios).length > 0 && Boolean(cfg.opening) && Boolean(cfg.challenge)
     case 'lyrics':
       return list(cfg.categories).length > 0 && list(cfg.reveal_fragments).length > 0 && Boolean(cfg.lab)
+    case 'closing':
+      return Boolean(cfg.opening) && Boolean(cfg.finale)
     case 'bracket':
       return list(cfg.tracks).length >= 2 && Boolean(cfg.entry) && Boolean(cfg.wildcard)
     default:

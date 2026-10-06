@@ -92,6 +92,38 @@ export async function getTracks(dayId: string): Promise<Track[]> {
   return seedTracks.filter((t) => t.day_id === dayId)
 }
 
+/**
+ * Para el cierre: lo que ella mandó en cada día, agrupado por número de día.
+ * Una sola consulta; si falla, el archivo se muestra vacío en vez de romperse.
+ */
+export async function getArchive(days: Day[]): Promise<Record<number, Track[]>> {
+  const numberOf = new Map(days.map((d) => [d.id, d.day_number]))
+  const rows = await herTracks([...numberOf.keys()])
+  const byDay: Record<number, Track[]> = {}
+  for (const t of rows) {
+    const n = numberOf.get(t.day_id)
+    if (n === undefined) continue
+    ;(byDay[n] ??= []).push(t)
+  }
+  for (const list of Object.values(byDay)) list.sort((a, b) => a.sort_order - b.sort_order)
+  return byDay
+}
+
+async function herTracks(dayIds: string[]): Promise<Track[]> {
+  const db = supabase()
+  if (!db) {
+    // Desarrollo: lo que haya quedado de caminar los días en la vista previa.
+    const local = localStoreAllowed() ? (await readLocal()).tracks : []
+    return [...seedTracks, ...local].filter((t) => t.source === 'HER' && dayIds.includes(t.day_id))
+  }
+  const { data, error } = await db.from('tracks').select('*').in('day_id', dayIds).eq('source', 'HER')
+  if (error) {
+    console.error('[p21] archive unavailable', error)
+    return []
+  }
+  return data as Track[]
+}
+
 export async function getResponse(dayId: string): Promise<ResponseRecord | null> {
   const db = supabase()
   if (db) {

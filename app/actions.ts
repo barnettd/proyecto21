@@ -21,18 +21,33 @@ const clip = (v: FormDataEntryValue | null) => String(v ?? '').trim().slice(0, 2
  * yet active can be walked end to end. The hidden field is ignored in production.
  */
 async function activeDayOfType(type: Day['experience_type'], form?: FormData): Promise<Day | null> {
+  const previewId = process.env.NODE_ENV !== 'production' ? String(form?.get('preview_day') ?? '') : ''
+  return dayOfType(type, previewId || undefined)
+}
+
+/**
+ * The day a submission may write into. Besides the active day, the closing may
+ * reopen one earlier day it links to (`opens_day`): Frankenstein lives outside
+ * the calendar, so without this its form would be rejected as expired.
+ */
+async function dayOfType(type: Day['experience_type'], previewDayId?: string): Promise<Day | null> {
   const { days, settings } = await loadContent()
 
-  if (process.env.NODE_ENV !== 'production') {
-    const previewId = String(form?.get('preview_day') ?? '')
-    if (previewId) {
-      const day = days.find((d) => d.id === previewId)
-      return day?.experience_type === type ? day : null
-    }
+  if (previewDayId && process.env.NODE_ENV !== 'production') {
+    const day = days.find((d) => d.id === previewDayId)
+    return day?.experience_type === type ? day : null
   }
 
   const active = resolveActiveDay(days, new Date(), settings.force_active_day)
-  return active.kind === 'day' && active.day.experience_type === type ? active.day : null
+  if (active.kind !== 'day') return null
+  if (active.day.experience_type === type) return active.day
+
+  const opens = active.day.config_json.opens_day
+  if (active.day.experience_type === 'closing' && typeof opens === 'number') {
+    const day = days.find((d) => d.day_number === opens)
+    if (day?.experience_type === type) return day
+  }
+  return null
 }
 
 async function persist(
@@ -214,15 +229,8 @@ export async function mixLines(
   avoid: string[],
   previewDayId?: string,
 ): Promise<MixState> {
-  const { days, settings } = await loadContent()
-  let day: Day | undefined
-  if (previewDayId && process.env.NODE_ENV !== 'production') {
-    day = days.find((d) => d.id === previewDayId)
-  } else {
-    const active = resolveActiveDay(days, new Date(), settings.force_active_day)
-    day = active.kind === 'day' ? active.day : undefined
-  }
-  if (!day || day.experience_type !== 'lyrics') return { error: 'Esto ya no está disponible.' }
+  const day = await dayOfType('lyrics', previewDayId)
+  if (!day) return { error: 'Esto ya no está disponible.' }
 
   const sources = await d8Sources(day, hers)
   if (sources.length < 5) return { error: 'Faltan frases para mezclar.' }

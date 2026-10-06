@@ -1877,3 +1877,262 @@ body:has(.preview-days) .bracket-hud {
 .lyric-option.is-on {
   border-color: var(--ambar);
 }
+
+/* ── D21: el cierre ──────────────────────────────────────────── */
+.final-opening .prose {
+  font-size: clamp(1.0625rem, 4.6vw, 1.1875rem);
+  line-height: 1.7;
+}
+
+/* El archivo: una sola pantalla con todo lo que mandó. */
+.archive-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.archive-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-left: 0.9rem;
+  border-left: 1px solid rgba(248, 248, 246, 0.14);
+}
+
+.archive-label {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.archive-day {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--ambar);
+}
+
+.archive-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.archive-line {
+  margin: 0;
+  color: var(--gris);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.archive-tracks {
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.archive-tracks li {
+  display: flex;
+  flex-direction: column;
+}
+
+.archive-track-title {
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+.archive-track-artist {
+  font-size: 0.75rem;
+  color: var(--gris);
+}
+
+.archive-empty {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: rgba(138, 138, 134, 0.7);
+}
+
+/* Lo que no llegó a pasar: fichas sin terminar, pero prolijas. */
+.pending-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.pending-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+  border: 1px dashed rgba(248, 248, 246, 0.16);
+  border-radius: 3px;
+}
+
+.pending-status {
+  margin: 0;
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+.pending-title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--ambar);
+}
+
+.pending-text {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: #c9c9c4;
+}
+
+.pending-note {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: var(--gris);
+}
+
+.voices-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.voice-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.voice-reason {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--gris);
+}
+
+.key-line {
+  font-size: clamp(1.25rem, 5.6vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* Track 21 sigue sonando: el reproductor no se desmonta al avanzar. */
+.t21-player {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 1.5rem;
+}
+
+.t21-player.is-tucked {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  margin: 0;
+  padding: 0.5rem var(--gutter) calc(0.5rem + env(safe-area-inset-bottom));
+  background: rgba(17, 17, 17, 0.94);
+  border-top: 1px solid rgba(248, 248, 246, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.t21-player.is-tucked .track-card {
+  margin: 0;
+  max-width: 34rem;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.t21-player.is-tucked .spotify-embed {
+  height: 80px;
+}
+
+.final-end {
+  padding-bottom: 7rem;
+}
+
+.final-signoff {
+  margin: 0.5rem 0 0;
+  font-size: clamp(1.5rem, 7vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--ambar);
+}
+
+.final-mark {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: var(--gris);
+}
+
+.final-next {
+  align-self: center;
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: rgba(138, 138, 134, 0.6);
+}
+
+.final-plus {
+  min-height: 55vh;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-bottom: 7rem;
+}
+
+.plus-title {
+  margin: 0;
+  font-size: clamp(2.25rem, 13vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ambar);
+}
+
+.plus-text {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+.back-to-closing {
+  margin-top: 2.5rem;
+}
+
+/* Sobre la escena de Frankenstein, la vuelta al cierre queda siempre a mano. */
+.shell-scene .back-to-closing {
+  position: fixed;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: calc(1.25rem + env(safe-area-inset-bottom));
+  z-index: 4;
+  margin: 0 auto;
+  max-width: 30rem;
+}

@@ -15,6 +15,7 @@ export type ExperienceType =
   | 'media_exchange'
   | 'archive'
   | 'reveal'
+  | 'closing'
   | 'custom'
 
 export type Day = {

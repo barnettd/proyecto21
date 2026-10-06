@@ -52,7 +52,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const { day } = active
   // La escena de cierre ocupa la pantalla entera: sin sello arriba ni día abajo.
   const scene = Boolean((day.config_json.closing_scene as { text?: string } | undefined)?.text)
-  const sceneOn = scene && Boolean(await getResponse(day.id))
+  // El cierre ocupa la pantalla entera de punta a punta, sin sello ni número de día.
+  const sceneOn = day.config_json.full_screen === true || (scene && Boolean(await getResponse(day.id)))
   const nextOpensAt =
     days
       .filter((d) => d.status !== 'disabled' && new Date(d.activation_datetime) > new Date())
