@@ -52,8 +52,10 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const { day } = active
   // La escena de cierre ocupa la pantalla entera: sin sello arriba ni día abajo.
   const scene = Boolean((day.config_json.closing_scene as { text?: string } | undefined)?.text)
-  // El cierre ocupa la pantalla entera de punta a punta, sin sello ni número de día.
-  const sceneOn = day.config_json.full_screen === true || (scene && Boolean(await getResponse(day.id)))
+  // La escena de D5 va a sangre: sin ancho máximo ni márgenes.
+  const sceneOn = scene && Boolean(await getResponse(day.id))
+  // El cierre sí respeta la columna; lo único que se va son el sello y el número de día.
+  const bare = sceneOn || day.config_json.full_screen === true
   const nextOpensAt =
     days
       .filter((d) => d.status !== 'disabled' && new Date(d.activation_datetime) > new Date())
@@ -62,7 +64,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   return (
     <div className={`shell${sceneOn ? ' shell-scene' : ''}`}>
       {preview && <PreviewDayBar days={previewDays} current={currentDay} />}
-      {!sceneOn && (
+      {!bare && (
         <header className="shell-header">
           <Seal size="xs" />
         </header>
@@ -70,7 +72,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       <main className="shell-main">
         <DayView day={day} nextOpensAt={nextOpensAt} serverNow={Date.now()} />
       </main>
-      {!sceneOn && <Footer dayNumber={day.day_number} />}
+      {!bare && <Footer dayNumber={day.day_number} />}
     </div>
   )
 }
