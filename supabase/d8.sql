@@ -84,7 +84,7 @@ update days set
     "cta": "CONTINUAR"
   },
   "kraken": {
-    "title": "TU KRAKEN",
+    "title": "TU CRIATURA",
     "rules": "Una frase nueva, hecha con palabras de las seis. Puede tener sentido o no tenerlo en absoluto; lo que no puede es aburrir.",
     "placeholder": "Escribí tu frase.",
     "max_chars": 300,
@@ -98,7 +98,7 @@ update days set
     "title_cta": "SEGUIR"
   },
   "choose": {
-    "title": "LOS KRAKENS DE LA CASA",
+    "title": "LAS CRIATURAS DE P.21",
     "text": "P.21 también hizo la tarea con las mismas seis frases. Tres veces, con distinto criterio.\n\nElegí la que se queda con vos.",
     "labels": {
       "coherent": "CASI TIENE SENTIDO",

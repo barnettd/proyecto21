@@ -45,7 +45,7 @@ const copy: Record<number, Partial<Day>> = {
       opening: {
         title: 'PROYECTO 21',
         text: 'Algunas cosas pasaron exactamente como estaban planeadas.\n\nOtras quedaron abiertas.\n\nY algunas nunca llegaron a suceder.\n\nDe eso también se trata P.21. De eso se trata casi todo, en realidad.\n\nHoy no vengo a recuperar los días que faltaron. Vengo a cerrar los que hubo, y a dejarte algunas cosas más.',
-        cta: 'EMPEZAR EL CIERRE',
+        cta: 'EMPECEMOS',
       },
       archive: {
         title: 'LO QUE SÍ PASÓ',
@@ -315,7 +315,7 @@ const copy: Record<number, Partial<Day>> = {
         cta: 'CONTINUAR',
       },
       kraken: {
-        title: 'TU KRAKEN',
+        title: 'TU CRIATURA',
         rules: 'Una frase nueva, hecha con palabras de las seis. Puede tener sentido o no tenerlo en absoluto; lo que no puede es aburrir.',
         placeholder: 'Escribí tu frase.',
         max_chars: 300,
@@ -329,7 +329,7 @@ const copy: Record<number, Partial<Day>> = {
         title_cta: 'SEGUIR',
       },
       choose: {
-        title: 'LOS KRAKENS DE LA CASA',
+        title: 'LAS CRIATURAS DE P.21',
         text: 'P.21 también hizo la tarea con las mismas seis frases. Tres veces, con distinto criterio.\n\nElegí la que se queda con vos.',
         labels: {
           coherent: 'CASI TIENE SENTIDO',

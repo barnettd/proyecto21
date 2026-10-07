@@ -15,7 +15,7 @@ update days set
   "opening": {
     "title": "PROYECTO 21",
     "text": "Algunas cosas pasaron exactamente como estaban planeadas.\n\nOtras quedaron abiertas.\n\nY algunas nunca llegaron a suceder.\n\nDe eso también se trata P.21. De eso se trata casi todo, en realidad.\n\nHoy no vengo a recuperar los días que faltaron. Vengo a cerrar los que hubo, y a dejarte algunas cosas más.",
-    "cta": "EMPEZAR EL CIERRE"
+    "cta": "EMPECEMOS"
   },
   "archive": {
     "title": "LO QUE SÍ PASÓ",
