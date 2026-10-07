@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from 'react'
 import { submitRiff, type SubmitState } from '@/app/actions'
+import type { ArchiveEntry } from '@/lib/archive'
 import { Wordmark } from '@/components/Brand'
 import { TrackCard } from '@/components/TrackCard'
 import type { SubmittedTrack } from '@/lib/types'
@@ -100,8 +101,8 @@ export function FinalFlow({
 }: {
   dayId: string
   config: FinalConfig
-  /** Lo que ella mandó cada día, por número de día. */
-  archive: Record<number, SubmittedTrack[]>
+  /** Lo que ella mandó cada día, con la ranura que llenó y lo que escribió. */
+  archive: Record<number, ArchiveEntry[]>
   /** Si Frankenstein ya está respondido, la pantalla invita a seguir en vez de a entrar. */
   frankensteinDone?: boolean
   preview?: boolean
@@ -181,8 +182,10 @@ export function FinalFlow({
                   <ul className="archive-tracks">
                     {hers.map((t, i) => (
                       <li key={i}>
-                        <span className="archive-track-title">{t.title ?? 'Una canción'}</span>
+                        {t.label && <span className="archive-slot">{t.label}</span>}
+                        <span className="archive-track-title">{t.title}</span>
                         {t.artist && <span className="archive-track-artist">{t.artist}</span>}
+                        {t.note && <span className="archive-note">«{t.note}»</span>}
                       </li>
                     ))}
                   </ul>

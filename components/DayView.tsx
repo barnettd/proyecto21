@@ -12,7 +12,8 @@ import { PreviewReset } from '@/components/PreviewReset'
 import { ScenariosFlow, type ScenariosConfig } from '@/components/ScenariosFlow'
 import { SingleTrackForm } from '@/components/SingleTrackForm'
 import { TrackCard } from '@/components/TrackCard'
-import { getArchive, getResponse, getTracks, loadContent } from '@/lib/content'
+import { buildArchive } from '@/lib/archive'
+import { getArchive, getResponse, getResponsesFor, getTracks, loadContent } from '@/lib/content'
 import { hasContent } from '@/lib/day-content'
 import { deadlineFor } from '@/lib/schedule'
 import type { Day, SubmittedTrack } from '@/lib/types'
@@ -37,13 +38,9 @@ export async function DayView({
 
   if (day.experience_type === 'closing') {
     const { days } = await loadContent()
-    const rows = await getArchive(days.filter((d) => d.day_number >= 1 && d.day_number <= 7))
-    const archive = Object.fromEntries(
-      Object.entries(rows).map(([n, list]) => [
-        Number(n),
-        list.map((t) => ({ title: t.title, artist: t.artist, spotify_url: t.spotify_url })),
-      ]),
-    )
+    const past = days.filter((d) => d.day_number >= 1 && d.day_number <= 7)
+    const [rows, responses] = await Promise.all([getArchive(past), getResponsesFor(past.map((d) => d.id))])
+    const archive = buildArchive(past, rows, responses)
     const frankenstein = days.find((d) => d.day_number === 8)
     const done = frankenstein ? Boolean(await getResponse(frankenstein.id)) : false
     return (

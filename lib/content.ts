@@ -109,6 +109,20 @@ export async function getArchive(days: Day[]): Promise<Record<number, Track[]>> 
   return byDay
 }
 
+/** Las respuestas de varios días en una sola consulta, por id de día. */
+export async function getResponsesFor(dayIds: string[]): Promise<Record<string, ResponseRecord>> {
+  const db = supabase()
+  let rows: ResponseRecord[] = []
+  if (db) {
+    const { data, error } = await db.from('responses').select('*').in('day_id', dayIds)
+    if (error) console.error('[p21] responses lookup failed', error)
+    rows = (data as ResponseRecord[] | null) ?? []
+  } else if (localStoreAllowed()) {
+    rows = (await readLocal()).responses.filter((r) => dayIds.includes(r.day_id))
+  }
+  return Object.fromEntries(rows.map((r) => [r.day_id, r]))
+}
+
 async function herTracks(dayIds: string[]): Promise<Track[]> {
   const db = supabase()
   if (!db) {
