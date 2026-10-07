@@ -2098,10 +2098,6 @@ body:has(.preview-days) .bracket-hud {
 }
 
 .final-plus {
-  min-height: 55vh;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
   padding-bottom: 7rem;
 }
 
@@ -2113,14 +2109,7 @@ body:has(.preview-days) .bracket-hud {
   color: var(--ambar);
 }
 
-.plus-text {
-  margin: 0;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--gris);
-}
+
 
 .back-to-closing {
   margin-top: 2.5rem;
@@ -2135,4 +2124,38 @@ body:has(.preview-days) .bracket-hud {
   z-index: 4;
   margin: 0 auto;
   max-width: 30rem;
+}
+
+.voices-question {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--ambar);
+}
+
+.voices-ask {
+  margin: 0;
+  font-size: clamp(1.0625rem, 4.8vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.voice-card {
+  gap: 0.6rem;
+}
+
+/* La pista de la caja: se lee despacio, así que respira. */
+.gift-clue {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(201, 151, 69, 0.4);
+  border-radius: 3px;
+  font-size: 1rem;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+.final-signoff {
+  white-space: pre-line;
 }

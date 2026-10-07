@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Seal, Wordmark } from '@/components/Brand'
+import { useActionState, useEffect, useState } from 'react'
+import { submitRiff, type SubmitState } from '@/app/actions'
+import { Wordmark } from '@/components/Brand'
 import { TrackCard } from '@/components/TrackCard'
 import type { SubmittedTrack } from '@/lib/types'
 
 export type ArchiveDay = { n: number; label: string; title: string; line: string }
-export type PendingItem = { title: string; text: string; status?: string; note?: string }
+export type PendingItem = { title: string; text: string; status?: string }
 export type VoiceCard = { name: string; reason?: string; track: SubmittedTrack }
 
 export type FinalConfig = {
@@ -21,14 +22,29 @@ export type FinalConfig = {
     done_text?: string
     done_cta: string
   }
-  guitar: {
-    intro: { title: string; text: string; cta: string }
-    challenge: { title: string; text: string; track?: SubmittedTrack; track_label?: string; cta: string }
-    done: { title: string; text?: string; cta: string }
+  mission: {
+    title: string
+    text: string
+    track?: SubmittedTrack
+    track_label?: string
+    link_label?: string
+    link_placeholder?: string
+    link_hint?: string
+    cta: string
+    skip?: string
   }
   pending: { title: string; text: string; cta: string; status_label?: string; items: PendingItem[] }
-  voices: { title: string; text: string; cta: string; children: VoiceCard[] }
-  key: { title: string; text: string; cta: string; reveal: { text: string; note?: string; cta: string } }
+  voices: {
+    title: string
+    text: string
+    question_label?: string
+    question?: string
+    note?: string
+    hint?: string
+    cta: string
+    children: VoiceCard[]
+  }
+  gift: { title: string; text: string; clue: string; cta: string }
   track21: {
     eyebrow?: string
     title: string
@@ -38,47 +54,42 @@ export type FinalConfig = {
     track_cta?: string
     cta: string
   }
-  finale: { title: string; text: string; signoff: string; mark: string; cta: string }
-  plus: { title: string; text: string }
+  plus: { title: string; text: string; cta: string }
+  finale: { text: string; signoff: string; playlist_label?: string; playlist_url?: string; mark: string }
 }
 
 type Step =
   | { kind: 'opening' }
   | { kind: 'archive' }
   | { kind: 'frankenstein' }
-  | { kind: 'guitar'; i: number }
+  | { kind: 'mission' }
   | { kind: 'pending' }
   | { kind: 'voices' }
-  | { kind: 'key' }
-  | { kind: 'key_open' }
+  | { kind: 'gift' }
   | { kind: 'track21' }
-  | { kind: 'finale' }
   | { kind: 'plus' }
+  | { kind: 'finale' }
 
 const ORDER: Step[] = [
   { kind: 'opening' },
   { kind: 'archive' },
   { kind: 'frankenstein' },
-  { kind: 'guitar', i: 0 },
-  { kind: 'guitar', i: 1 },
-  { kind: 'guitar', i: 2 },
+  { kind: 'mission' },
   { kind: 'pending' },
   { kind: 'voices' },
-  { kind: 'key' },
-  { kind: 'key_open' },
+  { kind: 'gift' },
   { kind: 'track21' },
-  { kind: 'finale' },
   { kind: 'plus' },
+  { kind: 'finale' },
 ]
 
-const at = (s: Step) => ORDER.findIndex((o) => o.kind === s.kind && ('i' in o ? o.i : -1) === ('i' in s ? s.i : -1))
-const same = (a: Step, b: Step) => at(a) === at(b)
+const at = (s: Step) => ORDER.findIndex((o) => o.kind === s.kind)
 /** Una vez que suena Track 21, el reproductor no se vuelve a montar. */
-const WITH_PLAYER = new Set(['track21', 'finale', 'plus'])
+const WITH_PLAYER = new Set(['track21', 'plus', 'finale'])
 
 /**
- * El cierre: lo que pasó, lo que quedó abierto, lo que no llegó a pasar,
- * y una canción que empieza hoy. No pide nada: se camina de a una pantalla.
+ * El cierre: lo que pasó, lo que no, y una canción que empieza hoy.
+ * Lo único que recoge es el link al audio del riff, y es opcional.
  */
 export function FinalFlow({
   dayId,
@@ -91,11 +102,13 @@ export function FinalFlow({
   config: FinalConfig
   /** Lo que ella mandó cada día, por número de día. */
   archive: Record<number, SubmittedTrack[]>
-  /** Si D8 ya está respondido, la pantalla invita a seguir en vez de a entrar. */
+  /** Si Frankenstein ya está respondido, la pantalla invita a seguir en vez de a entrar. */
   frankensteinDone?: boolean
   preview?: boolean
 }) {
+  const [state, action, pending] = useActionState<SubmitState, FormData>(submitRiff, { ok: false })
   const [step, setStep] = useState<Step>({ kind: 'opening' })
+  const [riff, setRiff] = useState('')
   const [restored, setRestored] = useState(false)
   const draftKey = `p21-draft-${dayId}`
 
@@ -103,7 +116,8 @@ export function FinalFlow({
     try {
       const saved = localStorage.getItem(draftKey)
       if (saved) {
-        const p = JSON.parse(saved) as { step?: Step }
+        const p = JSON.parse(saved) as { step?: Step; riff?: string }
+        if (typeof p.riff === 'string') setRiff(p.riff)
         if (p.step?.kind && at(p.step) >= 0) setStep(p.step)
       }
     } catch {
@@ -116,17 +130,22 @@ export function FinalFlow({
   useEffect(() => {
     if (!restored) return
     try {
-      localStorage.setItem(draftKey, JSON.stringify({ step }))
+      localStorage.setItem(draftKey, JSON.stringify({ step, riff }))
     } catch {
       /* sin guardado */
     }
-  }, [restored, draftKey, step])
+  }, [restored, draftKey, step, riff])
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [step])
 
   const next = () => setStep(ORDER[Math.min(at(step) + 1, ORDER.length - 1)])
+
+  // Guardado el audio, la misión se cierra sola y el recorrido sigue.
+  useEffect(() => {
+    if (state.ok) setStep((s) => (s.kind === 'mission' ? { kind: 'pending' } : s))
+  }, [state.ok])
 
   let content: React.ReactNode = null
 
@@ -192,56 +211,51 @@ export function FinalFlow({
             {f.done_cta}
           </button>
         ) : (
-          <>
-            <a className="submit submit-link" href={f.url ?? '/frankenstein'}>
-              {f.cta}
-            </a>
-            <button type="button" className="link-button step-back" onClick={next}>
-              {f.done_cta}
-            </button>
-          </>
+          <a className="submit submit-link" href={f.url ?? '/frankenstein'}>
+            {f.cta}
+          </a>
         )}
       </section>
     )
   }
 
-  if (step.kind === 'guitar') {
-    const g = config.guitar
-    if (step.i === 0) {
-      content = (
-        <section className="step step-entry">
-          <h2 className="bracket-title">{g.intro.title}</h2>
-          <p className="prose">{g.intro.text}</p>
-          <button type="button" className="submit" onClick={next}>
-            {g.intro.cta}
+  if (step.kind === 'mission') {
+    const m = config.mission
+    content = (
+      <form action={action} className="step">
+        {preview && <input type="hidden" name="preview_day" value={dayId} />}
+        <h2 className="bracket-title">{m.title}</h2>
+        <p className="prose">{m.text}</p>
+        {m.track && <TrackCard track={m.track} label={m.track_label} showLink={false} />}
+        <label className="field field-boxed">
+          <span className="visually-hidden">{m.link_label ?? 'Link al audio'}</span>
+          <input
+            name="riff_url"
+            value={riff}
+            onChange={(e) => setRiff(e.target.value)}
+            inputMode="url"
+            autoComplete="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            placeholder={m.link_placeholder ?? 'Pegá acá el link al audio'}
+          />
+        </label>
+        {m.link_hint && <p className="field-hint">{m.link_hint}</p>}
+        {state.error && (
+          <p className="form-error" role="alert">
+            {state.error}
+          </p>
+        )}
+        <button type="submit" className="submit" disabled={pending}>
+          {pending ? 'Guardando…' : m.cta}
+        </button>
+        {state.error && m.skip && (
+          <button type="button" className="link-button step-back" onClick={next}>
+            {m.skip}
           </button>
-        </section>
-      )
-    } else if (step.i === 1) {
-      content = (
-        <section className="step">
-          <h2 className="bracket-title">{g.challenge.title}</h2>
-          <p className="prose">{g.challenge.text}</p>
-          {g.challenge.track && (
-            <TrackCard track={g.challenge.track} label={g.challenge.track_label} showLink={false} />
-          )}
-          <button type="button" className="submit" onClick={next}>
-            {g.challenge.cta}
-          </button>
-        </section>
-      )
-    } else {
-      content = (
-        <section className="step step-entry">
-          <Seal size="sm" />
-          <h2 className="bracket-title">{g.done.title}</h2>
-          {g.done.text && <p className="prose">{g.done.text}</p>}
-          <button type="button" className="submit" onClick={next}>
-            {g.done.cta}
-          </button>
-        </section>
-      )
-    }
+        )}
+      </form>
+    )
   }
 
   if (step.kind === 'pending') {
@@ -255,7 +269,6 @@ export function FinalFlow({
               <p className="pending-status">{item.status ?? config.pending.status_label ?? 'NO LLEGÓ A SUCEDER'}</p>
               <p className="pending-title">{item.title}</p>
               <p className="pending-text">{item.text}</p>
-              {item.note && <p className="pending-note">{item.note}</p>}
             </li>
           ))}
         </ul>
@@ -267,45 +280,53 @@ export function FinalFlow({
   }
 
   if (step.kind === 'voices') {
+    const v = config.voices
     content = (
       <section className="step">
-        <h2 className="bracket-title">{config.voices.title}</h2>
-        <p className="prose">{config.voices.text}</p>
+        <h2 className="bracket-title">{v.title}</h2>
+        <p className="prose">{v.text}</p>
+        {v.question && (
+          <div className="voices-question">
+            {v.question_label && <p className="round-label">{v.question_label}</p>}
+            <p className="voices-ask">{v.question}</p>
+            {v.note && <p className="prose muted">{v.note}</p>}
+          </div>
+        )}
+        {v.hint && <p className="prose">{v.hint}</p>}
         <ul className="voices-list">
-          {config.voices.children.map((c) => (
+          {v.children.map((c) => (
             <li key={c.name} className="voice-card">
               <p className="round-label">{c.name}</p>
               <TrackCard track={c.track} showLink={false} />
+              {c.track.spotify_url && (
+                <a
+                  className="submit submit-link"
+                  href={c.track.spotify_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  ESCUCHAR EN SPOTIFY
+                </a>
+              )}
               {c.reason && <p className="voice-reason">{c.reason}</p>}
             </li>
           ))}
         </ul>
         <button type="button" className="submit" onClick={next}>
-          {config.voices.cta}
+          {v.cta}
         </button>
       </section>
     )
   }
 
-  if (step.kind === 'key') {
+  if (step.kind === 'gift') {
     content = (
       <section className="step step-entry">
-        <h2 className="bracket-title">{config.key.title}</h2>
-        <p className="prose">{config.key.text}</p>
+        <h2 className="bracket-title">{config.gift.title}</h2>
+        <p className="prose">{config.gift.text}</p>
+        <p className="gift-clue">{config.gift.clue}</p>
         <button type="button" className="submit" onClick={next}>
-          {config.key.cta}
-        </button>
-      </section>
-    )
-  }
-
-  if (step.kind === 'key_open') {
-    content = (
-      <section className="step step-entry">
-        <p className="prose key-line">{config.key.reveal.text}</p>
-        {config.key.reveal.note && <p className="prose muted">{config.key.reveal.note}</p>}
-        <button type="button" className="submit" onClick={next}>
-          {config.key.reveal.cta}
+          {config.gift.cta}
         </button>
       </section>
     )
@@ -323,26 +344,35 @@ export function FinalFlow({
     )
   }
 
-  if (step.kind === 'finale') {
+  if (step.kind === 'plus') {
     content = (
-      <section className="step step-entry final-end">
-        <Wordmark size="lg" live />
-        <h2 className="visually-hidden">{config.finale.title}</h2>
-        <p className="prose">{config.finale.text}</p>
-        <p className="final-signoff">{config.finale.signoff}</p>
-        <p className="final-mark">{config.finale.mark}</p>
-        <button type="button" className="link-button final-next" onClick={next}>
-          {config.finale.cta}
+      <section className="step final-plus">
+        <h2 className="plus-title">{config.plus.title}</h2>
+        <p className="prose">{config.plus.text}</p>
+        <button type="button" className="submit" onClick={next}>
+          {config.plus.cta}
         </button>
       </section>
     )
   }
 
-  if (step.kind === 'plus') {
+  if (step.kind === 'finale') {
     content = (
-      <section className="step step-entry final-plus">
-        <h2 className="plus-title">{config.plus.title}</h2>
-        <p className="plus-text">{config.plus.text}</p>
+      <section className="step step-entry final-end">
+        <Wordmark size="lg" live />
+        <p className="final-signoff">{config.finale.signoff}</p>
+        <p className="prose">{config.finale.text}</p>
+        {config.finale.playlist_url && (
+          <a
+            className="submit submit-link"
+            href={config.finale.playlist_url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {config.finale.playlist_label ?? 'ABRIR LA P.21 PLAYLIST'}
+          </a>
+        )}
+        <p className="final-mark">{config.finale.mark}</p>
       </section>
     )
   }
@@ -350,7 +380,7 @@ export function FinalFlow({
   const bar = preview ? (
     <nav className="preview-bar" aria-label="Pantallas (vista previa)">
       {ORDER.map((s, n) => (
-        <button key={n} type="button" className={same(s, step) ? 'is-on' : ''} onClick={() => setStep(s)}>
+        <button key={n} type="button" className={at(s) === at(step) ? 'is-on' : ''} onClick={() => setStep(s)}>
           {n + 1}
         </button>
       ))}

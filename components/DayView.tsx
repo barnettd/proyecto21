@@ -35,6 +35,28 @@ export async function DayView({
 
   const preview = process.env.NODE_ENV !== 'production'
 
+  if (day.experience_type === 'closing') {
+    const { days } = await loadContent()
+    const rows = await getArchive(days.filter((d) => d.day_number >= 1 && d.day_number <= 7))
+    const archive = Object.fromEntries(
+      Object.entries(rows).map(([n, list]) => [
+        Number(n),
+        list.map((t) => ({ title: t.title, artist: t.artist, spotify_url: t.spotify_url })),
+      ]),
+    )
+    const frankenstein = days.find((d) => d.day_number === 8)
+    const done = frankenstein ? Boolean(await getResponse(frankenstein.id)) : false
+    return (
+      <FinalFlow
+        dayId={day.id}
+        config={cfg as unknown as FinalConfig}
+        archive={archive}
+        frankensteinDone={done}
+        preview={preview}
+      />
+    )
+  }
+
   if (response) {
     const scene = cfg.closing_scene as Scene | undefined
     if (scene?.text) {
@@ -118,28 +140,6 @@ export async function DayView({
       ? { ...printable, phrase: { ...printable.phrase, answer: undefined } }
       : printable
     return <PrintableFlow dayId={day.id} config={config} preview={preview} />
-  }
-
-  if (day.experience_type === 'closing') {
-    const { days } = await loadContent()
-    const rows = await getArchive(days.filter((d) => d.day_number >= 1 && d.day_number <= 7))
-    const archive = Object.fromEntries(
-      Object.entries(rows).map(([n, list]) => [
-        Number(n),
-        list.map((t) => ({ title: t.title, artist: t.artist, spotify_url: t.spotify_url })),
-      ]),
-    )
-    const frankenstein = days.find((d) => d.day_number === 8)
-    const done = frankenstein ? Boolean(await getResponse(frankenstein.id)) : false
-    return (
-      <FinalFlow
-        dayId={day.id}
-        config={cfg as unknown as FinalConfig}
-        archive={archive}
-        frankensteinDone={done}
-        preview={preview}
-      />
-    )
   }
 
   if (day.experience_type === 'lyrics') {

@@ -310,6 +310,19 @@ export async function resetPreview(dayId: string): Promise<void> {
 type ConfigTrack = { title?: string; artist?: string; spotify_url?: string }
 
 /** Seven decisions plus a wildcard that never competed. */
+/**
+ * D21: el único dato que el cierre recoge, el audio del riff. El campo es
+ * opcional —puede llegar por WhatsApp— así que una respuesta vacía también vale.
+ */
+export async function submitRiff(_prev: SubmitState, form: FormData): Promise<SubmitState> {
+  const day = await activeDayOfType('closing', form)
+  if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
+  if (await getResponse(day.id)) return { ok: true }
+
+  const url = String(form.get('riff_url') ?? '').trim().slice(0, 500)
+  return persist(day, 'closing', [], { riff_url: url || null })
+}
+
 export async function submitBracket(_prev: SubmitState, form: FormData): Promise<SubmitState> {
   const day = await activeDayOfType('bracket', form)
   if (!day) return { ok: false, error: 'Esto ya no está disponible.' }
