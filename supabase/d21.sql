@@ -173,7 +173,7 @@ update days set
   "track21": {
     "eyebrow": "LA ÚLTIMA",
     "title": "TRACK 21",
-    "text": "Todas las canciones de estos días sirvieron para volver: a lugares, a personas, a situaciones, a versiones nuestras. A lo trivial le pusimos música, y a lo triste y nostálgico también.\n\nTodas traían un recuerdo.\n\nLa que te quiero regalar hoy no tiene ninguno. Hoy es 6 de octubre de 2026: anotá la fecha, porque va a ser el primer y único recuerdo que tenga esta canción. Mira para adelante, y además es una invitación.\n\nEscuchala con la letra, aunque no hace falta que la tomes textual. Lo que dice, más o menos, es lo que te quiero decir hoy.",
+    "text": "Todas las canciones de estos días sirvieron para volver: a lugares, a personas, a situaciones, a versiones nuestras. A lo trivial le pusimos música, y a lo triste y nostálgico también.\n\nTodas traían un recuerdo.\n\nLa que te quiero regalar hoy no tiene ninguno. Su primer recuerdo va a ser este: nuestro 6 de octubre, festejado unos días tarde. Muy a tono con todo lo demás.\n\nMira para adelante, y además es una invitación.\n\nEscuchala con la letra, aunque no hace falta que la tomes textual. Lo que dice, más o menos, es lo que te quiero decir hoy.",
     "track": {
       "title": "Vengo Del Futuro",
       "artist": "KURT",
