@@ -68,8 +68,8 @@ const copy: Record<number, Partial<Day>> = {
         text: 'La idea de estos veinte días no era recorrer una historia musical ni ir a buscar recuerdos puntuales. La música fue el idioma, no el tema.\n\nHubo una tarea que me quedó en el tintero: Frankenstein. Nunca encontré las letras correctas para lo que te quería decir, así que la dejé esperando.\n\nSin más palomeadas: vamos a tus siguientes tareas. Se me acumularon algunas que ya tenía preparadas, y después te cuento las que no llegaron a suceder.\n\nY esto también es P.21.',
         cta: 'TOY READY',
         url: '/frankenstein',
-        done_title: 'ESO YA EXISTE.',
-        done_text: 'Esta mañana no existía. Ahora sí, y nadie más lo tiene.',
+        done_title: 'ESA YA ESTÁ.',
+        done_text: 'Esperó bastante para existir.\n\nAhora vamos con la que ya tenías empezada.',
         done_cta: 'CONTINUAR',
       },
       mission: {
