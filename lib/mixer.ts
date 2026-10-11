@@ -213,10 +213,12 @@ export function localMix(
     const b = pick(i % 2 ? p21 : her, i * 7 + 3)
     const c = pick(halves.filter((h) => h.id !== a.id && h.id !== b.id), i * 13 + 5)
     if (!a || !b || !c) break
-    const words = [...a.head, ...b.tail]
+    const sizes = balance(a.head.length, b.tail.length, limits)
+    if (!sizes) continue
+    const words = [...a.head.slice(0, sizes.head), ...b.tail.slice(-sizes.tail)]
     // Una palabra de una tercera frase, para que toque tres.
     const extra = c.tail[0] ?? c.head[0]
-    if (extra) words.splice(Math.min(words.length, a.head.length), 0, extra)
+    if (extra) words.splice(Math.min(words.length, sizes.head), 0, extra)
     const line = words.join(' ')
     if (tried.has(normalizeLine(line))) continue
     tried.add(normalizeLine(line))
@@ -227,4 +229,28 @@ export function localMix(
 
 function pick<T>(list: T[], seed: number): T {
   return list[Math.abs(seed) % list.length]
+}
+
+/**
+ * Cuántas palabras tomar de cada lado. Una frase corta de un lado dejaba que
+ * la otra se llevara casi toda la línea, y entonces el verificador la rechazaba
+ * por calcar una sola fuente; acá se recorta el lado largo hasta que entre.
+ */
+function balance(head: number, tail: number, limits: Limits): { head: number; tail: number } | null {
+  let h = head
+  let t = tail
+  while (h >= 1 && t >= 1) {
+    const total = h + t + 1
+    if (total > limits.maxWords) {
+      if (h >= t) h--
+      else t--
+      continue
+    }
+    // +1 por la palabra de la tercera frase, que no suma a ninguno de los dos.
+    const cap = Math.floor(limits.maxFromOne * total)
+    if (h > cap) h--
+    else if (t > cap) t--
+    else return total >= limits.minWords ? { head: h, tail: t } : null
+  }
+  return null
 }

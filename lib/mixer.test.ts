@@ -128,3 +128,28 @@ test('con frases largas igual salen combinaciones', () => {
     assert.equal(checkLine(line, sources, {}).ok, true, `no validó: ${line}`)
   }
 })
+
+test('con frases cortas de un lado tampoco se queda sin nada', () => {
+  // Siete palabras de un lado contra dos del otro: la línea calcaba una sola
+  // frase y las doce tentativas se caían por el tope del 70%.
+  const sources: Fragment[] = [
+    { id: 'u1', owner: 'her', excerpt: 'no me importa' },
+    { id: 'u2', owner: 'her', excerpt: 'todo bien' },
+    { id: 'u3', owner: 'her', excerpt: 'dale que va' },
+    {
+      id: 'p1',
+      owner: 'p21',
+      excerpt: 'eso que tú me das es mucho más de lo que pido, todo lo que me das es lo que ahora necesito',
+    },
+    { id: 'p2', owner: 'p21', excerpt: 'minutos son la morgue del tiempo, cadáveres de momentos que no vuelven jamás' },
+    { id: 'p3', owner: 'p21', excerpt: 'no seas malo, Robertito, ¿no ves que soy tu mamá?' },
+  ]
+  // Como las pide buildSets: de a una, tres veces, sin repetir.
+  const seen: string[] = []
+  for (let i = 0; i < 3; i++) {
+    const [line] = localMix(sources, seen, 1)
+    assert.ok(line, `se quedó sin combinaciones en la ${i + 1}`)
+    assert.equal(checkLine(line, sources, { seen }).ok, true, `no validó: ${line}`)
+    seen.push(normalizeLine(line))
+  }
+})
