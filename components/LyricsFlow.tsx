@@ -5,7 +5,6 @@ import { useActionState, useEffect, useState, useTransition } from 'react'
 import { mixLines, submitLyrics, type SubmitState } from '@/app/actions'
 import { TrackCard } from '@/components/TrackCard'
 import { TrackPicker } from '@/components/TrackPicker'
-import type { Line } from '@/lib/ai'
 import { parseSpotifyTrackId } from '@/lib/spotify'
 import type { SubmittedTrack } from '@/lib/types'
 
@@ -34,14 +33,6 @@ export type LyricsConfig = {
     title_placeholder?: string
     title_cta: string
   }
-  choose: {
-    title: string
-    text: string
-    labels: { coherent: string; unexpected: string; absurd: string }
-    again: string
-    cta: string
-    loading: string
-  }
   deadline_note?: string
 }
 
@@ -51,7 +42,6 @@ type Step =
   | { kind: 'reveal' }
   | { kind: 'lab' }
   | { kind: 'kraken' }
-  | { kind: 'choose' }
 
 type Draft = { link: string; excerpt: string }
 
@@ -72,8 +62,6 @@ export function LyricsFlow({
   const [step, setStep] = useState<Step>({ kind: 'opening' })
   const [drafts, setDrafts] = useState<Draft[]>(() => config.categories.map(() => ({ link: '', excerpt: '' })))
   const [kraken, setKraken] = useState('')
-  const [options, setOptions] = useState<Line[]>([])
-  const [chosen, setChosen] = useState<string | null>(null)
   const [songTitle, setSongTitle] = useState('')
   const [naming, setNaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -92,15 +80,11 @@ export function LyricsFlow({
           step: Step
           drafts: Draft[]
           kraken: string
-          options: Line[]
-          chosen: string
           songTitle: string
           naming: boolean
         }>
         if (Array.isArray(p.drafts) && p.drafts.length === config.categories.length) setDrafts(p.drafts)
         if (typeof p.kraken === 'string') setKraken(p.kraken)
-        if (Array.isArray(p.options)) setOptions(p.options)
-        if (typeof p.chosen === 'string') setChosen(p.chosen)
         if (typeof p.songTitle === 'string') setSongTitle(p.songTitle)
         if (p.naming) setNaming(true)
         if (p.step?.kind) setStep(p.step)
@@ -115,11 +99,11 @@ export function LyricsFlow({
   useEffect(() => {
     if (!restored) return
     try {
-      localStorage.setItem(draftKey, JSON.stringify({ step, drafts, kraken, options, chosen, songTitle, naming }))
+      localStorage.setItem(draftKey, JSON.stringify({ step, drafts, kraken, songTitle, naming }))
     } catch {
       /* sin guardado */
     }
-  }, [restored, draftKey, step, drafts, kraken, options, chosen, songTitle, naming])
+  }, [restored, draftKey, step, drafts, kraken, songTitle, naming])
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
@@ -156,23 +140,18 @@ export function LyricsFlow({
     })),
   ].filter((f) => f.excerpt)
 
-  /** Le pide una línea al laboratorio: para asistir, o para las tres finales. */
-  function ask(what: 'assist' | 'options') {
+  /** Le pide al laboratorio una base para arrancar, que ella después reescribe. */
+  function assist() {
     setError(null)
     startWork(async () => {
-      // Que no repita ni lo que ella tiene escrito ni lo ya mostrado.
-      const avoid = [kraken, ...options.map((o) => o.text)].filter(Boolean)
-      const result = await mixLines(hers, avoid, preview ? dayId : undefined)
+      // Que no repita lo que ya tiene escrito.
+      const result = await mixLines(hers, [kraken].filter(Boolean), preview ? dayId : undefined)
       const set = result.sets?.[0]
       if (result.error || !set?.length) {
         setError(result.error ?? 'No salió nada. Probá de nuevo.')
         return
       }
-      if (what === 'assist') setKraken(set[0].text.slice(0, krakenMax))
-      else {
-        setOptions(set)
-        setChosen(null)
-      }
+      setKraken(set[0].text.slice(0, krakenMax))
     })
   }
 
@@ -182,7 +161,6 @@ export function LyricsFlow({
     { kind: 'reveal' },
     { kind: 'lab' },
     { kind: 'kraken' },
-    { kind: 'choose' },
   ]
 
   const bar = preview ? (
@@ -317,10 +295,20 @@ export function LyricsFlow({
     )
   }
 
-  if (step.kind === 'kraken') {
+  // step.kind === 'kraken': acá escribe la suya, le pone título y se guarda.
+  {
     return (
       <>
-        <section className="step">
+        <form action={action} className="step">
+          {preview && <input type="hidden" name="preview_day" value={dayId} />}
+          <input
+            type="hidden"
+            name="fragments"
+            value={JSON.stringify(hers.map((h) => ({ link: h.link, excerpt: h.excerpt })))}
+          />
+          <input type="hidden" name="kraken" value={kraken} />
+          <input type="hidden" name="song_title" value={songTitle} />
+
           <h2 className="bracket-title">{config.kraken.title}</h2>
           <p className="prose">{config.kraken.rules}</p>
 
@@ -333,7 +321,7 @@ export function LyricsFlow({
               placeholder={config.kraken.placeholder ?? 'Escribí la tuya.'}
             />
             <span className="kraken-tools">
-              <button type="button" className="kraken-generate" disabled={busy} onClick={() => ask('assist')}>
+              <button type="button" className="kraken-generate" disabled={busy} onClick={assist}>
                 <span aria-hidden="true">✦</span> {busy ? config.kraken.generating : config.kraken.generate}
               </button>
               <span className="field-hint">
@@ -342,9 +330,9 @@ export function LyricsFlow({
             </span>
           </label>
 
-          {error && (
+          {(error || state.error) && (
             <p className="form-error" role="alert">
-              {error}
+              {error ?? state.error}
             </p>
           )}
 
@@ -375,79 +363,19 @@ export function LyricsFlow({
           </ul>
 
           <button
-            type="button"
+            type={naming ? 'submit' : 'button'}
             className="submit"
-            disabled={!kraken.trim() || busy}
-            onClick={() => {
-              if (!naming) {
-                setNaming(true)
-                return
-              }
-              setStep({ kind: 'choose' })
-              if (!options.length) ask('options')
-            }}
+            disabled={!kraken.trim() || busy || pending || state.ok}
+            onClick={naming ? undefined : () => setNaming(true)}
           >
-            {naming ? config.kraken.title_cta : config.kraken.cta}
+            {pending || state.ok ? 'Guardando…' : naming ? config.kraken.title_cta : config.kraken.cta}
           </button>
           {deadline}
-        </section>
+        </form>
         {bar}
       </>
     )
   }
-
-  // step.kind === 'choose'
-  return (
-    <>
-      <form action={action} className="step">
-        {preview && <input type="hidden" name="preview_day" value={dayId} />}
-        <input
-          type="hidden"
-          name="fragments"
-          value={JSON.stringify(hers.map((h) => ({ link: h.link, excerpt: h.excerpt })))}
-        />
-        <input type="hidden" name="kraken" value={kraken} />
-        <input type="hidden" name="chosen" value={chosen ?? ''} />
-        <input type="hidden" name="song_title" value={songTitle} />
-
-        <h2 className="bracket-title">{config.choose.title}</h2>
-        <p className="prose">{config.choose.text}</p>
-
-        {busy && !options.length && <p className="field-hint">{config.choose.loading}</p>}
-
-        {options.map((line) => (
-          <button
-            type="button"
-            key={line.text}
-            className={`lyric-card lyric-option${chosen === line.text ? ' is-on' : ''}`}
-            onClick={() => setChosen(line.text)}
-          >
-            <span className="round-label">{config.choose.labels[line.mode]}</span>
-            <span className="lyric-text">{line.text}</span>
-          </button>
-        ))}
-
-        {options.length > 0 && (
-          <button type="button" className="link-button" disabled={busy} onClick={() => ask('options')}>
-            {busy ? config.choose.loading : config.choose.again}
-          </button>
-        )}
-
-        {(error || state.error) && (
-          <p className="form-error" role="alert">
-            {error ?? state.error}
-          </p>
-        )}
-
-        <button type="submit" className="submit" disabled={!chosen || pending || state.ok}>
-          {pending || state.ok ? 'Guardando…' : config.choose.cta}
-        </button>
-        <button type="button" className="link-button step-back" onClick={() => setStep({ kind: 'kraken' })}>
-          Volver
-        </button>
-        {deadline}
-      </form>
-      {bar}
-    </>
-  )
 }
+
+

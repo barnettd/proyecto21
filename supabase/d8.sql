@@ -42,7 +42,7 @@ update days set
       "progress": "3 / 3",
       "title": "¿QUÉ ACABO DE ESCUCHAR?",
       "text": "Una frase que en su momento pasó sin que nadie dijera nada, y que hoy, mirada con lupa, no se sostiene: cursi, disparatada, incómoda o directamente indefendible. Alguien la escribió, la grabó, y todos la cantamos sin preguntar demasiado.",
-      "cta": "REUNIR FRAGMENTOS"
+      "cta": "CONTINUAR"
     }
   ],
   "reveal": {
@@ -97,22 +97,10 @@ update days set
     "title_placeholder": "El título",
     "title_cta": "SEGUIR"
   },
-  "choose": {
-    "title": "LAS CRIATURAS DE P.21",
-    "text": "P.21 también hizo la tarea con las mismas seis frases. Tres veces, con distinto criterio.\n\nElegí la que se queda con vos.",
-    "labels": {
-      "coherent": "CASI TIENE SENTIDO",
-      "unexpected": "INESPERADA",
-      "absurd": "ABSURDA"
-    },
-    "again": "Mostrame otras tres",
-    "loading": "Buscando combinaciones improbables…",
-    "cta": "DARLE VIDA"
-  },
   "closing_scene": {
     "title": "YA TIENE VIDA PROPIA.",
-    "text": "Dos frases que no existían esta mañana.",
-    "footer": "Queda una última parte."
+    "text": "Una frase que no existía esta mañana.",
+    "footer": "Falta una sola cosa."
   }
 }$json$::jsonb,
   activation_datetime = '2026-09-24T08:00:00-03:00',

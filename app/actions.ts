@@ -281,7 +281,6 @@ export async function submitLyrics(_prev: SubmitState, form: FormData): Promise<
   const chosen = String(form.get('chosen') ?? '').trim().slice(0, 300)
   const songTitle = String(form.get('song_title') ?? '').trim().slice(0, 80)
   if (!kraken) return { ok: false, error: 'Falta tu frase.' }
-  if (!chosen) return { ok: false, error: 'Falta elegir una de las tres.' }
 
   // La procedencia se recalcula acá: lo que escribió a mano queda como suyo.
   const sources = await d8Sources(day, hers)

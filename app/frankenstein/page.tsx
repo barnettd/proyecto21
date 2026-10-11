@@ -29,7 +29,7 @@ export default async function FrankensteinPage() {
       <main className="shell-main">
         <DayView day={day} nextOpensAt={null} serverNow={Date.now()} />
         {done && (
-          <a className="submit submit-secondary back-to-closing" href="/">
+          <a className="submit submit-secondary submit-link back-to-closing" href="/">
             VOLVER AL CIERRE
           </a>
         )}

@@ -49,7 +49,7 @@ const copy: Record<number, Partial<Day>> = {
       },
       archive: {
         title: 'LO QUE SÍ PASÓ',
-        text: 'Durante estos veinte días —algunos de ellos, siendo honesto— pasaron cosas acá adentro. Unos minutos por día para pensar cosas que normalmente no pensamos.\n\nDel otro lado, mientras lo armaba, me pasaron un montón de cosas que no te podía contar sin arruinarlo. Traté de meter algo de eso en tus quince minutos diarios. No sé si lo logré.\n\nLo que sí sé, y me quedó más claro que antes: P.21 es viable solo por vos.',
+        text: 'Como habrás notado, durante estos veinte días —o una parte de ellos, siendo honesto— pasaron cosas en P.21. Le dedicamos algunos minutos por día a pensar cosas que normalmente no pensamos.\n\nFue un proceso distinto. A mí me trajo un sinnúmero de emociones que no te podía comunicar mientras lo estaba armando, y traté de pasarte algo de eso en tus quince minutos diarios. No sé si lo logré.\n\nLo que sí sé, y me quedó reconfirmado: P.21 es viable solo por vos.',
         empty: 'Sin registro.',
         cta: 'SEGUIR',
         // La cuenta regresiva, como la vio ella: 20, 19, 18…
@@ -99,7 +99,7 @@ const copy: Record<number, Partial<Day>> = {
           },
           {
             title: 'CUANDO ESTÉS MÁS MAL',
-            text: 'Tres compartimentos cerrados: TRISTE, FURIOSA, HARTA. Se abría el que hiciera falta, el día que hiciera falta. Sigue armado, por las dudas.',
+            text: 'Tres compartimentos cerrados —TRISTE, FURIOSA, HARTA— para abrir el que hiciera falta el día que hiciera falta. La idea era dejarte música preparada de antemano para los días en que no se tienen ganas de elegir nada.',
           },
           {
             title: 'MORNING WARM',
@@ -115,7 +115,11 @@ const copy: Record<number, Partial<Day>> = {
           },
           {
             title: 'PRIME',
-            text: 'Una historia sobre una versión nuestra en plenitud, construida alrededor de una sola canción. La candidata era Amor Amarillo.',
+            text: 'Una anécdota mía que nunca te conté, con una confesión adentro y una tarea cortita —y probablemente ridícula— para vos. Todo construido alrededor de una sola canción: la candidata era Amor Amarillo. Con eso ya podés deducir bastante.',
+          },
+          {
+            title: 'VOCES DE AFUERA',
+            text: 'Había más gente invitada a entrar un rato: gente que te conoce desde antes que yo, y gente que nos conoce solo juntos. A cada uno le iba a pedir una canción, sin decirle para qué.',
           },
         ],
       },
@@ -125,7 +129,7 @@ const copy: Record<number, Partial<Day>> = {
         question_label: 'LA PREGUNTA',
         question: '¿Qué canción te hace acordar a mamá y papá?',
         note: 'Juntos, no a uno o al otro. Por el motivo que sea y sin explicaciones.',
-        hint: 'Estas son las que eligieron los krakens. Escuchalas en Spotify, y si podés, con la letra.',
+        hint: 'Estas son las que eligieron los krakens. Aunque las conozcas de memoria, escuchalas con auriculares y siguiendo la letra: no es lo mismo cuando sabés que las eligieron pensando en nosotros dos.',
         cta: 'SEGUIR',
         children: [
           {
@@ -157,13 +161,14 @@ const copy: Record<number, Partial<Day>> = {
       gift: {
         title: 'FALTA UNA COSA.',
         text: 'Algunas cosas esperan bastante tiempo para encontrar su momento.\n\nEste es un re-regalo, de hace cuatro años.',
-        clue: 'Antes de salir al aire, las grabaciones maestras se resguardan en gabinetes oscuros y fríos. Esta caja negra y metálica no está a la altura de los ojos, sino en la zona ciega del estudio, donde no llega la luz de los amplificadores.\n\nBuscá abajo del escenario donde ensaya tu descanso.',
+        clue_title: 'PISTA TRACK 21',
+        clue: 'Para grabar un track profesional, las grabaciones maestras se solían resguardar en gabinetes oscuros y fríos. Esta caja negra no estaba a la altura de los ojos, sino en la zona ciega del estudio, donde no llega la vibración de los amplificadores.\n\nEl lugar más habitual era debajo del escenario donde ensaya tu descanso.',
         cta: 'LA ENCONTRÉ',
       },
       track21: {
         eyebrow: 'LA ÚLTIMA',
         title: 'TRACK 21',
-        text: 'Todas las canciones de estos días sirvieron para volver: a lugares, a personas, a situaciones, a versiones nuestras. A lo trivial le pusimos música, y a lo triste y nostálgico también.\n\nTodas traían un recuerdo.\n\nLa que te quiero regalar hoy no tiene ninguno. Mira para adelante, y además es una invitación.\n\nEscuchala con la letra. No la tomes textual: lo que te estoy diciendo es que hoy es el primer día de P.21+.',
+        text: 'Todas las canciones de estos días sirvieron para volver: a lugares, a personas, a situaciones, a versiones nuestras. A lo trivial le pusimos música, y a lo triste y nostálgico también.\n\nTodas traían un recuerdo.\n\nLa que te quiero regalar hoy no tiene ninguno. Mira para adelante, y además es una invitación.\n\nEscuchala con la letra, aunque no hace falta que la tomes textual. Lo que dice, más o menos, es lo que te quiero decir hoy.',
         track: {
           title: 'Vengo Del Futuro',
           artist: 'KURT',
@@ -174,14 +179,16 @@ const copy: Record<number, Partial<Day>> = {
       },
       plus: {
         title: 'P.21+',
-        text: 'Hasta acá, P.21 fueron veinte años resumidos en situaciones mínimas, pensamientos y algunas emociones.\n\nDesde hoy se transforma en P.21+, y te invito.\n\nTe vuelvo a elegir, como cada día.\n\nSigamos trayendo nuestra música, poniéndosela a lo que no la tiene, buscando la que todavía no conocemos y dejando entrar la de afuera. Sobre todo la de ellos.',
+        text: 'Hasta acá, P.21 fueron veinte días resumidos en situaciones mínimas, pensamientos y emociones. Por mi lado, demasiadas.',
+        invite: 'Desde hoy pasa a ser P.21+, y te invito.',
+        text2: 'Sigamos trayendo nuestra música, poniéndosela a lo que no la tiene, buscando la que todavía no conocemos y dejando entrar la de afuera. Sobre todo la de ellos, los krakens.',
+        playlist_label: 'NUESTRA P.21 PLAYLIST',
+        playlist_url: 'https://open.spotify.com/playlist/3DRmcBSTanFZt6YS9YfMra',
+        closer: 'Te vuelvo a elegir, como cada día.',
         cta: 'SEGUIR',
       },
       finale: {
-        text: 'Es opcional, como toda invitación.',
         signoff: 'Gracias por estos primeros veinte.\nVamos por los que siguen.',
-        playlist_label: 'ABRIR LA P.21 PLAYLIST',
-        playlist_url: 'https://open.spotify.com/playlist/3DRmcBSTanFZt6YS9YfMra',
         mark: 'P.21+',
       },
     },
@@ -284,7 +291,7 @@ const copy: Record<number, Partial<Day>> = {
           progress: '3 / 3',
           title: '¿QUÉ ACABO DE ESCUCHAR?',
           text: 'Una frase que en su momento pasó sin que nadie dijera nada, y que hoy, mirada con lupa, no se sostiene: cursi, disparatada, incómoda o directamente indefendible. Alguien la escribió, la grabó, y todos la cantamos sin preguntar demasiado.',
-          cta: 'REUNIR FRAGMENTOS',
+          cta: 'CONTINUAR',
         },
       ],
       reveal: {
@@ -328,22 +335,10 @@ const copy: Record<number, Partial<Day>> = {
         title_placeholder: 'El título',
         title_cta: 'SEGUIR',
       },
-      choose: {
-        title: 'LAS CRIATURAS DE P.21',
-        text: 'P.21 también hizo la tarea con las mismas seis frases. Tres veces, con distinto criterio.\n\nElegí la que se queda con vos.',
-        labels: {
-          coherent: 'CASI TIENE SENTIDO',
-          unexpected: 'INESPERADA',
-          absurd: 'ABSURDA',
-        },
-        again: 'Mostrame otras tres',
-        loading: 'Buscando combinaciones improbables…',
-        cta: 'DARLE VIDA',
-      },
       closing_scene: {
         title: 'YA TIENE VIDA PROPIA.',
-        text: 'Dos frases que no existían esta mañana.',
-        footer: 'Queda una última parte.',
+        text: 'Una frase que no existía esta mañana.',
+        footer: 'Falta una sola cosa.',
       },
     },
   },

@@ -45,7 +45,7 @@ export type FinalConfig = {
     cta: string
     children: VoiceCard[]
   }
-  gift: { title: string; text: string; clue: string; cta: string }
+  gift: { title: string; text: string; clue_title?: string; clue: string; cta: string }
   track21: {
     eyebrow?: string
     title: string
@@ -55,8 +55,17 @@ export type FinalConfig = {
     track_cta?: string
     cta: string
   }
-  plus: { title: string; text: string; cta: string }
-  finale: { text: string; signoff: string; playlist_label?: string; playlist_url?: string; mark: string }
+  plus: {
+    title: string
+    text: string
+    invite: string
+    text2: string
+    playlist_label?: string
+    playlist_url?: string
+    closer?: string
+    cta: string
+  }
+  finale: { signoff: string; mark: string }
 }
 
 type Step =
@@ -327,7 +336,10 @@ export function FinalFlow({
       <section className="step step-entry">
         <h2 className="bracket-title">{config.gift.title}</h2>
         <p className="prose">{config.gift.text}</p>
-        <p className="gift-clue">{config.gift.clue}</p>
+        <div className="gift-clue">
+          {config.gift.clue_title && <p className="gift-clue-title">{config.gift.clue_title}</p>}
+          <p className="gift-clue-text">{config.gift.clue}</p>
+        </div>
         <button type="button" className="submit" onClick={next}>
           {config.gift.cta}
         </button>
@@ -352,7 +364,20 @@ export function FinalFlow({
       <section className="step final-plus">
         <h2 className="plus-title">{config.plus.title}</h2>
         <p className="prose">{config.plus.text}</p>
-        <button type="button" className="submit" onClick={next}>
+        <p className="prose closing-emphasis">{config.plus.invite}</p>
+        <p className="prose">{config.plus.text2}</p>
+        {config.plus.playlist_url && (
+          <a
+            className="submit submit-link"
+            href={config.plus.playlist_url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {config.plus.playlist_label ?? 'NUESTRA P.21 PLAYLIST'}
+          </a>
+        )}
+        {config.plus.closer && <p className="prose plus-closer">{config.plus.closer}</p>}
+        <button type="button" className="submit submit-secondary" onClick={next}>
           {config.plus.cta}
         </button>
       </section>
@@ -364,17 +389,6 @@ export function FinalFlow({
       <section className="step step-entry final-end">
         <Wordmark size="lg" live />
         <p className="final-signoff">{config.finale.signoff}</p>
-        <p className="prose">{config.finale.text}</p>
-        {config.finale.playlist_url && (
-          <a
-            className="submit submit-link"
-            href={config.finale.playlist_url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {config.finale.playlist_label ?? 'ABRIR LA P.21 PLAYLIST'}
-          </a>
-        )}
         <p className="final-mark">{config.finale.mark}</p>
       </section>
     )
