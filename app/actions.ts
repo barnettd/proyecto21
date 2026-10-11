@@ -239,11 +239,11 @@ export async function mixLines(
   if (!(await allowAiCall(max))) {
     // Sin cuota: el combinador propio igual devuelve algo válido.
     const { sets } = await buildSets(sources, avoid.slice(-60), 0)
-    return { sets, error: sets.length ? undefined : 'El laboratorio está descansando. Probá de nuevo más tarde.' }
+    return { sets, error: sets.length ? undefined : 'El laboratorio está descansando. Escribila vos, que para eso estás.' }
   }
 
   const { sets, error } = await buildSets(sources, avoid.slice(-60), 5)
-  if (!sets.length) return { error: error ? 'No salió ninguna combinación. Probá de nuevo.' : 'Probá de nuevo.' }
+  if (!sets.length) return { error: 'Esta vez no me salió nada decente. Escribila vos, que te va a salir mejor.' }
   return { sets }
 }
 

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { buildBank, checkLine, localMix, normalizeLine, tokenize, type Fragment } from './mixer.ts'
+import { DEFAULT_LIMITS, buildBank, checkLine, localMix, normalizeLine, tokenize, type Fragment } from './mixer.ts'
 
 const sources: Fragment[] = [
   { id: 'u1', owner: 'her', excerpt: 'los lunes tienen memoria de vidrio' },
@@ -90,4 +90,41 @@ test('el combinador local devuelve líneas que pasan la verificación', () => {
   const lines = localMix(sources, [], 3)
   assert.ok(lines.length >= 1)
   for (const line of lines) assert.ok(checkLine(line, sources, { seen: [] }).ok, line)
+})
+
+test('con frases largas igual salen combinaciones', () => {
+  // Partir al medio sin recortar daba líneas de 22 palabras: todas rechazadas.
+  const sources: Fragment[] = [
+    {
+      id: 'u1',
+      owner: 'her',
+      excerpt:
+        'y aunque no sea la primera vez me tiembla el cuerpo igual que entonces, como si nadie me hubiera enseñado nada todavía',
+    },
+    {
+      id: 'u2',
+      owner: 'her',
+      excerpt:
+        'la vida es un ratito y se nos va mirando el reloj de la pared, contando las horas que no volvemos a ver nunca más',
+    },
+    {
+      id: 'p1',
+      owner: 'p21',
+      excerpt: 'eso que tú me das es mucho más de lo que pido, todo lo que me das es lo que ahora necesito',
+    },
+    {
+      id: 'u3',
+      owner: 'her',
+      excerpt:
+        'corazón partío de tanto esperar afuera sentada en la vereda de casa, con el frío metido en los huesos y sin ganas de entrar',
+    },
+    { id: 'p2', owner: 'p21', excerpt: 'minutos son la morgue del tiempo, cadáveres de momentos que no vuelven jamás' },
+    { id: 'p3', owner: 'p21', excerpt: 'no seas malo, Robertito, ¿no ves que soy tu mamá?' },
+  ]
+  const out = localMix(sources, [], 3)
+  assert.equal(out.length, 3)
+  for (const line of out) {
+    assert.ok(tokenize(line).length <= DEFAULT_LIMITS.maxWords, `se pasó de largo: ${line}`)
+    assert.equal(checkLine(line, sources, {}).ok, true, `no validó: ${line}`)
+  }
 })

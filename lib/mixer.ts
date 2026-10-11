@@ -181,11 +181,26 @@ export function normalizeLine(text: string): string {
  * El combinador propio, para cuando no hay modelo: corta dos frases y las
  * cose, más una palabra de una tercera. Tosco, pero honesto y siempre válido.
  */
-export function localMix(sources: Fragment[], seen: string[] = [], count = 3): string[] {
+export function localMix(
+  sources: Fragment[],
+  seen: string[] = [],
+  count = 3,
+  limits: Limits = DEFAULT_LIMITS,
+): string[] {
+  // Cada mitad se recorta para que la línea entre en el tope. Partiendo al medio
+  // sin más, dos frases largas daban siempre una línea pasada de palabras y no
+  // salía ninguna combinación válida.
+  const side = Math.max(2, Math.floor((limits.maxWords - 1) / 2))
   const halves = sources.map((s) => {
     const words = tokenize(s.excerpt)
     const cut = Math.max(1, Math.round(words.length / 2))
-    return { id: s.id, owner: s.owner, head: words.slice(0, cut), tail: words.slice(cut) }
+    return {
+      id: s.id,
+      owner: s.owner,
+      head: words.slice(0, cut).slice(0, side),
+      // Del final, para no perder el cierre de la frase.
+      tail: words.slice(cut).slice(-side),
+    }
   })
   const her = halves.filter((h) => h.owner === 'her')
   const p21 = halves.filter((h) => h.owner === 'p21')
@@ -205,7 +220,7 @@ export function localMix(sources: Fragment[], seen: string[] = [], count = 3): s
     const line = words.join(' ')
     if (tried.has(normalizeLine(line))) continue
     tried.add(normalizeLine(line))
-    if (checkLine(line, sources, { seen: [...seen, ...out] }).ok) out.push(line)
+    if (checkLine(line, sources, { seen: [...seen, ...out], limits }).ok) out.push(line)
   }
   return out
 }
