@@ -304,19 +304,19 @@ const copy: Record<number, Partial<Day>> = {
         task: 'Tu tarea: escribir una frase nueva a partir de estas seis.',
         cta: 'SEGUIR',
       },
-      // PROVISORIAS: las tres frases de P.21, a reemplazar por las reales.
+      // Las tres de P.21, una por consigna.
       reveal_fragments: [
         {
-          excerpt: 'quien quiera oír que oiga',
-          track: { title: 'Yo Vengo A Ofrecer Mi Corazon', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/0Qjrw4gXtqkfwfmp3GMMlW' },
+          excerpt: 'eso que tú me das es mucho más de lo que pido, todo lo que me das es lo que ahora necesito',
+          track: { title: 'Eso Que Tú Me Das', artist: 'Jarabe De Palo', spotify_url: 'https://open.spotify.com/track/6cRvHL1jwsAktcEcukPYmp' },
         },
         {
-          excerpt: 'nada se pierde, todo se transforma',
-          track: { title: 'Todo se transforma', artist: 'Jorge Drexler', spotify_url: 'https://open.spotify.com/track/4YEU9N2XAE0DfUwxWI5ijA' },
+          excerpt: 'minutos son la morgue del tiempo, cadáveres de momentos que no vuelven jamás',
+          track: { title: 'Minutos', artist: 'Ricardo Arjona', spotify_url: 'https://open.spotify.com/track/2vGUmuGUjtUG7iM5yTHKkZ' },
         },
         {
-          excerpt: 'el mundo cabe en una canción',
-          track: { title: 'El Mundo Cabe En Una Canción', artist: 'Fito Paez', spotify_url: 'https://open.spotify.com/track/2HHtWyy5CgaQbC7XSoOb0e' },
+          excerpt: 'no seas malo, Robertito, ¿no ves que soy tu mamá?',
+          track: { title: 'Presentación del cuartetazo Los Bedronclos', artist: 'El Cuarteto De Nos', spotify_url: 'https://open.spotify.com/track/4T7cDwjuXdtqSnrYiKcuD7' },
         },
       ],
       lab: {
