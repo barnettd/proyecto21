@@ -87,8 +87,9 @@ update days set
     },
     "link_label": "Link al audio",
     "link_placeholder": "Pegá acá el link al audio",
-    "link_hint": "Agregá el link al audio. En su defecto, mandámelo por WhatsApp.",
+    "link_hint": "Si ya lo tenés grabado, pegá el link acá. Y si no, no pasa nada: mandámelo por WhatsApp cuando puedas, hoy o la semana que viene. Esto no te frena, podés seguir igual.",
     "cta": "MISIÓN CUMPLIDA",
+    "cta_empty": "LO MANDO POR WHATSAPP",
     "skip": "Seguir igual"
   },
   "pending": {
@@ -99,7 +100,7 @@ update days set
     "items": [
       {
         "title": "GUILTY PLEASURE",
-        "text": "Una canción que te gusta y que preferirías no tener que defender en público. Yo ya tenía elegida la mía hace semanas. No, no te la voy a decir ahora."
+        "text": "El día de bajar la guardia: esa canción que te encanta y que cantás fuerte solo cuando no hay testigos. Sin justificarla, sin explicar el contexto, sin aclarar que era otra época. Cada uno ponía la suya y el otro no tenía derecho a opinar."
       },
       {
         "title": "CUANDO ESTÉS MÁS MAL",
@@ -119,7 +120,7 @@ update days set
       },
       {
         "title": "PRIME",
-        "text": "Una anécdota mía que nunca te conté, con una confesión adentro y una tarea cortita —y probablemente ridícula— para vos. Todo construido alrededor de una sola canción: la candidata era Amor Amarillo. Con eso ya podés deducir bastante."
+        "text": "Una mini confesión mía, con una tarea cortita —y probablemente ridícula— para vos. Todo construido alrededor de una sola canción: Amor Amarillo."
       },
       {
         "title": "VOCES DE AFUERA",
@@ -164,7 +165,7 @@ update days set
   },
   "gift": {
     "title": "FALTA UNA COSA.",
-    "text": "Algunas cosas esperan bastante tiempo para encontrar su momento.\n\nEste es un re-regalo, de hace cuatro años.",
+    "text": "Algunas cosas esperan bastante tiempo para encontrar su momento.\n\nEste es un re-regalo, de hace cuatro años atrás.",
     "clue_title": "PISTA TRACK 21",
     "clue": "Para grabar un track profesional, las grabaciones maestras se solían resguardar en gabinetes oscuros y fríos. Esta caja negra no estaba a la altura de los ojos, sino en la zona ciega del estudio, donde no llega la vibración de los amplificadores.\n\nEl lugar más habitual era debajo del escenario donde ensaya tu descanso.",
     "cta": "LA ENCONTRÉ"
@@ -172,7 +173,7 @@ update days set
   "track21": {
     "eyebrow": "LA ÚLTIMA",
     "title": "TRACK 21",
-    "text": "Todas las canciones de estos días sirvieron para volver: a lugares, a personas, a situaciones, a versiones nuestras. A lo trivial le pusimos música, y a lo triste y nostálgico también.\n\nTodas traían un recuerdo.\n\nLa que te quiero regalar hoy no tiene ninguno. Mira para adelante, y además es una invitación.\n\nEscuchala con la letra, aunque no hace falta que la tomes textual. Lo que dice, más o menos, es lo que te quiero decir hoy.",
+    "text": "Todas las canciones de estos días sirvieron para volver: a lugares, a personas, a situaciones, a versiones nuestras. A lo trivial le pusimos música, y a lo triste y nostálgico también.\n\nTodas traían un recuerdo.\n\nLa que te quiero regalar hoy no tiene ninguno. Hoy es 6 de octubre de 2026: anotá la fecha, porque va a ser el primer y único recuerdo que tenga esta canción. Mira para adelante, y además es una invitación.\n\nEscuchala con la letra, aunque no hace falta que la tomes textual. Lo que dice, más o menos, es lo que te quiero decir hoy.",
     "track": {
       "title": "Vengo Del Futuro",
       "artist": "KURT",
@@ -193,6 +194,9 @@ update days set
   },
   "finale": {
     "signoff": "Gracias por estos primeros veinte.\nVamos por los que siguen.",
+    "text": "Esto es lo único que queda abierto.",
+    "playlist_label": "PLAYLIST 21+",
+    "playlist_url": "https://open.spotify.com/playlist/3DRmcBSTanFZt6YS9YfMra",
     "mark": "P.21+"
   }
 }$json$::jsonb,

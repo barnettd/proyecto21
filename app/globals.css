@@ -2204,3 +2204,11 @@ body:has(.preview-days) .bracket-hud {
 .final-signoff {
   white-space: pre-line;
 }
+
+/* El pie de la misión del riff: tiene que leerse, porque dice que no bloquea. */
+.mission-hint {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--gris);
+}

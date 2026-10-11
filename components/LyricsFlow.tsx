@@ -346,6 +346,10 @@ export function LyricsFlow({
                   placeholder={config.kraken.title_placeholder ?? 'El título'}
                   autoComplete="off"
                   autoFocus
+                  // Enter en un campo suelto envía el formulario: acá cerraría el paso sin título.
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') e.preventDefault()
+                  }}
                 />
               </label>
               {config.kraken.title_hint && <p className="field-hint">{config.kraken.title_hint}</p>}
@@ -365,7 +369,7 @@ export function LyricsFlow({
           <button
             type={naming ? 'submit' : 'button'}
             className="submit"
-            disabled={!kraken.trim() || busy || pending || state.ok}
+            disabled={!kraken.trim() || (naming && !songTitle.trim()) || busy || pending || state.ok}
             onClick={naming ? undefined : () => setNaming(true)}
           >
             {pending || state.ok ? 'Guardando…' : naming ? config.kraken.title_cta : config.kraken.cta}

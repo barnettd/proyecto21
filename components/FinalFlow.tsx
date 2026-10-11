@@ -32,6 +32,8 @@ export type FinalConfig = {
     link_placeholder?: string
     link_hint?: string
     cta: string
+    /** Sin link, el botón dice otra cosa: el paso no bloquea. */
+    cta_empty?: string
     skip?: string
   }
   pending: { title: string; text: string; cta: string; status_label?: string; items: PendingItem[] }
@@ -65,7 +67,7 @@ export type FinalConfig = {
     closer?: string
     cta: string
   }
-  finale: { signoff: string; mark: string }
+  finale: { signoff: string; text?: string; playlist_label?: string; playlist_url?: string; mark: string }
 }
 
 type Step =
@@ -252,14 +254,14 @@ export function FinalFlow({
             placeholder={m.link_placeholder ?? 'Pegá acá el link al audio'}
           />
         </label>
-        {m.link_hint && <p className="field-hint">{m.link_hint}</p>}
+        {m.link_hint && <p className="mission-hint">{m.link_hint}</p>}
         {state.error && (
           <p className="form-error" role="alert">
             {state.error}
           </p>
         )}
         <button type="submit" className="submit" disabled={pending}>
-          {pending ? 'Guardando…' : m.cta}
+          {pending ? 'Guardando…' : riff.trim() ? m.cta : (m.cta_empty ?? m.cta)}
         </button>
         {state.error && m.skip && (
           <button type="button" className="link-button step-back" onClick={next}>
@@ -389,6 +391,17 @@ export function FinalFlow({
       <section className="step step-entry final-end">
         <Wordmark size="lg" live />
         <p className="final-signoff">{config.finale.signoff}</p>
+        {config.finale.text && <p className="prose">{config.finale.text}</p>}
+        {config.finale.playlist_url && (
+          <a
+            className="submit submit-link"
+            href={config.finale.playlist_url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {config.finale.playlist_label ?? 'PLAYLIST 21+'}
+          </a>
+        )}
         <p className="final-mark">{config.finale.mark}</p>
       </section>
     )
