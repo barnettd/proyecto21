@@ -123,14 +123,25 @@ export async function getResponsesFor(dayIds: string[]): Promise<Record<string, 
   return Object.fromEntries(rows.map((r) => [r.day_id, r]))
 }
 
+/**
+ * En D2 la que sobrevivió es una de las mías: la eligió ella, así que cuenta
+ * como suya en el archivo aunque esté guardada con source P21.
+ */
+const SUYA_AUNQUE_MIA = ['D2_WINNER']
+const esSuya = (t: Track) => t.source === 'HER' || (t.tag !== null && SUYA_AUNQUE_MIA.includes(t.tag))
+
 async function herTracks(dayIds: string[]): Promise<Track[]> {
   const db = supabase()
   if (!db) {
     // Desarrollo: lo que haya quedado de caminar los días en la vista previa.
     const local = localStoreAllowed() ? (await readLocal()).tracks : []
-    return [...seedTracks, ...local].filter((t) => t.source === 'HER' && dayIds.includes(t.day_id))
+    return [...seedTracks, ...local].filter((t) => esSuya(t) && dayIds.includes(t.day_id))
   }
-  const { data, error } = await db.from('tracks').select('*').in('day_id', dayIds).eq('source', 'HER')
+  const { data, error } = await db
+    .from('tracks')
+    .select('*')
+    .in('day_id', dayIds)
+    .or(`source.eq.HER,tag.in.(${SUYA_AUNQUE_MIA.join(',')})`)
   if (error) {
     console.error('[p21] archive unavailable', error)
     return []
